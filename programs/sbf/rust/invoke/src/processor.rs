@@ -798,6 +798,7 @@ fn process_instruction(
             let serialized_len_ptr =
                 unsafe { account.data.borrow_mut().as_mut_ptr().offset(-8) as *mut u64 };
             unsafe {
+                #[cfg_attr(nightly, allow(invalid_reference_casting))]
                 std::ptr::write(
                     &account.data as *const _ as usize as *mut Rc<RefCell<&mut [u8]>>,
                     Rc::from_raw(((rc_box_addr as usize) + mem::size_of::<usize>() * 2) as *mut _),
@@ -836,6 +837,7 @@ fn process_instruction(
             // global_deallocator.dealloc(rc_box_addr) which is invalid and
             // happens to write a poison value into the account.
             unsafe {
+                #[cfg_attr(nightly, allow(invalid_reference_casting))]
                 std::ptr::write(
                     &account.data as *const _ as usize as *mut Rc<RefCell<&mut [u8]>>,
                     Rc::new(RefCell::new(&mut [])),
@@ -886,6 +888,7 @@ fn process_instruction(
             // allows us to test having CallerAccount::ref_to_len_in_vm in an
             // account region.
             unsafe {
+                #[cfg_attr(nightly, allow(invalid_reference_casting))]
                 std::ptr::write(
                     &account.data as *const _ as usize as *mut Rc<RefCell<&mut [u8]>>,
                     Rc::from_raw(((rc_box_addr as usize) + mem::size_of::<usize>() * 2) as *mut _),
@@ -920,6 +923,7 @@ fn process_instruction(
             // global_deallocator.dealloc(rc_box_addr) which is invalid and
             // happens to write a poison value into the account.
             unsafe {
+                #[cfg_attr(nightly, allow(invalid_reference_casting))]
                 std::ptr::write(
                     &account.data as *const _ as usize as *mut Rc<RefCell<&mut [u8]>>,
                     Rc::new(RefCell::new(&mut [])),
@@ -1133,6 +1137,7 @@ fn process_instruction(
             let account = &accounts[ARGUMENT_INDEX];
             let key = *account.key;
             let key = &key as *const _ as usize;
+            #[cfg_attr(nightly, allow(invalid_reference_casting))]
             unsafe {
                 *mem::transmute::<_, *mut *const Pubkey>(&account.key) = key as *const Pubkey;
             }
@@ -1179,6 +1184,7 @@ fn process_instruction(
             const CALLEE_PROGRAM_INDEX: usize = 2;
             let account = &accounts[ARGUMENT_INDEX];
             let owner = account.owner as *const _ as usize + 1;
+            #[cfg_attr(nightly, allow(invalid_reference_casting))]
             unsafe {
                 *mem::transmute::<_, *mut *const Pubkey>(&account.owner) = owner as *const Pubkey;
             }
