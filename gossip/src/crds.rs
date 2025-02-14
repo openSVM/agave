@@ -479,7 +479,7 @@ impl Crds {
         self.shards
             .find(mask, mask_bits)
             .map(move |i| self.table.index(i))
-            .filter(|VersionedCrdsValue { value, .. }| !value.data().is_deprecated())
+            .filter(|VersionedCrdsValue { value, .. }| !value.data.is_deprecated())
     }
 
     /// Update the timestamp's of all the labels that are associated with Pubkey
