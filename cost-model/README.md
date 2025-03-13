@@ -1,71 +1,83 @@
 # Agave Cost Model
 
-The cost-model module is a critical component of the Agave blockchain platform, responsible for calculating and managing the computational costs of transactions. It provides a framework for estimating the resources required to execute transactions, which is essential for fair fee calculation, prioritization, and resource allocation.
+The cost-model module provides a framework for calculating and managing the computational costs of transactions in the Agave blockchain platform. It ensures fair resource allocation, prevents abuse, and enables efficient prioritization of transactions based on their computational requirements.
 
 ## Architecture Overview
 
 ```mermaid
 graph TD
     A[Transaction] -->|Analyzed by| B[Cost Model]
-    B -->|Calculates| C[Transaction Cost]
-    B -->|Influences| D[Transaction Prioritization]
-    B -->|Determines| E[Resource Allocation]
+    B -->|Calculates| C[Compute Units]
+    B -->|Determines| D[Transaction Fee]
     
     subgraph "Cost Model Components"
-    F[Transaction Cost Calculator]
+    E[Transaction Cost Model]
+    F[Instruction Cost Table]
     G[Program Cost Table]
-    H[Instruction Cost Estimator]
-    I[Cost Parameters]
+    H[Cost Tracking]
     end
     
+    B --- E
     B --- F
     B --- G
     B --- H
-    B --- I
     
-    F -->|Uses| G
-    F -->|Uses| H
-    F -->|Uses| I
+    E -->|Evaluates| I[Transaction Complexity]
+    F -->|Defines| J[Instruction Costs]
+    G -->|Defines| K[Program-Specific Costs]
+    H -->|Monitors| L[Resource Usage]
     
-    J[Banking Stage] -->|Uses| B
-    K[Compute Budget] -->|Configures| I
+    M[Configuration] -->|Sets| N[Cost Parameters]
+    M -->|Sets| O[Fee Structure]
+    M -->|Controls| P[Resource Limits]
 ```
 
 ## Key Components
 
-### Transaction Cost Calculator
-The Transaction Cost Calculator is the main component that calculates the overall cost of a transaction. It analyzes the transaction's instructions, accounts, and signatures to determine the computational resources required for execution.
+### Transaction Cost Model
+The Transaction Cost Model is responsible for:
+- Analyzing transactions to determine their computational complexity
+- Calculating the compute units required for execution
+- Determining the appropriate transaction fee
+- Enforcing resource limits to prevent abuse
+
+### Instruction Cost Table
+The Instruction Cost Table defines the base cost for different types of instructions:
+- System program instructions (transfer, create account, etc.)
+- Token program instructions (transfer, mint, etc.)
+- Vote program instructions
+- Other built-in program instructions
+- Custom program instructions
 
 ### Program Cost Table
-The Program Cost Table maintains the cost parameters for different programs on the blockchain. It provides program-specific cost estimates based on historical execution data and predefined cost models.
+The Program Cost Table provides program-specific cost information:
+- Costs for specific programs based on their computational requirements
+- Adjustments for programs with unique resource usage patterns
+- Historical data on program execution costs
 
-### Instruction Cost Estimator
-The Instruction Cost Estimator calculates the cost of individual instructions within a transaction. It considers factors such as:
-- Instruction complexity
-- Number of accounts accessed
-- Amount of data processed
-- Program being invoked
+### Cost Tracking
+The Cost Tracking component monitors resource usage during transaction execution:
+- Tracks compute unit consumption
+- Records execution time
+- Monitors memory usage
+- Identifies resource-intensive operations
 
-### Cost Parameters
-The Cost Parameters component defines the base costs for various operations, such as:
-- Signature verification
-- Write locks
-- Account access
-- Data transfer
-- Program execution
+## Cost Calculation Mechanism
 
-These parameters are used to calculate the overall cost of a transaction.
+The cost model calculates transaction costs using the following approach:
 
-## Cost Calculation Process
+1. **Base Cost**: Each transaction has a base cost for overhead
+2. **Instruction Costs**: Each instruction adds cost based on its type and complexity
+3. **Data Size Cost**: Additional cost based on the size of transaction data
+4. **Account Access Cost**: Cost for accessing and modifying accounts
+5. **Program Execution Cost**: Cost for executing program instructions
+6. **Signatures Cost**: Cost for verifying transaction signatures
 
-The cost calculation process follows these steps:
-
-1. **Transaction Analysis**: The transaction is analyzed to identify its components (instructions, accounts, signatures)
-2. **Base Cost Calculation**: A base cost is calculated based on the transaction's size and structure
-3. **Instruction Cost Estimation**: The cost of each instruction is estimated based on its complexity and the program it invokes
-4. **Account Access Cost**: Additional costs are added for account access, particularly for write operations
-5. **Signature Verification Cost**: Costs for signature verification are added
-6. **Total Cost Calculation**: All costs are summed to determine the total transaction cost
+This mechanism ensures that:
+- Complex transactions pay higher fees
+- Resource-intensive operations are appropriately priced
+- The network remains protected from spam and abuse
+- Validators are compensated for their resources
 
 ## Usage Examples
 
@@ -75,67 +87,99 @@ The cost calculation process follows these steps:
 use solana_cost_model::cost_model::CostModel;
 use solana_sdk::transaction::Transaction;
 
-// Create a cost model with default parameters
+// Create a cost model
 let cost_model = CostModel::default();
 
 // Calculate the cost of a transaction
 let transaction = /* create or get transaction */;
-let transaction_cost = cost_model.calculate_cost(&transaction);
+let cost = cost_model.calculate_cost(&transaction);
 
-println!("Transaction cost: {} compute units", transaction_cost);
+println!("Transaction cost in compute units: {}", cost);
 ```
 
-### Using Program-Specific Cost Models
+### Estimating Transaction Fee
 
 ```rust
-use solana_cost_model::{cost_model::CostModel, program_costs::ProgramCostTable};
+use solana_cost_model::cost_model::{CostModel, FeeStructure};
+use solana_sdk::transaction::Transaction;
+
+// Create a cost model with a specific fee structure
+let fee_structure = FeeStructure {
+    lamports_per_signature: 5000,
+    ..FeeStructure::default()
+};
+let cost_model = CostModel::new(fee_structure);
+
+// Estimate the fee for a transaction
+let transaction = /* create or get transaction */;
+let fee = cost_model.calculate_fee(&transaction);
+
+println!("Estimated transaction fee: {} lamports", fee);
+```
+
+### Program-Specific Cost Analysis
+
+```rust
+use solana_cost_model::cost_model::CostModel;
 use solana_sdk::pubkey::Pubkey;
 
-// Create a program cost table
-let mut program_costs = ProgramCostTable::default();
+// Create a cost model
+let cost_model = CostModel::default();
 
-// Set custom cost for a specific program
-let program_id = Pubkey::new_unique();
-let program_cost = 1000; // Cost in compute units
-program_costs.set_program_cost(program_id, program_cost);
+// Get the cost statistics for a specific program
+let program_id = Pubkey::from_str("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA").unwrap();
+let stats = cost_model.get_program_cost_stats(&program_id);
 
-// Create a cost model with the custom program costs
-let cost_model = CostModel::new(program_costs);
+println!("Program average cost: {}", stats.average_cost);
+println!("Program max cost: {}", stats.max_cost);
+println!("Program call count: {}", stats.call_count);
 ```
 
-### Estimating Instruction Cost
+### Custom Cost Model Configuration
 
 ```rust
-use solana_cost_model::instruction_costs::InstructionCostEstimator;
-use solana_sdk::instruction::Instruction;
+use solana_cost_model::cost_model::{CostModel, CostModelConfig};
 
-// Create an instruction cost estimator
-let instruction_cost_estimator = InstructionCostEstimator::default();
+// Create a custom cost model configuration
+let config = CostModelConfig {
+    instruction_base_cost: 200,
+    signature_cost: 100,
+    write_lock_cost: 50,
+    data_bytes_cost: 5,
+    builtins_execution_cost: 500,
+    ..CostModelConfig::default()
+};
 
-// Estimate the cost of an instruction
-let instruction = /* create or get instruction */;
-let instruction_cost = instruction_cost_estimator.estimate_cost(&instruction);
-
-println!("Instruction cost: {} compute units", instruction_cost);
+// Create a cost model with the custom configuration
+let cost_model = CostModel::new_with_config(config);
 ```
 
 ## Performance Considerations
 
 The cost model is designed for efficiency and accuracy:
 
-- **Caching**: Frequently used cost calculations are cached to improve performance
-- **Incremental Updates**: Cost parameters can be updated incrementally based on network conditions
-- **Adaptive Estimation**: Cost estimates adapt to changing execution patterns
-- **Low Overhead**: The cost model adds minimal overhead to transaction processing
+- **Low Overhead**: Cost calculations add minimal overhead to transaction processing
+- **Predictable Costs**: Costs are deterministic and predictable for the same transaction
+- **Adaptive Pricing**: The model can adapt to changing network conditions
+- **Fine-Grained Control**: Provides detailed control over resource pricing
+- **Historical Analysis**: Uses historical data to improve cost estimates
+
+Performance implications:
+
+- Cost calculations are performed during transaction validation
+- The model balances accuracy with computational efficiency
+- Cost parameters can be tuned to optimize network performance
+- Historical data helps refine cost estimates over time
 
 ## Configuration
 
 The cost model can be configured with various parameters:
 
-- **Base Costs**: The base costs for different operations
+- **Base Costs**: The base cost for transactions and instructions
+- **Resource Costs**: Costs for CPU, memory, and storage usage
+- **Fee Structure**: How costs translate to transaction fees
 - **Program-Specific Costs**: Custom costs for specific programs
-- **Scaling Factors**: Factors to scale costs based on network conditions
-- **Update Frequency**: How often cost parameters are updated
+- **Resource Limits**: Maximum allowed resource usage
 
 ## Development
 
@@ -159,9 +203,9 @@ cargo test
 
 ## Further Reading
 
-For more detailed information about the cost model, refer to the following resources:
+For more detailed information about the cost model and transaction fees, refer to the following resources:
 
 - [Transaction Fees](https://docs.anza.xyz/economics/transaction-fees)
 - [Compute Budget](https://docs.anza.xyz/developing/programming-model/runtime)
-- [Transaction Prioritization](https://docs.anza.xyz/validator/transaction-prioritization)
-- [Resource Allocation](https://docs.anza.xyz/validator/resource-allocation)
+- [Resource Pricing](https://docs.anza.xyz/economics/resource-pricing)
+- [Prioritization Fees](https://docs.anza.xyz/economics/prioritization-fees)
