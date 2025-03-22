@@ -9,8 +9,9 @@ publish = false
 solana-bpf-loader-program = { workspace = true }
 solana-client = { workspace = true }
 solana-compute-budget = { workspace = true }
+solana-fee-structure = "=2.2.1"
 solana-logger = { workspace = true }
-solana-program-runtime = { workspace = true }
+solana-program-runtime = { workspace = true, features = ["dev-context-only-utils"] }
 solana-sdk = { workspace = true }
 solana-svm = { workspace = true }
 solana-system-program = { workspace = true }

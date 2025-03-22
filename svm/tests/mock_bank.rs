@@ -1,4 +1,5 @@
 #![allow(unused)]
+
 #[allow(deprecated)]
 use solana_sdk::sysvar::recent_blockhashes::{Entry as BlockhashesEntry, RecentBlockhashes};
 use {
@@ -6,10 +7,10 @@ use {
         SyscallAbort, SyscallGetClockSysvar, SyscallGetRentSysvar, SyscallInvokeSignedRust,
         SyscallLog, SyscallMemcpy, SyscallMemset, SyscallSetReturnData,
     },
-    solana_compute_budget::compute_budget::ComputeBudget,
     solana_feature_set::FeatureSet,
-    solana_fee_structure::FeeDetails,
+    solana_fee_structure::{FeeDetails, FeeStructure},
     solana_program_runtime::{
+        execution_budget::{SVMTransactionExecutionBudget, SVMTransactionExecutionCost},
         invoke_context::InvokeContext,
         loaded_programs::{BlockRelation, ForkGraph, ProgramCacheEntry},
         solana_sbpf::{
@@ -110,14 +111,10 @@ impl TransactionProcessingCallback for MockBankCallback {
             .or_default()
             .push((account, is_writable));
     }
+}
 
-    fn calculate_fee(
-        &self,
-        message: &impl SVMMessage,
-        lamports_per_signature: u64,
-        prioritization_fee: u64,
-        _feature_set: &FeatureSet,
-    ) -> FeeDetails {
+impl MockBankCallback {
+    pub fn calculate_fee_details(message: &impl SVMMessage, prioritization_fee: u64) -> FeeDetails {
         let signature_count = message
             .num_transaction_signatures()
             .saturating_add(message.num_ed25519_signatures())
@@ -125,13 +122,11 @@ impl TransactionProcessingCallback for MockBankCallback {
             .saturating_add(message.num_secp256r1_signatures());
 
         FeeDetails::new(
-            signature_count.saturating_mul(lamports_per_signature),
+            signature_count.saturating_mul(FeeStructure::default().lamports_per_signature),
             prioritization_fee,
         )
     }
-}
 
-impl MockBankCallback {
     #[allow(unused)]
     pub fn override_feature_set(&mut self, new_set: FeatureSet) {
         self.feature_set = Arc::new(new_set)
@@ -350,7 +345,7 @@ pub fn register_builtins(
 }
 
 pub fn create_custom_loader<'a>() -> BuiltinProgram<InvokeContext<'a>> {
-    let compute_budget = ComputeBudget::default();
+    let compute_budget = SVMTransactionExecutionBudget::default();
     let vm_config = Config {
         max_call_depth: compute_budget.max_call_depth,
         stack_frame_size: compute_budget.stack_frame_size,

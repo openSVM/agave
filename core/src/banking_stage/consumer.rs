@@ -1,7 +1,6 @@
 use {
     super::{
         committer::{CommitTransactionDetails, Committer, PreBalanceInfo},
-        immutable_deserialized_packet::ImmutableDeserializedPacket,
         leader_slot_metrics::{
             CommittedTransactionsCounts, LeaderSlotMetricsTracker, ProcessTransactionsSummary,
         },
@@ -16,9 +15,11 @@ use {
     solana_fee::FeeFeatures,
     solana_ledger::token_balances::collect_token_balances,
     solana_measure::{measure::Measure, measure_us},
-    solana_poh::poh_recorder::{
-        BankStart, PohRecorderError, RecordTransactionsSummary, RecordTransactionsTimings,
-        TransactionRecorder,
+    solana_poh::{
+        poh_recorder::{BankStart, PohRecorderError},
+        transaction_recorder::{
+            RecordTransactionsSummary, RecordTransactionsTimings, TransactionRecorder,
+        },
     },
     solana_runtime::{
         bank::{Bank, LoadAndExecuteTransactionsOutput},
@@ -127,14 +128,14 @@ impl Consumer {
             bank_start.working_bank.clone(),
             banking_stage_stats,
             slot_metrics_tracker,
-            |packets_to_process, payload| {
+            |packets_to_process_len, payload| {
                 self.do_process_packets(
                     bank_start,
                     payload,
                     banking_stage_stats,
                     &mut consumed_buffered_packets_count,
                     &mut rebuffered_packet_count,
-                    packets_to_process,
+                    packets_to_process_len,
                 )
             },
         );
@@ -171,13 +172,12 @@ impl Consumer {
         banking_stage_stats: &BankingStageStats,
         consumed_buffered_packets_count: &mut usize,
         rebuffered_packet_count: &mut usize,
-        packets_to_process: &[Arc<ImmutableDeserializedPacket>],
+        packets_to_process_len: usize,
     ) -> Option<Vec<usize>> {
         if payload.reached_end_of_slot {
             return None;
         }
 
-        let packets_to_process_len = packets_to_process.len();
         let (process_transactions_summary, process_packets_transactions_us) = measure_us!(self
             .process_packets_transactions(
                 &bank_start.working_bank,
@@ -192,7 +192,6 @@ impl Consumer {
 
         // Clear payload for next iteration
         payload.sanitized_transactions.clear();
-        payload.account_locks.clear();
 
         let ProcessTransactionsSummary {
             reached_max_poh_height,
@@ -631,7 +630,6 @@ impl Consumer {
                 TransactionProcessingConfig {
                     account_overrides: None,
                     check_program_modification_slot: bank.check_program_modification_slot(),
-                    compute_budget: bank.compute_budget(),
                     log_messages_bytes_limit: self.log_messages_bytes_limit,
                     limit_to_load_programs: true,
                     recording_config: ExecutionRecordingConfig::new_single_setting(
@@ -766,7 +764,7 @@ impl Consumer {
         );
         let fee = solana_fee::calculate_fee(
             transaction,
-            bank.get_lamports_per_signature() == 0,
+            bank.is_zero_fees_for_test(),
             bank.fee_structure().lamports_per_signature,
             fee_budget_limits.prioritization_fee,
             FeeFeatures::from(bank.feature_set.as_ref()),
@@ -914,7 +912,7 @@ mod tests {
         let ledger_path = get_tmp_ledger_path_auto_delete!();
         let blockstore = Blockstore::open(ledger_path.path())
             .expect("Expected to be able to open database ledger");
-        let (poh_recorder, _entry_receiver, record_receiver) = PohRecorder::new(
+        let (poh_recorder, _entry_receiver) = PohRecorder::new(
             bank.tick_height(),
             bank.last_blockhash(),
             bank.clone(),
@@ -925,7 +923,8 @@ mod tests {
             &PohConfig::default(),
             Arc::new(AtomicBool::default()),
         );
-        let recorder = poh_recorder.new_recorder();
+        let (record_sender, record_receiver) = unbounded();
+        let recorder = TransactionRecorder::new(record_sender, poh_recorder.is_exited.clone());
         let poh_recorder = Arc::new(RwLock::new(poh_recorder));
 
         poh_recorder
@@ -1019,7 +1018,7 @@ mod tests {
         let ledger_path = get_tmp_ledger_path_auto_delete!();
         let blockstore = Blockstore::open(ledger_path.path())
             .expect("Expected to be able to open database ledger");
-        let (poh_recorder, entry_receiver, record_receiver) = PohRecorder::new(
+        let (poh_recorder, entry_receiver) = PohRecorder::new(
             bank.tick_height(),
             bank.last_blockhash(),
             bank.clone(),
@@ -1030,7 +1029,8 @@ mod tests {
             &PohConfig::default(),
             Arc::new(AtomicBool::default()),
         );
-        let recorder = poh_recorder.new_recorder();
+        let (record_sender, record_receiver) = unbounded();
+        let recorder = TransactionRecorder::new(record_sender, poh_recorder.is_exited.clone());
         let poh_recorder = Arc::new(RwLock::new(poh_recorder));
 
         let poh_simulator = simulate_poh(record_receiver, &poh_recorder);
@@ -1166,7 +1166,7 @@ mod tests {
         let ledger_path = get_tmp_ledger_path_auto_delete!();
         let blockstore = Blockstore::open(ledger_path.path())
             .expect("Expected to be able to open database ledger");
-        let (poh_recorder, entry_receiver, record_receiver) = PohRecorder::new(
+        let (poh_recorder, entry_receiver) = PohRecorder::new(
             bank.tick_height(),
             bank.last_blockhash(),
             bank.clone(),
@@ -1177,7 +1177,8 @@ mod tests {
             &PohConfig::default(),
             Arc::new(AtomicBool::new(false)),
         );
-        let recorder = poh_recorder.new_recorder();
+        let (record_sender, record_receiver) = unbounded();
+        let recorder = TransactionRecorder::new(record_sender, poh_recorder.is_exited.clone());
         let poh_recorder = Arc::new(RwLock::new(poh_recorder));
 
         fn poh_tick_before_returning_record_response(
@@ -1307,7 +1308,7 @@ mod tests {
         let ledger_path = get_tmp_ledger_path_auto_delete!();
         let blockstore = Blockstore::open(ledger_path.path())
             .expect("Expected to be able to open database ledger");
-        let (poh_recorder, _entry_receiver, record_receiver) = PohRecorder::new(
+        let (poh_recorder, _entry_receiver) = PohRecorder::new(
             bank.tick_height(),
             bank.last_blockhash(),
             bank.clone(),
@@ -1318,7 +1319,8 @@ mod tests {
             &PohConfig::default(),
             Arc::new(AtomicBool::default()),
         );
-        let recorder = poh_recorder.new_recorder();
+        let (record_sender, record_receiver) = unbounded();
+        let recorder = TransactionRecorder::new(record_sender, poh_recorder.is_exited.clone());
         let poh_recorder = Arc::new(RwLock::new(poh_recorder));
 
         let poh_simulator = simulate_poh(record_receiver, &poh_recorder);
@@ -1383,7 +1385,7 @@ mod tests {
         let ledger_path = get_tmp_ledger_path_auto_delete!();
         let blockstore = Blockstore::open(ledger_path.path())
             .expect("Expected to be able to open database ledger");
-        let (poh_recorder, _entry_receiver, record_receiver) = PohRecorder::new(
+        let (poh_recorder, _entry_receiver) = PohRecorder::new(
             bank.tick_height(),
             bank.last_blockhash(),
             bank.clone(),
@@ -1394,7 +1396,8 @@ mod tests {
             &PohConfig::default(),
             Arc::new(AtomicBool::default()),
         );
-        let recorder = poh_recorder.new_recorder();
+        let (record_sender, record_receiver) = unbounded();
+        let recorder = TransactionRecorder::new(record_sender, poh_recorder.is_exited.clone());
         let poh_recorder = Arc::new(RwLock::new(poh_recorder));
 
         let poh_simulator = simulate_poh(record_receiver, &poh_recorder);
@@ -1541,7 +1544,7 @@ mod tests {
         let ledger_path = get_tmp_ledger_path_auto_delete!();
         let blockstore = Blockstore::open(ledger_path.path())
             .expect("Expected to be able to open database ledger");
-        let (poh_recorder, _entry_receiver, record_receiver) = PohRecorder::new(
+        let (poh_recorder, _entry_receiver) = PohRecorder::new(
             bank.tick_height(),
             bank.last_blockhash(),
             bank.clone(),
@@ -1552,7 +1555,8 @@ mod tests {
             &PohConfig::default(),
             Arc::new(AtomicBool::default()),
         );
-        let recorder = poh_recorder.new_recorder();
+        let (record_sender, record_receiver) = unbounded();
+        let recorder = TransactionRecorder::new(record_sender, poh_recorder.is_exited.clone());
         let poh_recorder = Arc::new(RwLock::new(poh_recorder));
 
         poh_recorder
@@ -1746,7 +1750,7 @@ mod tests {
         let ledger_path = get_tmp_ledger_path_auto_delete!();
         let blockstore = Blockstore::open(ledger_path.path())
             .expect("Expected to be able to open database ledger");
-        let (poh_recorder, _entry_receiver, record_receiver) = PohRecorder::new(
+        let (poh_recorder, _entry_receiver) = PohRecorder::new(
             bank.tick_height(),
             bank.last_blockhash(),
             bank.clone(),
@@ -1760,7 +1764,8 @@ mod tests {
 
         // Poh Recorder has no working bank, so should throw MaxHeightReached error on
         // record
-        let recorder = poh_recorder.new_recorder();
+        let (record_sender, record_receiver) = unbounded();
+        let recorder = TransactionRecorder::new(record_sender, poh_recorder.is_exited.clone());
 
         let poh_simulator = simulate_poh(record_receiver, &Arc::new(RwLock::new(poh_recorder)));
 
@@ -1844,7 +1849,7 @@ mod tests {
         let blockstore = Blockstore::open(ledger_path.path())
             .expect("Expected to be able to open database ledger");
         let blockstore = Arc::new(blockstore);
-        let (poh_recorder, _entry_receiver, record_receiver) = PohRecorder::new(
+        let (poh_recorder, _entry_receiver) = PohRecorder::new(
             bank.tick_height(),
             bank.last_blockhash(),
             bank.clone(),
@@ -1855,7 +1860,8 @@ mod tests {
             &PohConfig::default(),
             Arc::new(AtomicBool::default()),
         );
-        let recorder = poh_recorder.new_recorder();
+        let (record_sender, record_receiver) = unbounded();
+        let recorder = TransactionRecorder::new(record_sender, poh_recorder.is_exited.clone());
         let poh_recorder = Arc::new(RwLock::new(poh_recorder));
 
         let poh_simulator = simulate_poh(record_receiver, &poh_recorder);
@@ -1988,7 +1994,7 @@ mod tests {
         let blockstore = Blockstore::open(ledger_path.path())
             .expect("Expected to be able to open database ledger");
         let blockstore = Arc::new(blockstore);
-        let (poh_recorder, _entry_receiver, record_receiver) = PohRecorder::new(
+        let (poh_recorder, _entry_receiver) = PohRecorder::new(
             bank.tick_height(),
             bank.last_blockhash(),
             bank.clone(),
@@ -1999,7 +2005,8 @@ mod tests {
             &PohConfig::default(),
             Arc::new(AtomicBool::default()),
         );
-        let recorder = poh_recorder.new_recorder();
+        let (record_sender, record_receiver) = unbounded();
+        let recorder = TransactionRecorder::new(record_sender, poh_recorder.is_exited.clone());
         let poh_recorder = Arc::new(RwLock::new(poh_recorder));
 
         let poh_simulator = simulate_poh(record_receiver, &poh_recorder);

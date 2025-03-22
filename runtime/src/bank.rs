@@ -1436,7 +1436,7 @@ impl Bank {
             .prepare_program_cache_for_upcoming_feature_set(
                 &new,
                 &new.compute_active_feature_set(true).0,
-                &new.compute_budget.unwrap_or_default(),
+                &new.compute_budget.unwrap_or_default().to_budget(),
                 slot_index,
                 slots_in_epoch,
             ));
@@ -2503,17 +2503,11 @@ impl Bank {
         let slots_per_epoch = self.epoch_schedule().slots_per_epoch;
         let vote_accounts = self.vote_accounts();
         let recent_timestamps = vote_accounts.iter().filter_map(|(pubkey, (_, account))| {
-            let vote_state = account.vote_state();
-            let slot_delta = self.slot().checked_sub(vote_state.last_timestamp.slot)?;
-            (slot_delta <= slots_per_epoch).then_some({
-                (
-                    *pubkey,
-                    (
-                        vote_state.last_timestamp.slot,
-                        vote_state.last_timestamp.timestamp,
-                    ),
-                )
-            })
+            let vote_state = account.vote_state_view();
+            let last_timestamp = vote_state.last_timestamp();
+            let slot_delta = self.slot().checked_sub(last_timestamp.slot)?;
+            (slot_delta <= slots_per_epoch)
+                .then_some((*pubkey, (last_timestamp.slot, last_timestamp.timestamp)))
         });
         let slot_duration = Duration::from_nanos(self.ns_per_slot as u64);
         let epoch = self.epoch_schedule().get_epoch(self.slot());
@@ -2750,7 +2744,9 @@ impl Bank {
 
         self.blockhash_queue.write().unwrap().genesis_hash(
             &genesis_hash,
-            genesis_config.fee_rate_governor.lamports_per_signature,
+            genesis_config
+                .fee_rate_governor
+                .target_lamports_per_signature,
         );
 
         self.hashes_per_tick = genesis_config.hashes_per_tick();
@@ -2845,6 +2841,12 @@ impl Bank {
         (last_hash, last_lamports_per_signature)
     }
 
+    pub fn is_zero_fees_for_test(&self) -> bool {
+        let (_last_hash, last_lamports_per_signature) =
+            self.last_blockhash_and_lamports_per_signature();
+        last_lamports_per_signature == 0
+    }
+
     pub fn is_blockhash_valid(&self, hash: &Hash) -> bool {
         let blockhash_queue = self.blockhash_queue.read().unwrap();
         blockhash_queue.is_hash_valid_for_age(hash, MAX_PROCESSING_AGE)
@@ -2852,10 +2854,6 @@ impl Bank {
 
     pub fn get_minimum_balance_for_rent_exemption(&self, data_len: usize) -> u64 {
         self.rent_collector.rent.minimum_balance(data_len).max(1)
-    }
-
-    pub fn get_lamports_per_signature(&self) -> u64 {
-        self.fee_rate_governor.lamports_per_signature
     }
 
     pub fn get_lamports_per_signature_for_blockhash(&self, hash: &Hash) -> Option<u64> {
@@ -2990,6 +2988,9 @@ impl Bank {
         // consistent tx check_age handling.
         BankWithScheduler::wait_for_paused_scheduler(self, scheduler);
 
+        let (_last_hash, last_lamports_per_signature) =
+            self.last_blockhash_and_lamports_per_signature();
+
         // Only acquire the write lock for the blockhash queue on block boundaries because
         // readers can starve this write lock acquisition and ticks would be slowed down too
         // much if the write lock is acquired for each tick.
@@ -3015,7 +3016,10 @@ impl Bank {
         #[cfg(feature = "dev-context-only-utils")]
         let blockhash = blockhash_override.as_ref().unwrap_or(blockhash);
 
-        w_blockhash_queue.register_hash(blockhash, self.fee_rate_governor.lamports_per_signature);
+        // lamports_per_signature stored in blockhash_queue is not used for fee calculation
+        // but only for determining zero_fees_for_test mode (lamports_per_signature == 0).
+        // Storing last_lamports_per_signature serves the same purpose.
+        w_blockhash_queue.register_hash(blockhash, last_lamports_per_signature);
         self.update_recent_blockhashes_locked(&w_blockhash_queue);
     }
 
@@ -3034,6 +3038,9 @@ impl Bank {
         blockhash: &Hash,
         lamports_per_signature: Option<u64>,
     ) {
+        let (_last_hash, last_lamports_per_signature) =
+            self.last_blockhash_and_lamports_per_signature();
+
         // Only acquire the write lock for the blockhash queue on block boundaries because
         // readers can starve this write lock acquisition and ticks would be slowed down too
         // much if the write lock is acquired for each tick.
@@ -3041,8 +3048,7 @@ impl Bank {
         if let Some(lamports_per_signature) = lamports_per_signature {
             w_blockhash_queue.register_hash(blockhash, lamports_per_signature);
         } else {
-            w_blockhash_queue
-                .register_hash(blockhash, self.fee_rate_governor.lamports_per_signature);
+            w_blockhash_queue.register_hash(blockhash, last_lamports_per_signature);
         }
     }
 
@@ -3228,7 +3234,6 @@ impl Bank {
             TransactionProcessingConfig {
                 account_overrides: Some(&account_overrides),
                 check_program_modification_slot: self.check_program_modification_slot,
-                compute_budget: self.compute_budget(),
                 log_messages_bytes_limit: None,
                 limit_to_load_programs: true,
                 recording_config: ExecutionRecordingConfig {
@@ -3379,7 +3384,6 @@ impl Bank {
             blockhash_lamports_per_signature,
             epoch_total_stake: self.get_current_epoch_total_stake(),
             feature_set: Arc::clone(&self.feature_set),
-            fee_lamports_per_signature: self.fee_structure.lamports_per_signature,
             rent_collector: Some(&rent_collector_with_metrics),
         };
 
@@ -4575,7 +4579,6 @@ impl Bank {
             TransactionProcessingConfig {
                 account_overrides: None,
                 check_program_modification_slot: self.check_program_modification_slot,
-                compute_budget: self.compute_budget(),
                 log_messages_bytes_limit,
                 limit_to_load_programs: false,
                 recording_config,
@@ -4827,6 +4830,11 @@ impl Bank {
         additional_builtins: Option<&[BuiltinPrototype]>,
         debug_do_not_add_builtins: bool,
     ) {
+        if let Some(compute_budget) = self.compute_budget {
+            self.transaction_processor
+                .set_execution_cost(compute_budget.to_cost());
+        }
+
         self.rewards_pool_pubkeys =
             Arc::new(genesis_config.rewards_pools.keys().cloned().collect());
 
@@ -4895,14 +4903,14 @@ impl Bank {
                 Some(Arc::new(
                     create_program_runtime_environment_v1(
                         &self.feature_set,
-                        &self.compute_budget().unwrap_or_default(),
+                        &self.compute_budget().unwrap_or_default().to_budget(),
                         false, /* deployment */
                         false, /* debugging_features */
                     )
                     .unwrap(),
                 )),
                 Some(Arc::new(create_program_runtime_environment_v2(
-                    &self.compute_budget().unwrap_or_default(),
+                    &self.compute_budget().unwrap_or_default().to_budget(),
                     false, /* debugging_features */
                 ))),
             );
@@ -6084,6 +6092,45 @@ impl Bank {
         self.epoch_schedule().get_leader_schedule_epoch(slot)
     }
 
+    /// Returns whether the specified epoch should use the new vote account
+    /// keyed leader schedule
+    pub fn should_use_vote_keyed_leader_schedule(&self, epoch: Epoch) -> Option<bool> {
+        let effective_epoch = self
+            .feature_set
+            .activated_slot(&solana_feature_set::enable_vote_address_leader_schedule::id())
+            .map(|activation_slot| {
+                // If the feature was activated at genesis, then the new leader
+                // schedule should be effective immediately in the first epoch
+                if activation_slot == 0 {
+                    return 0;
+                }
+
+                // Calculate the epoch that the feature became activated in
+                let activation_epoch = self.epoch_schedule.get_epoch(activation_slot);
+
+                // The effective epoch is the epoch immediately after the
+                // activation epoch
+                activation_epoch.wrapping_add(1)
+            });
+
+        // Starting from the effective epoch, always use the new leader schedule
+        if let Some(effective_epoch) = effective_epoch {
+            return Some(epoch >= effective_epoch);
+        }
+
+        // Calculate the max epoch we can cache a leader schedule for
+        let max_cached_leader_schedule = self.get_leader_schedule_epoch(self.slot());
+        if epoch <= max_cached_leader_schedule {
+            // The feature cannot be effective by the specified epoch
+            Some(false)
+        } else {
+            // Cannot determine if an epoch should use the new leader schedule if the
+            // the epoch is too far in the future because we won't know if the feature
+            // will have been activated by then or not.
+            None
+        }
+    }
+
     /// a bank-level cache of vote accounts and stake delegation info
     fn update_stakes_cache(
         &self,
@@ -6436,14 +6483,14 @@ impl Bank {
 
         if new_feature_activations.contains(&feature_set::pico_inflation::id()) {
             *self.inflation.write().unwrap() = Inflation::pico();
-            self.fee_rate_governor.burn_percent = 50; // 50% fee burn
+            self.fee_rate_governor.burn_percent = solana_sdk::fee_calculator::DEFAULT_BURN_PERCENT; // 50% fee burn
             self.rent_collector.rent.burn_percent = 50; // 50% rent burn
         }
 
         if !new_feature_activations.is_disjoint(&self.feature_set.full_inflation_features_enabled())
         {
             *self.inflation.write().unwrap() = Inflation::full();
-            self.fee_rate_governor.burn_percent = 50; // 50% fee burn
+            self.fee_rate_governor.burn_percent = solana_sdk::fee_calculator::DEFAULT_BURN_PERCENT; // 50% fee burn
             self.rent_collector.rent.burn_percent = 50; // 50% rent burn
         }
 
@@ -6900,22 +6947,6 @@ impl TransactionProcessingCallback for Bank {
             .get(vote_address)
             .map(|(stake, _)| (*stake))
             .unwrap_or(0)
-    }
-
-    fn calculate_fee(
-        &self,
-        message: &impl SVMMessage,
-        lamports_per_signature: u64,
-        prioritization_fee: u64,
-        feature_set: &FeatureSet,
-    ) -> FeeDetails {
-        solana_fee::calculate_fee_details(
-            message,
-            false, /* zero_fees_for_test */
-            lamports_per_signature,
-            prioritization_fee,
-            FeeFeatures::from(feature_set),
-        )
     }
 }
 

@@ -43,6 +43,7 @@ solana-metrics = { workspace = true }
 solana-perf = { workspace = true }
 solana-poh = { workspace = true }
 solana-pubkey = { workspace = true }
+solana-quic-definitions = { workspace = true }
 solana-rayon-threadlimit = { workspace = true }
 solana-rpc-client-api = { workspace = true }
 solana-runtime = { workspace = true }
@@ -73,6 +74,7 @@ solana-runtime = { workspace = true, features = ["dev-context-only-utils"] }
 solana-runtime-transaction = { workspace = true, features = [
     "dev-context-only-utils",
 ] }
+solana-send-transaction-service = { workspace = true, features = ["dev-context-only-utils"] }
 solana-stake-program = { workspace = true }
 spl-pod = { workspace = true }
 symlink = { workspace = true }

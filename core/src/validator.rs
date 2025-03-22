@@ -13,7 +13,6 @@ use {
             tower_storage::{NullTowerStorage, TowerStorage},
             ExternalRootSource, Tower,
         },
-        poh_timing_report_service::PohTimingReportService,
         repair::{
             self,
             quic_endpoint::{RepairQuicAsyncSenders, RepairQuicSenders, RepairQuicSockets},
@@ -72,12 +71,11 @@ use {
         use_snapshot_archives_at_startup::UseSnapshotArchivesAtStartup,
     },
     solana_measure::measure::Measure,
-    solana_metrics::{
-        datapoint_info, metrics::metrics_config_sanity_check, poh_timing_point::PohTimingSender,
-    },
+    solana_metrics::{datapoint_info, metrics::metrics_config_sanity_check},
     solana_poh::{
         poh_recorder::PohRecorder,
         poh_service::{self, PohService},
+        transaction_recorder::TransactionRecorder,
     },
     solana_rayon_threadlimit::{get_max_thread_count, get_thread_count},
     solana_rpc::{
@@ -90,7 +88,7 @@ use {
         rpc::JsonRpcConfig,
         rpc_completed_slots_service::RpcCompletedSlotsService,
         rpc_pubsub_service::{PubSubConfig, PubSubService},
-        rpc_service::JsonRpcService,
+        rpc_service::{ClientOption, JsonRpcService, JsonRpcServiceConfig},
         rpc_subscriptions::RpcSubscriptions,
         transaction_notifier_interface::TransactionNotifierArc,
         transaction_status_service::TransactionStatusService,
@@ -108,6 +106,7 @@ use {
         snapshot_archive_info::SnapshotArchiveInfoGetter,
         snapshot_bank_utils::{self, DISABLED_SNAPSHOT_ARCHIVE_INTERVAL},
         snapshot_config::SnapshotConfig,
+        snapshot_controller::SnapshotController,
         snapshot_hash::StartingSnapshotHashes,
         snapshot_utils::{self, clean_orphaned_account_snapshot_dirs},
     },
@@ -123,7 +122,7 @@ use {
         signature::{Keypair, Signer},
         timing::timestamp,
     },
-    solana_send_transaction_service::send_transaction_service,
+    solana_send_transaction_service::send_transaction_service::Config as SendTransactionServiceConfig,
     solana_streamer::{quic::QuicServerParams, socket::SocketAddrSpace, streamer::StakedNodes},
     solana_tpu_client::tpu_client::{
         DEFAULT_TPU_CONNECTION_POOL_SIZE, DEFAULT_TPU_USE_QUIC, DEFAULT_VOTE_USE_QUIC,
@@ -189,8 +188,8 @@ impl BlockVerificationMethod {
 #[derive(Clone, EnumString, EnumVariantNames, Default, IntoStaticStr, Display)]
 #[strum(serialize_all = "kebab-case")]
 pub enum BlockProductionMethod {
-    #[default]
     CentralScheduler,
+    #[default]
     CentralSchedulerGreedy,
 }
 
@@ -279,7 +278,7 @@ pub struct ValidatorConfig {
     pub debug_keys: Option<Arc<HashSet<Pubkey>>>,
     pub contact_debug_interval: u64,
     pub contact_save_interval: u64,
-    pub send_transaction_service_config: send_transaction_service::Config,
+    pub send_transaction_service_config: SendTransactionServiceConfig,
     pub no_poh_speed_test: bool,
     pub no_os_memory_stats_reporting: bool,
     pub no_os_network_stats_reporting: bool,
@@ -315,6 +314,7 @@ pub struct ValidatorConfig {
     pub replay_transactions_threads: NonZeroUsize,
     pub tvu_shred_sigverify_threads: NonZeroUsize,
     pub delay_leader_block_for_pending_fork: bool,
+    pub use_tpu_client_next: bool,
 }
 
 impl Default for ValidatorConfig {
@@ -352,7 +352,7 @@ impl Default for ValidatorConfig {
             debug_keys: None,
             contact_debug_interval: DEFAULT_CONTACT_DEBUG_INTERVAL_MILLIS,
             contact_save_interval: DEFAULT_CONTACT_SAVE_INTERVAL_MILLIS,
-            send_transaction_service_config: send_transaction_service::Config::default(),
+            send_transaction_service_config: SendTransactionServiceConfig::default(),
             no_poh_speed_test: true,
             no_os_memory_stats_reporting: true,
             no_os_network_stats_reporting: true,
@@ -388,6 +388,7 @@ impl Default for ValidatorConfig {
             replay_transactions_threads: NonZeroUsize::new(1).expect("1 is non-zero"),
             tvu_shred_sigverify_threads: NonZeroUsize::new(1).expect("1 is non-zero"),
             delay_leader_block_for_pending_fork: false,
+            use_tpu_client_next: false,
         }
     }
 }
@@ -565,7 +566,6 @@ pub struct Validator {
     entry_notifier_service: Option<EntryNotifierService>,
     system_monitor_service: Option<SystemMonitorService>,
     sample_performance_service: Option<SamplePerformanceService>,
-    poh_timing_report_service: PohTimingReportService,
     stats_reporter_service: StatsReporterService,
     gossip_service: GossipService,
     serve_repair_service: ServeRepairService,
@@ -795,10 +795,6 @@ impl Validator {
             },
         ));
 
-        let (poh_timing_point_sender, poh_timing_point_receiver) = unbounded();
-        let poh_timing_report_service =
-            PohTimingReportService::new(poh_timing_point_receiver, exit.clone());
-
         let (
             bank_forks,
             blockstore,
@@ -827,7 +823,6 @@ impl Validator {
             accounts_update_notifier,
             transaction_notifier,
             entry_notifier,
-            Some(poh_timing_point_sender.clone()),
         )
         .map_err(ValidatorError::Other)?;
 
@@ -919,6 +914,11 @@ impl Validator {
         let (snapshot_request_sender, snapshot_request_receiver) = unbounded();
         let accounts_background_request_sender =
             AbsRequestSender::new(snapshot_request_sender.clone());
+        let snapshot_controller = Arc::new(SnapshotController::new(
+            accounts_background_request_sender,
+            Some(config.snapshot_config.clone()),
+            bank_forks.read().unwrap().root(),
+        ));
         let snapshot_request_handler = SnapshotRequestHandler {
             snapshot_config: config.snapshot_config.clone(),
             snapshot_request_sender,
@@ -950,7 +950,7 @@ impl Validator {
 
         let leader_schedule_cache = Arc::new(leader_schedule_cache);
         let startup_verification_complete;
-        let (poh_recorder, entry_receiver, record_receiver) = {
+        let (poh_recorder, entry_receiver) = {
             let bank = &bank_forks.read().unwrap().working_bank();
             startup_verification_complete = Arc::clone(bank.get_startup_verification_complete());
             PohRecorder::new_with_clear_signal(
@@ -964,10 +964,12 @@ impl Validator {
                 blockstore.get_new_shred_signal(0),
                 &leader_schedule_cache,
                 &genesis_config.poh_config,
-                Some(poh_timing_point_sender),
                 exit.clone(),
             )
         };
+        let (record_sender, record_receiver) = unbounded();
+        let transaction_recorder =
+            TransactionRecorder::new(record_sender, poh_recorder.is_exited.clone());
         let poh_recorder = Arc::new(RwLock::new(poh_recorder));
 
         let (banking_tracer, tracer_thread) =
@@ -1027,7 +1029,7 @@ impl Validator {
             block_meta_sender.clone(),
             entry_notification_sender,
             blockstore_root_scan,
-            accounts_background_request_sender.clone(),
+            &snapshot_controller,
             config,
         );
 
@@ -1037,7 +1039,7 @@ impl Validator {
             ledger_path,
             &bank_forks,
             &leader_schedule_cache,
-            &accounts_background_request_sender,
+            &snapshot_controller,
         )
         .map_err(ValidatorError::Other)?;
 
@@ -1087,6 +1089,9 @@ impl Validator {
 
         let staked_nodes = Arc::new(RwLock::new(StakedNodes::default()));
 
+        // ConnectionCache might be used for JsonRpc and for Forwarding. Since
+        // the latter is not migrated yet to the tpu-client-next, create
+        // ConnectionCache regardless of config.use_tpu_client_next for now.
         let connection_cache = if use_quic {
             let connection_cache = ConnectionCache::new_with_client_options(
                 "connection_cache_tpu_quic",
@@ -1159,31 +1164,36 @@ impl Validator {
                 None
             };
 
-            let json_rpc_service = JsonRpcService::new(
+            let rpc_svc_config = JsonRpcServiceConfig {
                 rpc_addr,
-                config.rpc_config.clone(),
-                Some(config.snapshot_config.clone()),
-                bank_forks.clone(),
-                block_commitment_cache.clone(),
-                blockstore.clone(),
-                cluster_info.clone(),
-                Some(poh_recorder.clone()),
-                genesis_config.hash(),
-                ledger_path,
-                config.validator_exit.clone(),
-                exit.clone(),
-                rpc_override_health_check.clone(),
+                rpc_config: config.rpc_config.clone(),
+                snapshot_config: Some(config.snapshot_config.clone()),
+                bank_forks: bank_forks.clone(),
+                block_commitment_cache: block_commitment_cache.clone(),
+                blockstore: blockstore.clone(),
+                cluster_info: cluster_info.clone(),
+                poh_recorder: Some(poh_recorder.clone()),
+                genesis_hash: genesis_config.hash(),
+                ledger_path: ledger_path.to_path_buf(),
+                validator_exit: config.validator_exit.clone(),
+                exit: exit.clone(),
+                override_health_check: rpc_override_health_check.clone(),
                 startup_verification_complete,
-                optimistically_confirmed_bank.clone(),
-                config.send_transaction_service_config.clone(),
-                max_slots.clone(),
-                leader_schedule_cache.clone(),
-                connection_cache.clone(),
+                optimistically_confirmed_bank: optimistically_confirmed_bank.clone(),
+                send_transaction_service_config: config.send_transaction_service_config.clone(),
+                max_slots: max_slots.clone(),
+                leader_schedule_cache: leader_schedule_cache.clone(),
                 max_complete_transaction_status_slot,
                 max_complete_rewards_slot,
-                prioritization_fee_cache.clone(),
-            )
-            .map_err(ValidatorError::Other)?;
+                prioritization_fee_cache: prioritization_fee_cache.clone(),
+                client_option: if config.use_tpu_client_next {
+                    ClientOption::TpuClientNext(Arc::as_ref(&identity_keypair))
+                } else {
+                    ClientOption::ConnectionCache(connection_cache.clone())
+                },
+            };
+            let json_rpc_service =
+                JsonRpcService::new_with_config(rpc_svc_config).map_err(ValidatorError::Other)?;
 
             let pubsub_service = if !config.rpc_config.full_api {
                 None
@@ -1468,6 +1478,11 @@ impl Validator {
         let cluster_slots =
             Arc::new(crate::cluster_slots_service::cluster_slots::ClusterSlots::default());
 
+        // If RPC is supported and ConnectionCache is used, pass ConnectionCache for being warmup inside Tvu.
+        let connection_cache_for_warmup = (json_rpc_service.is_some()
+            && !config.use_tpu_client_next)
+            .then_some(&connection_cache);
+
         let tvu = Tvu::new(
             vote_account,
             authorized_voter_keypairs,
@@ -1513,9 +1528,9 @@ impl Validator {
             &max_slots,
             block_metadata_notifier,
             config.wait_to_vote_slot,
-            accounts_background_request_sender.clone(),
+            snapshot_controller.clone(),
             config.runtime_config.log_messages_bytes_limit,
-            json_rpc_service.is_some().then_some(&connection_cache), // for the cache warmer only used for STS for RPC service
+            connection_cache_for_warmup,
             &prioritization_fee_cache,
             banking_tracer.clone(),
             turbine_quic_endpoint_sender.clone(),
@@ -1545,7 +1560,7 @@ impl Validator {
                 wait_for_supermajority_threshold_percent:
                     WAIT_FOR_WEN_RESTART_SUPERMAJORITY_THRESHOLD_PERCENT,
                 snapshot_config: config.snapshot_config.clone(),
-                accounts_background_request_sender: accounts_background_request_sender.clone(),
+                snapshot_controller: snapshot_controller.clone(),
                 abs_status: accounts_background_service.status().clone(),
                 genesis_config_hash: genesis_config.hash(),
                 exit: exit.clone(),
@@ -1556,6 +1571,7 @@ impl Validator {
         let (tpu, mut key_notifies) = Tpu::new(
             &cluster_info,
             &poh_recorder,
+            transaction_recorder,
             entry_receiver,
             retransmit_slots_receiver,
             TpuSockets {
@@ -1613,6 +1629,12 @@ impl Validator {
         );
 
         *start_progress.write().unwrap() = ValidatorStartProgress::Running;
+        if config.use_tpu_client_next {
+            if let Some(json_rpc_service) = &json_rpc_service {
+                key_notifies.push(json_rpc_service.get_client_key_updater())
+            }
+        }
+        // add connection_cache because it is still used in Forwarder.
         key_notifies.push(connection_cache);
 
         *admin_rpc_service_post_init.write().unwrap() = Some(AdminRpcRequestMetadataPostInit {
@@ -1639,7 +1661,6 @@ impl Validator {
             entry_notifier_service,
             system_monitor_service,
             sample_performance_service,
-            poh_timing_report_service,
             snapshot_packager_service,
             completed_data_sets_service,
             tpu,
@@ -1812,10 +1833,6 @@ impl Validator {
         if let Some(geyser_plugin_service) = self.geyser_plugin_service {
             geyser_plugin_service.join().expect("geyser_plugin_service");
         }
-
-        self.poh_timing_report_service
-            .join()
-            .expect("poh_timing_report_service");
     }
 }
 
@@ -1992,7 +2009,6 @@ fn load_blockstore(
     accounts_update_notifier: Option<AccountsUpdateNotifier>,
     transaction_notifier: Option<TransactionNotifierArc>,
     entry_notifier: Option<EntryNotifierArc>,
-    poh_timing_point_sender: Option<PohTimingSender>,
 ) -> Result<
     (
         Arc<RwLock<BankForks>>,
@@ -2012,14 +2028,12 @@ fn load_blockstore(
     info!("loading ledger from {:?}...", ledger_path);
     *start_progress.write().unwrap() = ValidatorStartProgress::LoadingLedger;
 
-    let mut blockstore =
-        Blockstore::open_with_options(ledger_path, config.blockstore_options.clone())
-            .map_err(|err| format!("Failed to open Blockstore: {err:?}"))?;
+    let blockstore = Blockstore::open_with_options(ledger_path, config.blockstore_options.clone())
+        .map_err(|err| format!("Failed to open Blockstore: {err:?}"))?;
 
     let (ledger_signal_sender, ledger_signal_receiver) = bounded(MAX_REPLAY_WAKE_UP_SIGNALS);
     blockstore.add_new_shred_signal(ledger_signal_sender);
 
-    blockstore.shred_timing_point_sender = poh_timing_point_sender;
     // following boot sequence (esp BankForks) could set root. so stash the original value
     // of blockstore root away here as soon as possible.
     let original_blockstore_root = blockstore.max_root();
@@ -2088,11 +2102,6 @@ fn load_blockstore(
         AccountsBackgroundService::setup_bank_drop_callback(bank_forks.clone());
 
     leader_schedule_cache.set_fixed_leader_schedule(config.fixed_leader_schedule.clone());
-    {
-        let mut bank_forks = bank_forks.write().unwrap();
-        bank_forks.set_snapshot_config(Some(config.snapshot_config.clone()));
-        bank_forks.set_accounts_hash_interval_slots(config.accounts_hash_interval_slots);
-    }
 
     Ok((
         bank_forks,
@@ -2122,7 +2131,7 @@ pub struct ProcessBlockStore<'a> {
     block_meta_sender: Option<BlockMetaSender>,
     entry_notification_sender: Option<&'a EntryNotifierSender>,
     blockstore_root_scan: Option<BlockstoreRootScan>,
-    accounts_background_request_sender: AbsRequestSender,
+    snapshot_controller: &'a SnapshotController,
     config: &'a ValidatorConfig,
     tower: Option<Tower>,
 }
@@ -2142,7 +2151,7 @@ impl<'a> ProcessBlockStore<'a> {
         block_meta_sender: Option<BlockMetaSender>,
         entry_notification_sender: Option<&'a EntryNotifierSender>,
         blockstore_root_scan: BlockstoreRootScan,
-        accounts_background_request_sender: AbsRequestSender,
+        snapshot_controller: &'a SnapshotController,
         config: &'a ValidatorConfig,
     ) -> Self {
         Self {
@@ -2158,7 +2167,7 @@ impl<'a> ProcessBlockStore<'a> {
             block_meta_sender,
             entry_notification_sender,
             blockstore_root_scan: Some(blockstore_root_scan),
-            accounts_background_request_sender,
+            snapshot_controller,
             config,
             tower: None,
         }
@@ -2195,7 +2204,7 @@ impl<'a> ProcessBlockStore<'a> {
                 self.transaction_status_sender,
                 self.block_meta_sender.as_ref(),
                 self.entry_notification_sender,
-                &self.accounts_background_request_sender,
+                self.snapshot_controller,
             )
             .map_err(|err| {
                 exit.store(true, Ordering::Relaxed);
@@ -2259,7 +2268,7 @@ fn maybe_warp_slot(
     ledger_path: &Path,
     bank_forks: &RwLock<BankForks>,
     leader_schedule_cache: &LeaderScheduleCache,
-    accounts_background_request_sender: &AbsRequestSender,
+    snapshot_controller: &SnapshotController,
 ) -> Result<(), String> {
     if let Some(warp_slot) = config.warp_slot {
         let mut bank_forks = bank_forks.write().unwrap();
@@ -2290,11 +2299,7 @@ fn maybe_warp_slot(
             solana_accounts_db::accounts_db::CalcAccountsHashDataSource::Storages,
         ));
         bank_forks
-            .set_root(
-                warp_slot,
-                accounts_background_request_sender,
-                Some(warp_slot),
-            )
+            .set_root(warp_slot, snapshot_controller, Some(warp_slot))
             .map_err(|err| err.to_string())?;
         leader_schedule_cache.set_root(&bank_forks.root_bank());
 

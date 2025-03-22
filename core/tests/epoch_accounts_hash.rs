@@ -25,6 +25,7 @@ use {
         snapshot_archive_info::SnapshotArchiveInfoGetter,
         snapshot_bank_utils,
         snapshot_config::SnapshotConfig,
+        snapshot_controller::SnapshotController,
         snapshot_utils,
     },
     solana_sdk::{
@@ -67,9 +68,6 @@ struct TestEnvironment {
 impl TestEnvironment {
     /// A small, round number to make the tests run quickly, and easy to debug
     const SLOTS_PER_EPOCH: u64 = 400;
-
-    /// A small, round number to ensure accounts packages are sent to the background services
-    const ACCOUNTS_HASH_INTERVAL: u64 = 40;
 
     #[must_use]
     fn new() -> TestEnvironment {
@@ -121,14 +119,6 @@ impl TestEnvironment {
 
         let bank_forks =
             BankForks::new_rw_arc(Bank::new_for_tests(&genesis_config_info.genesis_config));
-        bank_forks
-            .write()
-            .unwrap()
-            .set_snapshot_config(Some(snapshot_config.clone()));
-        bank_forks
-            .write()
-            .unwrap()
-            .set_accounts_hash_interval_slots(Self::ACCOUNTS_HASH_INTERVAL);
 
         let exit = Arc::new(AtomicBool::new(false));
         let node_id = Arc::new(Keypair::new());
@@ -170,7 +160,7 @@ impl TestEnvironment {
 struct BackgroundServices {
     exit: Arc<AtomicBool>,
     accounts_background_service: ManuallyDrop<AccountsBackgroundService>,
-    accounts_background_request_sender: AbsRequestSender,
+    snapshot_controller: SnapshotController,
     accounts_hash_verifier: ManuallyDrop<AccountsHashVerifier>,
     snapshot_packager_service: ManuallyDrop<SnapshotPackagerService>,
 }
@@ -208,6 +198,11 @@ impl BackgroundServices {
         let (snapshot_request_sender, snapshot_request_receiver) = crossbeam_channel::unbounded();
         let accounts_background_request_sender =
             AbsRequestSender::new(snapshot_request_sender.clone());
+        let snapshot_controller = SnapshotController::new(
+            accounts_background_request_sender,
+            Some(snapshot_config.clone()),
+            bank_forks.read().unwrap().root(),
+        );
         let snapshot_request_handler = SnapshotRequestHandler {
             snapshot_config: snapshot_config.clone(),
             snapshot_request_sender,
@@ -231,7 +226,7 @@ impl BackgroundServices {
         Self {
             exit,
             accounts_background_service: ManuallyDrop::new(accounts_background_service),
-            accounts_background_request_sender,
+            snapshot_controller,
             accounts_hash_verifier: ManuallyDrop::new(accounts_hash_verifier),
             snapshot_packager_service: ManuallyDrop::new(snapshot_packager_service),
         }
@@ -304,9 +299,7 @@ fn test_epoch_accounts_hash_basic(test_environment: TestEnvironment) {
                 .unwrap()
                 .set_root(
                     bank.slot(),
-                    &test_environment
-                        .background_services
-                        .accounts_background_request_sender,
+                    &test_environment.background_services.snapshot_controller,
                     None,
                 )
                 .unwrap();
@@ -418,9 +411,7 @@ fn test_snapshots_have_expected_epoch_accounts_hash() {
             .unwrap()
             .set_root(
                 bank.slot(),
-                &test_environment
-                    .background_services
-                    .accounts_background_request_sender,
+                &test_environment.background_services.snapshot_controller,
                 None,
             )
             .unwrap();
@@ -544,9 +535,7 @@ fn test_background_services_request_handling_for_epoch_accounts_hash() {
                 .unwrap()
                 .set_root(
                     bank.slot(),
-                    &test_environment
-                        .background_services
-                        .accounts_background_request_sender,
+                    &test_environment.background_services.snapshot_controller,
                     None,
                 )
                 .unwrap();
@@ -605,9 +594,7 @@ fn test_epoch_accounts_hash_and_warping() {
         .unwrap()
         .set_root(
             bank.slot(),
-            &test_environment
-                .background_services
-                .accounts_background_request_sender,
+            &test_environment.background_services.snapshot_controller,
             None,
         )
         .unwrap();
@@ -635,9 +622,7 @@ fn test_epoch_accounts_hash_and_warping() {
         .unwrap()
         .set_root(
             bank.slot(),
-            &test_environment
-                .background_services
-                .accounts_background_request_sender,
+            &test_environment.background_services.snapshot_controller,
             None,
         )
         .unwrap();
@@ -679,9 +664,7 @@ fn test_epoch_accounts_hash_and_warping() {
         .unwrap()
         .set_root(
             bank.slot(),
-            &test_environment
-                .background_services
-                .accounts_background_request_sender,
+            &test_environment.background_services.snapshot_controller,
             None,
         )
         .unwrap();

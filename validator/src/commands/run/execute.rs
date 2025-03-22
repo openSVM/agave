@@ -94,7 +94,7 @@ pub fn execute(
     socket_addr_space: SocketAddrSpace,
     ledger_path: &Path,
     operation: Operation,
-) -> Result<(), String> {
+) -> Result<(), Box<dyn std::error::Error>> {
     let cli::thread_args::NumThreadConfig {
         accounts_db_clean_threads,
         accounts_db_foreground_threads,
@@ -989,16 +989,16 @@ pub fn execute(
     );
 
     info!(
-        "Snapshot configuration: full snapshot interval: {} slots, incremental snapshot interval: {} slots",
+        "Snapshot configuration: full snapshot interval: {}, incremental snapshot interval: {}",
         if full_snapshot_archive_interval_slots == DISABLED_SNAPSHOT_ARCHIVE_INTERVAL {
             "disabled".to_string()
         } else {
-            full_snapshot_archive_interval_slots.to_string()
+            format!("{full_snapshot_archive_interval_slots} slots")
         },
         if incremental_snapshot_archive_interval_slots == DISABLED_SNAPSHOT_ARCHIVE_INTERVAL {
             "disabled".to_string()
         } else {
-            incremental_snapshot_archive_interval_slots.to_string()
+            format!("{incremental_snapshot_archive_interval_slots} slots")
         },
     );
 
