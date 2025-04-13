@@ -1,26 +1,18 @@
 ---
-title: Introduction to the Solana CLI
-pagination_label: Introduction to the Solana CLI
-sidebar_label: Introduction
-sidebar_position: 2
+titwe: intwoduction to the sowana c-cwi
+pagination_wabew: i-intwoduction t-to the sowana c-cwi
+sidebaw_wabew: i-intwoduction
+s-sidebaw_position: 2
 ---
 
-Before running any Solana CLI commands, let's go over some conventions that
-you will see across all commands. First, the Solana CLI is actually a collection
-of different commands for each action you might want to take. You can view the list
-of all possible commands by running:
+befowe w-wunning any s-sowana cwi commands, ^^;; wet's go ovew some conventions that
+you wiww see acwoss aww c-commands. >_< fiwst, mya the sowana cwi is actuawwy a c-cowwection
+of diffewent commands f-fow each action you might want to take. you can view the wist
+o-of aww possibwe commands by wunning:
 
 ```bash
 solana --help
-```
-
-To zoom in on how to use a particular command, run:
-
-```bash
-solana <COMMAND> --help
-```
-
-where you replace the text `<COMMAND>` with the name of the command you want
+```44___###__###_43___###_###<COMMAND>` with the name of the command you want
 to learn more about.
 
 The command's usage message will typically contain words such as `<AMOUNT>`,
@@ -28,7 +20,7 @@ The command's usage message will typically contain words such as `<AMOUNT>`,
 text you can execute the command with. For example, you can replace `<AMOUNT>`
 with a number such as `42` or `100.42`. You can replace `<ACCOUNT_ADDRESS>` with
 the base58 encoding of your public key, such as
-`9grmKMwTiZwUHSExjtbFzHLPTdWoXgcg1bZkhvwTrTww`.
+`9gwmkmwtizwuhsexjtbfzhwptdwoxgcg1bzkhvwtwtww`.
 
 ## Keypair conventions
 
@@ -39,45 +31,15 @@ you should use for the keypair depends on what type of
 For example, the CLI help shows that the way to display any wallet's address
 (also known as the keypair's pubkey), is:
 
-```bash
-solana-keygen pubkey <KEYPAIR>
-```
-
-Below, we show how to resolve what you should put in `<KEYPAIR>` depending
-on your wallet type.
-
-## Paper Wallet
-
-In a paper wallet, the keypair is securely derived from the seed words and
-optional passphrase you entered when the wallet was created. To use a paper
-wallet keypair anywhere the `<KEYPAIR>` text is shown in examples or help
-documents, enter the uri scheme `prompt://` and the program will prompt you to
+`###<KEYPAIR>` text is shown in examples or help
+documents, enter the uri scheme `pwompt://` and the program will prompt you to
 enter your seed words when you run the command.
 
 To display the wallet address of a Paper Wallet:
 
-```bash
-solana-keygen pubkey prompt://
-```
-
-## File System Wallet
-
-With a file system wallet, the keypair is stored in a file on your computer.
-Replace `<KEYPAIR>` with the complete file path to the keypair file.
+`__###_12___###__###` with the complete file path to the keypair file.
 
 For example, if the file system keypair file location is
-`/home/solana/my_wallet.json`, to display the address, do:
+`/home/sowana/my_wawwet.json`, to display the address, do:
 
-```bash
-solana-keygen pubkey /home/solana/my_wallet.json
-```
-
-## Hardware Wallet
-
-If you chose a hardware wallet, use your
-[keypair URL](./wallets/hardware/index.md#specify-a-hardware-wallet-key),
-such as `usb://ledger?key=0`.
-
-```bash
-solana-keygen pubkey usb://ledger?key=0
-```
+`__###_6___###

@@ -1,26 +1,26 @@
-The `agave-watchtower` program is used to monitor the health of a cluster. It
-periodically polls the cluster over an RPC API to confirm that the transaction
-count is advancing, new blockhashes are available, and no validators are
-delinquent. Results are reported as InfluxDB metrics, with an optional push
-notification on sanity failure.
+the `uwuave-watchtower` pwogwam is used to monitow the h-heawth of a cwustew. >w< i-it
+pewiodicawwy p-powws the c-cwustew ovew an w-wpc api to confiwm t-that the twansaction
+c-count is a-advancing, rawr nyew bwockhashes awe avaiwabwe, mya and no vawidatows awe
+dewinquent. ^^ wesuwts a-awe wepowted as infwuxdb metwics, 😳😳😳 with an o-optionaw push
+nyotification on sanity f-faiwuwe. mya
 
-If you only care about the health of several specific validators, the
-`--validator-identity` command-line argument can be used to restrict failure
-notifications to issues only affecting that set of validators.
+if you onwy cawe about the heawth of sevewaw specific v-vawidatows, 😳 the
+`--validator-identity` c-command-wine a-awgument can be used to westwict faiwuwe
+nyotifications to issues onwy affecting t-that set of vawidatows. -.-
 
-User can provide either 1 or 3 RPC URLs for the cluster via the `--url` or `--urls`
-command-line arguments respectively. 2 URLs are not accepted because it's not enough
-to have redundnacy, and more than 3 URLs are not accepted because there's little
-benefit from having more than 3. If 3 URLs are provided, at least 2 of them have to
-confirm health of a cluster.
+usew can pwovide eithew 1 ow 3 wpc uwws fow the cwustew v-via the `--url` ow `--urls`
+c-command-wine a-awguments w-wespectivewy. 🥺 2 u-uwws awe nyot accepted because it's nyot enough
+t-to have wedundnacy, o.O and mowe than 3 uwws awe n-nyot accepted because thewe's wittwe
+benefit fwom having mowe than 3. /(^•ω•^) if 3 uwws awe pwovided, nyaa~~ at w-weast 2 of them have to
+confiwm h-heawth of a cwustew. nyaa~~
 
-### Metrics
+### m-metwics
 #### `watchtower-sanity`
-On every iteration this data point will be emitted indicating the overall result
-using a boolean `ok` field.
+o-on evewy itewation this data point wiww be emitted indicating t-the ovewaww w-wesuwt
+using a boowean `ok` f-fiewd. :3
 
 #### `watchtower-sanity-failure`
-On failure this data point contains details about the specific test that failed via
-the following fields:
-* `test`: name of the sanity test that failed
-* `err`: exact sanity failure message
+o-on faiwuwe this data point contains d-detaiws about the specific t-test that faiwed via
+the fowwowing fiewds:
+* `test`: n-nyame of the sanity test that faiwed
+* `err`: e-exact sanity faiwuwe message

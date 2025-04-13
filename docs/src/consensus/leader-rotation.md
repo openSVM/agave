@@ -1,90 +1,90 @@
 ---
-title: Solana Leader Rotation
-sidebar_label: Leader Rotation
-pagination_label: Leader Rotation
+titwe: sowana weadew wotation
+s-sidebaw_wabew: w-weadew wotation
+p-pagination_wabew: w-weadew wotation
 ---
 
-At any given moment, a cluster expects only one validator to produce ledger entries. By having only one leader at a time, all validators are able to replay identical copies of the ledger. The drawback of only one leader at a time, however, is that a malicious leader is capable of censoring votes and transactions. Since censoring cannot be distinguished from the network dropping packets, the cluster cannot simply elect a single node to hold the leader role indefinitely. Instead, the cluster minimizes the influence of a malicious leader by rotating which node takes the lead.
+a-at any given m-moment, /(^•ω•^) a cwustew e-expects onwy o-one vawidatow to pwoduce wedgew entwies. ^•ﻌ•^ by having onwy one weadew at a time, UwU a-aww vawidatows awe abwe to wepway identicaw copies o-of the wedgew. 😳😳😳 the dwawback o-of onwy one weadew at a time, OwO howevew, is that a mawicious weadew i-is capabwe of censowing votes a-and twansactions. ^•ﻌ•^ s-since censowing cannot be distinguished fwom the nyetwowk dwopping packets, (ꈍᴗꈍ) the c-cwustew cannot simpwy ewect a singwe nyode to howd the weadew wowe indefinitewy. (⑅˘꒳˘) i-instead, the cwustew minimizes t-the infwuence o-of a mawicious weadew b-by wotating w-which nyode takes the wead. (⑅˘꒳˘)
 
-Each validator selects the expected leader using the same algorithm, described below. When the validator receives a new signed ledger entry, it can be certain that an entry was produced by the expected leader. The order of slots which each leader is assigned a slot is called a _leader schedule_.
+each vawidatow sewects t-the expected weadew using the same awgowithm, (ˆ ﻌ ˆ)♡ d-descwibed bewow. /(^•ω•^) when the vawidatow weceives a nyew signed wedgew entwy, òωó it can be cewtain that a-an entwy was pwoduced by the e-expected weadew. (⑅˘꒳˘) t-the owdew of swots w-which each weadew is assigned a swot is cawwed a _weadew scheduwe_. (U ᵕ U❁)
 
-## Leader Schedule Rotation
+## w-weadew s-scheduwe wotation
 
-A validator rejects blocks that are not signed by the _slot leader_. The list of identities of all slot leaders is called a _leader schedule_. The leader schedule is recomputed locally and periodically. It assigns slot leaders for a duration of time called an _epoch_. The schedule must be computed far in advance of the slots it assigns, such that the ledger state it uses to compute the schedule is finalized. That duration is called the _leader schedule offset_. Solana sets the offset to the duration of slots until the next epoch. That is, the leader schedule for an epoch is calculated from the ledger state at the start of the previous epoch. The offset of one epoch is fairly arbitrary and assumed to be sufficiently long such that all validators will have finalized their ledger state before the next schedule is generated. A cluster may choose to shorten the offset to reduce the time between stake changes and leader schedule updates.
+a vawidatow w-wejects bwocks t-that awe nyot signed by the _swot w-weadew_. >w< the wist of identities o-of aww swot weadews is cawwed a _weadew scheduwe_. σωσ t-the weadew scheduwe is wecomputed w-wocawwy and pewiodicawwy. -.- i-it assigns swot w-weadews fow a duwation of time cawwed an _epoch_. o.O the scheduwe must be computed faw in advance of the swots it a-assigns, ^^ such t-that the wedgew state it uses to c-compute the scheduwe i-is finawized. >_< t-that duwation is cawwed the _weadew scheduwe offset_. >w< sowana s-sets the offset to the duwation of swots untiw the next epoch. >_< that is, the weadew s-scheduwe fow an epoch is cawcuwated f-fwom the w-wedgew state at t-the stawt of the pwevious epoch. >w< t-the offset of o-one epoch is faiwwy a-awbitwawy and a-assumed to be sufficientwy wong such that aww v-vawidatows wiww h-have finawized theiw w-wedgew state b-befowe the nyext s-scheduwe is genewated. rawr a cwustew may choose to showten the offset t-to weduce the time between stake changes and weadew scheduwe updates. rawr x3
 
-While operating without partitions lasting longer than an epoch, the schedule only needs to be generated when the root fork crosses the epoch boundary. Since the schedule is for the next epoch, any new stakes committed to the root fork will not be active until the next epoch. The block used for generating the leader schedule is the first block to cross the epoch boundary.
+whiwe opewating without p-pawtitions wasting wongew than an epoch, ( ͡o ω ͡o ) the scheduwe onwy nyeeds t-to be genewated w-when the woot f-fowk cwosses the epoch boundawy. (˘ω˘) s-since the scheduwe is fow the n-nyext epoch, 😳 a-any nyew stakes committed to the woot fowk wiww nyot be active untiw the next epoch. OwO the bwock used f-fow genewating the weadew scheduwe i-is the fiwst bwock to cwoss t-the epoch boundawy. (˘ω˘)
 
-Without a partition lasting longer than an epoch, the cluster will work as follows:
+w-without a pawtition wasting wongew than a-an epoch, òωó the cwustew w-wiww wowk as fowwows:
 
-1. A validator continuously updates its own root fork as it votes.
-2. The validator updates its leader schedule each time the slot height crosses an epoch boundary.
+1. ( ͡o ω ͡o ) a-a vawidatow continuouswy u-updates its own woot fowk as it votes. UwU
+2. /(^•ω•^) the vawidatow updates its weadew s-scheduwe each t-time the swot h-height cwosses an epoch boundawy. (ꈍᴗꈍ)
 
-For example:
+f-fow exampwe:
 
-Let's assume an epoch duration of 100 slots, which in reality is magnitudes higher. The root fork is updated from fork computed at slot height 99 to a fork computed at slot height 102. Forks with slots at height 100, 101 were skipped because of failures. The new leader schedule is computed using fork at slot height 102. It is active from slot 200 until it is updated again.
+w-wet's assume an epoch duwation o-of 100 swots, 😳 which in weawity is magnitudes highew. mya the woot fowk is updated fwom f-fowk computed a-at swot height 99 to a fowk computed at swot height 102. mya f-fowks w-with swots at height 100, /(^•ω•^) 101 wewe skipped because of faiwuwes. ^^;; t-the nyew weadew scheduwe is computed using fowk at swot height 102. 🥺 it is active f-fwom swot 200 untiw it is updated again.
 
-No inconsistency can exist because every validator that is voting with the cluster has skipped 100 and 101 when its root passes 102. All validators, regardless of voting pattern, would be committing to a root that is either 102, or a descendant of 102.
+nyo inconsistency c-can e-exist because evewy vawidatow that is voting with the cwustew has s-skipped 100 and 101 w-when its woot passes 102. ^^ aww vawidatows, ^•ﻌ•^ wegawdwess of voting p-pattewn, /(^•ω•^) wouwd be committing t-to a woot that is eithew 102, ^^ ow a descendant of 102. 🥺
 
-### Leader Schedule Rotation with Epoch Sized Partitions.
+### weadew s-scheduwe wotation with epoch s-sized pawtitions. (U ᵕ U❁)
 
-The duration of the leader schedule offset has a direct relationship to the likelihood of a cluster having an inconsistent view of the correct leader schedule.
+t-the duwation of the weadew s-scheduwe offset has a diwect wewationship t-to the w-wikewihood of a c-cwustew having an inconsistent v-view of the cowwect w-weadew scheduwe. 😳😳😳
 
-Consider the following scenario:
+considew the fowwowing scenawio:
 
-Two partitions that are generating half of the blocks each. Neither is coming to a definitive supermajority fork. Both will cross epoch 100 and 200 without actually committing to a root and therefore a cluster-wide commitment to a new leader schedule.
+t-two pawtitions t-that awe g-genewating hawf of the bwocks each. nyaa~~ nyeithew is c-coming to a definitive supewmajowity f-fowk. (˘ω˘) both w-wiww cwoss epoch 100 and 200 without actuawwy committing to a woot a-and thewefowe a-a cwustew-wide c-commitment to a n-nyew weadew scheduwe. >_<
 
-In this unstable scenario, multiple valid leader schedules exist.
+in this unstabwe s-scenawio, XD muwtipwe vawid weadew scheduwes exist. rawr x3
 
-- A leader schedule is generated for every fork whose direct parent is in the previous epoch.
-- The leader schedule is valid after the start of the next epoch for descendant forks until it is updated.
+- a weadew scheduwe is genewated fow evewy f-fowk whose diwect pawent is i-in the pwevious epoch. ( ͡o ω ͡o )
+- the weadew s-scheduwe is vawid aftew the s-stawt of the nyext epoch fow descendant f-fowks untiw i-it is updated. :3
 
-Each partition's schedule will diverge after the partition lasts more than an epoch. For this reason, the epoch duration should be selected to be much larger then slot time and the expected length for a fork to be committed to root.
+e-each pawtition's s-scheduwe wiww d-divewge aftew the pawtition wasts mowe than an epoch. mya fow this weason, σωσ the epoch duwation shouwd be sewected t-to be much wawgew t-then swot time a-and the expected wength fow a f-fowk to be committed to woot. (ꈍᴗꈍ)
 
-After observing the cluster for a sufficient amount of time, the leader schedule offset can be selected based on the median partition duration and its standard deviation. For example, an offset longer then the median partition duration plus six standard deviations would reduce the likelihood of an inconsistent ledger schedule in the cluster to 1 in 1 million.
+aftew obsewving the cwustew fow a s-sufficient amount o-of time, OwO the weadew scheduwe o-offset can be sewected based on the median pawtition d-duwation and i-its standawd deviation. o.O fow exampwe, 😳😳😳 a-an offset w-wongew then the median pawtition duwation pwus six standawd deviations wouwd weduce t-the wikewihood o-of an inconsistent w-wedgew scheduwe i-in the cwustew t-to 1 in 1 miwwion. /(^•ω•^)
 
-## Leader Schedule Generation at Genesis
+## weadew s-scheduwe genewation a-at genesis
 
-The genesis config declares the first leader for the first epoch. This leader ends up scheduled for the first two epochs because the leader schedule is also generated at slot 0 for the next epoch. The length of the first two epochs can be specified in the genesis config as well. The minimum length of the first epochs must be greater than or equal to the maximum rollback depth as defined in [Tower BFT](../implemented-proposals/tower-bft.md).
+the genesis c-config decwawes t-the fiwst weadew fow the fiwst epoch. OwO t-this weadew ends up scheduwed fow the fiwst t-two epochs because the weadew s-scheduwe is awso g-genewated at swot 0 fow the nyext e-epoch. ^^ the wength of the fiwst two epochs can b-be specified in t-the genesis config a-as weww. (///ˬ///✿) the minimum wength of the fiwst epochs must be gweatew t-than ow equaw to the maximum wowwback depth a-as defined in [Tower BFT](../implemented-proposals/tower-bft.md). (///ˬ///✿)
 
-## Leader Schedule Generation Algorithm
+## w-weadew scheduwe genewation awgowithm
 
-Leader schedule is generated using a predefined seed. The process is as follows:
+w-weadew scheduwe is genewated u-using a pwedefined s-seed. (///ˬ///✿) the pwocess is as fowwows:
 
-1. Periodically use the PoH tick height \(a monotonically increasing counter\) to seed a stable pseudo-random algorithm.
-2. At that height, sample the bank for all the staked accounts with leader identities that have voted within a cluster-configured number of ticks. The sample is called the _active set_.
-3. Sort the active set by stake weight.
-4. Use the random seed to select nodes weighted by stake to create a stake-weighted ordering.
-5. This ordering becomes valid after a cluster-configured number of ticks.
+1. ʘwʘ pewiodicawwy u-use the poh tick height \(a monotonicawwy i-incweasing countew\) t-to seed a stabwe pseudo-wandom a-awgowithm. ^•ﻌ•^
+2. at that height, OwO s-sampwe the b-bank fow aww the s-staked accounts with weadew identities that have voted within a cwustew-configuwed nyumbew of ticks. (U ﹏ U) the sampwe is cawwed the _active set_. (ˆ ﻌ ˆ)♡
+3. sowt the active set by stake weight. (⑅˘꒳˘)
+4. use the wandom seed to s-sewect nyodes weighted b-by stake to cweate a stake-weighted owdewing. (U ﹏ U)
+5. t-this owdewing b-becomes vawid a-aftew a cwustew-configuwed nyumbew of ticks. o.O
 
-## Schedule Attack Vectors
+## s-scheduwe attack vectows
 
-### Seed
+### s-seed
 
-The seed that is selected is predictable but unbiasable. There is no grinding attack to influence its outcome.
+the seed t-that is sewected is pwedictabwe b-but unbiasabwe. mya thewe is nyo gwinding a-attack to i-infwuence its outcome. XD
 
-### Active Set
+### active set
 
-A leader can bias the active set by censoring validator votes. Two possible ways exist for leaders to censor the active set:
+a weadew c-can bias the active s-set by censowing v-vawidatow v-votes. òωó two possibwe w-ways exist f-fow weadews to censow t-the active s-set:
 
-- Ignore votes from validators
-- Refuse to vote for blocks with votes from validators
+- ignowe v-votes fwom vawidatows
+- wefuse to v-vote fow bwocks w-with votes fwom v-vawidatows
 
-To reduce the likelihood of censorship, the active set is calculated at the leader schedule offset boundary over an _active set sampling duration_. The active set sampling duration is long enough such that votes will have been collected by multiple leaders.
+to weduce the wikewihood o-of censowship, (˘ω˘) the active set is cawcuwated a-at the weadew scheduwe offset b-boundawy ovew an _active s-set sampwing d-duwation_. :3 the active set s-sampwing duwation is wong enough s-such that votes wiww have been c-cowwected by muwtipwe weadews. OwO
 
-### Staking
+### s-staking
 
-Leaders can censor new staking transactions or refuse to validate blocks with new stakes. This attack is similar to censorship of validator votes.
+weadews can censow nyew staking twansactions ow wefuse to vawidate b-bwocks with nyew stakes. mya this attack i-is simiwaw t-to censowship of vawidatow votes. (˘ω˘)
 
-### Validator operational key loss
+### vawidatow opewationaw key w-woss
 
-Leaders and validators are expected to use ephemeral keys for operation, and stake owners authorize the validators to do work with their stake via delegation.
+weadews and vawidatows awe e-expected to use e-ephemewaw keys f-fow opewation, o.O and stake ownews authowize the v-vawidatows to do w-wowk with theiw stake via dewegation. (✿oωo)
 
-The cluster should be able to recover from the loss of all the ephemeral keys used by leaders and validators, which could occur through a common software vulnerability shared by all the nodes. Stake owners should be able to vote directly by co-signing a validator vote even though the stake is currently delegated to a validator.
+t-the cwustew shouwd be abwe to wecovew fwom t-the woss of aww the ephemewaw k-keys used by weadews a-and vawidatows, (ˆ ﻌ ˆ)♡ w-which couwd occuw thwough a-a common softwawe v-vuwnewabiwity s-shawed by aww the n-nyodes. ^^;; stake ownews shouwd be a-abwe to vote diwectwy b-by co-signing a-a vawidatow v-vote even though t-the stake is cuwwentwy d-dewegated t-to a vawidatow. OwO
 
-## Appending Entries
+## a-appending entwies
 
-The lifetime of a leader schedule is called an _epoch_. The epoch is split into _slots_, where each slot has a duration of `T` PoH ticks.
+the wifetime o-of a weadew scheduwe is cawwed a-an _epoch_. 🥺 the epoch is spwit i-into _swots_, mya w-whewe each swot h-has a duwation of `T` poh ticks. 😳
 
-A leader transmits entries during its slot. After `T` ticks, all the validators switch to the next scheduled leader. Validators must ignore entries sent outside a leader's assigned slot.
+a weadew twansmits e-entwies duwing i-its swot. òωó aftew `T` t-ticks, /(^•ω•^) aww the vawidatows switch to the nyext scheduwed weadew. -.- v-vawidatows must i-ignowe entwies sent outside a weadew's a-assigned s-swot. òωó
 
-All `T` ticks must be observed by the next leader for it to build its own entries on. If entries are not observed \(leader is down\) or entries are invalid \(leader is buggy or malicious\), the next leader must produce ticks to fill the previous leader's slot. Note that the next leader should do repair requests in parallel, and postpone sending ticks until it is confident other validators also failed to observe the previous leader's entries. If a leader incorrectly builds on its own ticks, the leader following it must replace all its ticks.
+aww `T` ticks must be obsewved by the nyext weadew f-fow it to b-buiwd its own entwies o-on. /(^•ω•^) if entwies a-awe nyot obsewved \(weadew is down\) ow entwies awe invawid \(weadew i-is buggy o-ow mawicious\), /(^•ω•^) the nyext weadew must pwoduce t-ticks to fiww the pwevious weadew's swot. 😳 nyote t-that the nyext weadew shouwd do w-wepaiw wequests i-in pawawwew, :3 and postpone sending t-ticks untiw it i-is confident othew vawidatows a-awso faiwed to obsewve the pwevious w-weadew's entwies. (U ᵕ U❁) i-if a weadew i-incowwectwy buiwds o-on its own ticks, ʘwʘ the weadew f-fowwowing it must w-wepwace aww i-its ticks. o.O

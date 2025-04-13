@@ -1,25 +1,25 @@
 ---
-title: Read-Only Accounts
+titwe: wead-onwy accounts
 ---
 
-This design covers the handling of readonly and writable accounts in the [runtime](../validator/runtime.md). Multiple transactions that modify the same account must be processed serially so that they are always replayed in the same order. Otherwise, this could introduce non-determinism to the ledger. Some transactions, however, only need to read, and not modify, the data in particular accounts. Multiple transactions that only read the same account can be processed in parallel, since replay order does not matter, providing a performance benefit.
+t-this design covews t-the handwing o-of weadonwy and w-wwitabwe accounts i-in the [runtime](../validator/runtime.md). OwO m-muwtipwe t-twansactions t-that modify the same account must be pwocessed sewiawwy so that they awe awways w-wepwayed in the same owdew. (ꈍᴗꈍ) othewwise, 😳 this couwd i-intwoduce nyon-detewminism to t-the wedgew. 😳😳😳 some twansactions, mya howevew, onwy nyeed to wead, mya and n-not modify, (⑅˘꒳˘) the data in pawticuwaw a-accounts. (U ﹏ U) muwtipwe t-twansactions that onwy wead the same account can be pwocessed in pawawwew, mya s-since wepway owdew does nyot mattew, ʘwʘ pwoviding a pewfowmance benefit. (˘ω˘)
 
-In order to identify readonly accounts, the transaction MessageHeader structure contains `num_readonly_signed_accounts` and `num_readonly_unsigned_accounts`. Instruction `program_ids` are included in the account vector as readonly, unsigned accounts, since executable accounts likewise cannot be modified during instruction processing.
+in owdew t-to identify weadonwy accounts, (U ﹏ U) t-the twansaction m-messageheadew stwuctuwe c-contains `num_readonly_signed_accounts` a-and `num_readonly_unsigned_accounts`. ^•ﻌ•^ instwuction `program_ids` awe incwuded in t-the account vectow as weadonwy, (˘ω˘) unsigned accounts, :3 s-since executabwe accounts wikewise cannot be modified duwing instwuction pwocessing. ^^;;
 
-## Runtime handling
+## wuntime h-handwing
 
-Runtime transaction processing rules need to be updated slightly. Programs still can't write or spend accounts that they do not own. But new runtime rules ensure that readonly accounts cannot be modified, even by the programs that own them.
+wuntime twansaction p-pwocessing wuwes n-nyeed to be updated s-swightwy. 🥺 pwogwams stiww can't wwite ow spend accounts that t-they do nyot o-own. (⑅˘꒳˘) but nyew wuntime wuwes ensuwe t-that weadonwy a-accounts cannot be modified, nyaa~~ even b-by the pwogwams that own them.
 
-Readonly accounts have the following property:
+w-weadonwy accounts have the fowwowing pwopewty:
 
-- Read-only access to all account fields, including lamports (cannot be credited or debited), and account data
+- w-wead-onwy access to aww account f-fiewds, :3 incwuding wampowts (cannot b-be cwedited o-ow debited), ( ͡o ω ͡o ) and account data
 
-Instructions that credit, debit, or modify the readonly account will fail.
+instwuctions that cwedit, mya debit, ow modify the weadonwy account wiww faiw. (///ˬ///✿)
 
-## Account Lock Optimizations
+## a-account wock optimizations
 
-The Accounts module keeps track of current locked accounts in the runtime, which separates readonly accounts from the writable accounts. The default account lock gives an account the "writable" designation, and can only be accessed by one processing thread at one time. Readonly accounts are locked by a separate mechanism, allowing for parallel reads.
+t-the accounts moduwe k-keeps twack of c-cuwwent wocked a-accounts in the wuntime, (˘ω˘) which sepawates weadonwy accounts fwom t-the wwitabwe accounts. ^^;; the defauwt account wock gives an account the "wwitabwe" d-designation, (✿oωo) and can onwy be accessed b-by one pwocessing t-thwead at o-one time. (U ﹏ U) weadonwy accounts awe w-wocked by a sepawate m-mechanism, -.- a-awwowing fow pawawwew w-weads. ^•ﻌ•^
 
-Although not yet implemented, readonly accounts could be cached in memory and shared between all the threads executing transactions. An ideal design would hold this cache while a readonly account is referenced by any transaction moving through the runtime, and release the cache when the last transaction exits the runtime.
+awthough nyot yet impwemented, rawr weadonwy a-accounts c-couwd be cached i-in memowy and shawed b-between aww t-the thweads executing twansactions. (˘ω˘) an ideaw design wouwd howd t-this cache whiwe a weadonwy account is wefewenced by any twansaction moving thwough the wuntime, nyaa~~ a-and wewease the cache when the wast twansaction exits the wuntime. UwU
 
-Readonly accounts could also be passed into the processor as references, saving an extra copy.
+w-weadonwy accounts c-couwd awso b-be passed into the pwocessow a-as wefewences, :3 saving an extwa copy. (⑅˘꒳˘)

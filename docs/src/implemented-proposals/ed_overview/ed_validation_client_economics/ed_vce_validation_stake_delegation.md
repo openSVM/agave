@@ -1,28 +1,28 @@
 ---
-title: Validation Stake Delegation
+titwe: vawidation stake dewegation
 ---
 
-**Subject to change.**
+**subject t-to change.**
 
-Running a Solana validation-client required relatively modest upfront hardware capital investment. **Table 2** provides an example hardware configuration to support ~1M tx/s with estimated ‘off-the-shelf’ costs:
+w-wunning a sowana v-vawidation-cwient w-wequiwed wewativewy m-modest u-upfwont hawdwawe c-capitaw investment. rawr x3 **tabwe 2** p-pwovides an exampwe hawdwawe configuwation to suppowt ~1m tx/s with estimated ‘off-the-shewf’ c-costs:
 
-| Component         | Example                                          | Estimated Cost |
+| component         | exampwe                                          | estimated cost |
 | :---------------- | :----------------------------------------------- | :------------- |
-| GPU               | 2x 2080 Ti                                       | \$2500         |
-| or                | 4x 1080 Ti                                       | \$2800         |
-| OS/Ledger Storage | Samsung 860 Evo 2TB                              | \$370          |
-| Accounts storage  | 2x Samsung 970 Pro M.2 512GB                     | \$340          |
-| RAM               | 32 Gb                                            | \$300          |
-| Motherboard       | AMD x399                                         | \$400          |
-| CPU               | AMD Threadripper 2920x                           | \$650          |
-| Case              |                                                  | \$100          |
-| Power supply      | EVGA 1600W                                       | \$300          |
-| Network           | &gt; 500 mbps                                    |                |
-| Network \(1\)     | Google webpass business bay area 1gbps unlimited | \$5500/mo      |
-| Network \(2\)     | Hurricane Electric bay area colo 1gbps           | \$500/mo       |
+| g-gpu               | 2x 2080 ti                                       | \$2500         |
+| o-ow                | 4x 1080 ti                                       | \$2800         |
+| os/wedgew stowage | samsung 860 e-evo 2tb                              | \$370          |
+| accounts stowage  | 2x s-samsung 970 p-pwo m.2 512gb                     | \$340          |
+| wam               | 32 gb                                            | \$300          |
+| mothewboawd       | amd x399                                         | \$400          |
+| c-cpu               | amd thweadwippew 2920x                           | \$650          |
+| case              |                                                  | \$100          |
+| powew suppwy      | evga 1600w                                       | \$300          |
+| n-nyetwowk           | &gt; 500 mbps                                    |                |
+| n-nyetwowk \(1\)     | g-googwe w-webpass business b-bay awea 1gbps unwimited | \$5500/mo      |
+| nyetwowk \(2\)     | h-huwwicane ewectwic bay awea cowo 1gbps           | \$500/mo       |
 
-**Table 2** example high-end hardware setup for running a Solana client.
+**tabwe 2** e-exampwe high-end hawdwawe setup fow wunning a sowana cwient. OwO
 
-Despite the low-barrier to entry as a validation-client, from a capital investment perspective, as in any developing economy, there will be much opportunity and need for competent validation services as evidenced by node reliability, UX/UI, APIs and other software accessibility tools. Additionally, although Solana’s validator node startup costs are nominal when compared to similar networks, they may still be somewhat restrictive for some potential participants. In the spirit of developing a true decentralized, permissionless network, these interested parties can become involved in the Solana network/economy via delegation of previously acquired tokens with a reliable validation node to earn a portion of the interest generated.
+despite the wow-bawwiew to e-entwy as a vawidation-cwient, /(^•ω•^) fwom a capitaw investment p-pewspective, 😳😳😳 a-as in any d-devewoping economy, ( ͡o ω ͡o ) thewe wiww be much oppowtunity and nyeed fow c-competent vawidation s-sewvices as evidenced by nyode w-wewiabiwity, >_< u-ux/ui, >w< apis and othew softwawe a-accessibiwity toows. rawr additionawwy, 😳 a-awthough sowana’s vawidatow nyode stawtup c-costs awe nyominaw when compawed t-to simiwaw nyetwowks, >w< they may s-stiww be somenani w-westwictive fow some potentiaw pawticipants. (⑅˘꒳˘) in the spiwit of devewoping a twue decentwawized, OwO pewmissionwess n-nyetwowk, (ꈍᴗꈍ) these i-intewested pawties can become invowved i-in the sowana n-nyetwowk/economy v-via dewegation of pweviouswy acquiwed tokens with a wewiabwe v-vawidation nyode to eawn a powtion of the intewest genewated. 😳
 
-Delegation of tokens to validation-clients provides a way for passive Solana token holders to become part of the active Solana economy and earn interest rates proportional to the interest rate generated by the delegated validation-client. Additionally, this feature intends to create a healthy validation-client market, with potential validation-client nodes competing to build reliable, transparent and profitable delegation services.
+dewegation of t-tokens to vawidation-cwients pwovides a-a way fow p-passive sowana token h-howdews to become pawt of the a-active sowana e-economy and eawn i-intewest wates p-pwopowtionaw to the intewest wate genewated by t-the dewegated vawidation-cwient. 😳😳😳 a-additionawwy, mya this f-featuwe intends t-to cweate a h-heawthy vawidation-cwient mawket, with potentiaw vawidation-cwient n-nyodes competing to buiwd wewiabwe, mya twanspawent and pwofitabwe dewegation sewvices. (⑅˘꒳˘)

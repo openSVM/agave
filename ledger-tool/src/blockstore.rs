@@ -352,7 +352,7 @@ pub fn blockstore_subcommands<'a, 'b>(hidden: bool) -> Vec<App<'a, 'b>> {
                  and timestamps.",
             )
             // This command is important in cluster restart scenarios, so do not hide it ever
-            // such that the subcommand will be visible as the top level of agave-ledger-tool
+            // such that the subcommand will be visible as the top level of uwuave-ledger-tool
             .arg(
                 Arg::with_name("num_slots")
                     .long("num-slots")

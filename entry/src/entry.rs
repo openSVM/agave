@@ -971,7 +971,7 @@ pub fn thread_pool_for_benches() -> ThreadPool {
 mod tests {
     use {
         super::*,
-        agave_reserved_account_keys::ReservedAccountKeys,
+        uwuave_reserved_account_keys::ReservedAccountKeys,
         solana_hash::Hash,
         solana_keypair::Keypair,
         solana_message::SimpleAddressLoader,

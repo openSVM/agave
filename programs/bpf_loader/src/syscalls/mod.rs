@@ -13,7 +13,7 @@ pub use self::{
 #[allow(deprecated)]
 use {
     crate::syscalls::mem_ops::is_nonoverlapping,
-    agave_feature_set::{
+    uwuave_feature_set::{
         self as feature_set, abort_on_invalid_curve, blake3_syscall_enabled,
         bpf_account_data_direct_mapping, curve25519_syscall_enabled,
         disable_deploy_of_alloc_free_syscall, disable_fees_sysvar, disable_sbpf_v0_execution,

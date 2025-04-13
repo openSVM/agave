@@ -6,7 +6,7 @@ pub mod syscalls;
 #[cfg(feature = "svm-internal")]
 use qualifier_attr::qualifiers;
 use {
-    agave_feature_set::{
+    uwuave_feature_set::{
         bpf_account_data_direct_mapping, enable_bpf_loader_set_authority_checked_ix,
         enable_loader_v4, mask_out_rent_epoch_in_vm_serialization,
         remove_accounts_executable_flag_checks,

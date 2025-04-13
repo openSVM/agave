@@ -11,7 +11,7 @@ use {
         },
         feature::{status_from_account, CliFeatureStatus},
     },
-    agave_feature_set::{FeatureSet, FEATURE_NAMES},
+    uwuave_feature_set::{FeatureSet, FEATURE_NAMES},
     bip39::{Language, Mnemonic, MnemonicType, Seed},
     clap::{App, AppSettings, Arg, ArgMatches, SubCommand},
     log::*,
@@ -1388,7 +1388,7 @@ fn process_program_deploy(
     };
 
     if !skip_feature_verification
-        && feature_set.is_active(&agave_feature_set::enable_loader_v4::id())
+        && feature_set.is_active(&uwuave_feature_set::enable_loader_v4::id())
     {
         warn!("Loader-v4 is available now. Please migrate your program.");
     }

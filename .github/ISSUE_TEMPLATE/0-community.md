@@ -1,12 +1,12 @@
 ---
-name: Community Issue
-about: Create a report describing a problem and a proposed solution
-title: ''
-labels: ["community"]
-assignees: ''
+nyame: community issue
+about: c-cweate a wepowt d-descwibing a pwobwem a-and a pwoposed s-sowution
+titwe: ''
+w-wabews: ["community"]
+a-assignees: ''
 ---
 
-#### Problem
+#### p-pwobwem
 <!--
   The GitHub issue tracker exists to track issues
   that affect the development of Solana itself.
@@ -19,4 +19,4 @@ assignees: ''
 -->
 <!-- If reporting a crash, degraded performance, etc, please include the software version(s) you are using. -->
 
-#### Proposed Solution
+#### p-pwoposed sowution

@@ -1,33 +1,33 @@
 ---
-title: Staking Rewards
+titwe: staking wewawds
 ---
 
-A Proof of Stake \(PoS\), \(i.e. using in-protocol asset, SOL, to provide secure consensus\) design is outlined here. Solana implements a proof of stake reward/security scheme for validator nodes in the cluster. The purpose is threefold:
+a p-pwoof of stake \(pos\), òωó \(i.e. 😳😳😳 u-using in-pwotocow a-asset, σωσ sow, (⑅˘꒳˘) to p-pwovide secuwe c-consensus\) design i-is outwined hewe. (///ˬ///✿) s-sowana impwements a-a pwoof of stake wewawd/secuwity scheme fow vawidatow nyodes in the cwustew. 🥺 t-the puwpose is thweefowd:
 
-- Align validator incentives with that of the greater cluster through skin-in-the-game deposits at risk
+- awign vawidatow i-incentives with that of the gweatew c-cwustew thwough skin-in-the-game deposits at wisk
 
-- Avoid 'nothing at stake' fork voting issues by implementing slashing rules aimed at promoting fork convergence
+- avoid 'nothing a-at stake' fowk voting issues b-by impwementing s-swashing wuwes aimed at pwomoting fowk convewgence
 
-- Provide an avenue for validator rewards provided as a function of validator participation in the cluster.
+- pwovide an avenue fow v-vawidatow wewawds pwovided as a function of vawidatow pawticipation in the cwustew. OwO
 
-While many of the details of the specific implementation are currently under consideration and are expected to come into focus through specific modeling studies and parameter exploration on the Solana testnet, we outline here our current thinking on the main components of the PoS system. Much of this thinking is based on the current status of Casper FFG, with optimizations and specific attributes to be modified as is allowed by Solana's Proof of History \(PoH\) blockchain data structure.
+w-whiwe many of the detaiws o-of the specific i-impwementation a-awe cuwwentwy undew c-considewation and awe expected to come into f-focus thwough specific modewing studies and pawametew e-expwowation on the sowana testnet, >w< we outwine hewe ouw cuwwent thinking on the main components o-of the pos system. 🥺 much of t-this thinking is b-based on the cuwwent s-status of caspew ffg, with optimizations and specific attwibutes t-to be modified a-as is awwowed by sowana's p-pwoof of histowy \(poh\) b-bwockchain data stwuctuwe.
 
-## General Overview
+## g-genewaw ovewview
 
-Solana's ledger validation design is based on a rotating, stake-weighted selected leader broadcasting transactions in a PoH data structure to validating nodes. These nodes, upon receiving the leader's broadcast, have the opportunity to vote on the current state and PoH height by signing a transaction into the PoH stream.
+sowana's w-wedgew vawidation design is based on a wotating, nyaa~~ s-stake-weighted sewected weadew b-bwoadcasting twansactions in a-a poh data stwuctuwe t-to vawidating nyodes. ^^ these nodes, upon weceiving the weadew's bwoadcast, >w< have the oppowtunity to vote on the c-cuwwent state a-and poh height by signing a twansaction i-into the p-poh stweam. OwO
 
-To become a Solana validator, one must deposit/lock-up some amount of SOL in a contract. This SOL will not be accessible for a specific time period. The precise duration of the staking lockup period has not been determined. However we can consider three phases of this time for which specific parameters will be necessary:
+to b-become a sowana vawidatow, XD one must deposit/wock-up some amount o-of sow in a contwact. ^^;; this sow wiww nyot be accessibwe fow a specific time pewiod. 🥺 t-the pwecise duwation of the s-staking wockup p-pewiod has nyot b-been detewmined. XD howevew we can c-considew thwee phases o-of this time f-fow which specific p-pawametews wiww be nyecessawy:
 
-- _Warm-up period_: which SOL is deposited and inaccessible to the node, however PoH transaction validation has not begun. Most likely on the order of days to weeks
+- _wawm-up pewiod_: which s-sow is deposited a-and inaccessibwe t-to the nyode, (U ᵕ U❁) h-howevew poh twansaction v-vawidation has nyot begun. :3 most wikewy on the owdew of days t-to weeks
 
-- _Validation period_: a minimum duration for which the deposited SOL will be inaccessible, at risk of slashing \(see slashing rules below\) and earning rewards for the validator participation. Likely duration of months to a year.
+- _vawidation pewiod_: a minimum duwation fow which the deposited sow wiww be inaccessibwe, ( ͡o ω ͡o ) a-at wisk of swashing \(see swashing wuwes bewow\) and eawning w-wewawds fow t-the vawidatow p-pawticipation. òωó wikewy duwation o-of months to a yeaw. σωσ
 
-- _Cool-down period_: a duration of time following the submission of a 'withdrawal' transaction. During this period validation responsibilities have been removed and the funds continue to be inaccessible. Accumulated rewards should be delivered at the end of this period, along with the return of the initial deposit.
+- _coow-down pewiod_: a duwation o-of time fowwowing t-the submission of a 'withdwawaw' twansaction. (U ᵕ U❁) duwing this pewiod vawidation wesponsibiwities h-have been wemoved and the f-funds continue to be inaccessibwe. (✿oωo) a-accumuwated wewawds s-shouwd be dewivewed at the end of this pewiod, ^^ a-awong with t-the wetuwn of the initiaw deposit. ^•ﻌ•^
 
-Solana's trustless sense of time and ordering provided by its PoH data structure, along with its [turbine](https://docs.anza.xyz/consensus/turbine-block-propagation) data broadcast and transmission design, should provide sub-second transaction confirmation times that scale with the log of the number of nodes in the cluster. This means we shouldn't have to restrict the number of validating nodes with a prohibitive 'minimum deposits' and expect nodes to be able to become validators with nominal amounts of SOL staked. At the same time, Solana's focus on high-throughput should create incentive for validation clients to provide high-performant and reliable hardware. Combined with potentially a minimum network speed threshold to join as a validation-client, we expect a healthy validation delegation market to emerge.
+s-sowana's twustwess s-sense of time and owdewing pwovided by its poh data stwuctuwe, XD awong with i-its [turbine](https://docs.anza.xyz/consensus/turbine-block-propagation) d-data bwoadcast a-and twansmission design, :3 shouwd p-pwovide sub-second t-twansaction confiwmation t-times that scawe with the wog of the nyumbew of nyodes in the cwustew. (ꈍᴗꈍ) this means w-we shouwdn't have t-to westwict the nyumbew of vawidating nyodes w-with a pwohibitive 'minimum d-deposits' and expect nyodes to be abwe to become vawidatows w-with nyominaw amounts of sow staked. :3 at the same time, (U ﹏ U) sowana's focus on h-high-thwoughput shouwd cweate incentive fow vawidation c-cwients t-to pwovide high-pewfowmant and wewiabwe hawdwawe. UwU combined with p-potentiawwy a minimum n-nyetwowk speed thweshowd to join as a vawidation-cwient, 😳😳😳 we expect a heawthy v-vawidation dewegation mawket t-to emewge. XD
 
-## Penalties
+## penawties
 
-As discussed in the [Economic Design](ed_overview/ed_overview.md) section, annual validator interest rates are to be specified as a function of total percentage of circulating supply that has been staked. The cluster rewards validators who are online and actively participating in the validation process throughout the entirety of their _validation period_. For validators that go offline/fail to validate transactions during this period, their annual reward is effectively reduced.
+as discussed in the [Economic Design](ed_overview/ed_overview.md) section, o.O a-annuaw vawidatow intewest w-wates awe to be s-specified as a function of totaw p-pewcentage of ciwcuwating suppwy t-that has been s-staked. (⑅˘꒳˘) the cwustew w-wewawds vawidatows who awe o-onwine and activewy p-pawticipating in the vawidation pwocess thwoughout t-the entiwety o-of theiw _vawidation p-pewiod_. 😳😳😳 fow vawidatows that go offwine/faiw t-to vawidate twansactions duwing t-this pewiod, nyaa~~ t-theiw annuaw wewawd is effectivewy weduced. rawr
 
-Similarly, we may consider an algorithmic reduction in a validator's active staked amount in the case that they are offline. I.e. if a validator is inactive for some amount of time, either due to a partition or otherwise, the amount of their stake that is considered ‘active’ \(eligible to earn rewards\) may be reduced. This design would be structured to help long-lived partitions to eventually reach finality on their respective chains as the % of non-voting total stake is reduced over time until a supermajority can be achieved by the active validators in each partition. Similarly, upon re-engaging, the ‘active’ amount staked will come back online at some defined rate. Different rates of stake reduction may be considered depending on the size of the partition/active set.
+simiwawwy, -.- we may c-considew an awgowithmic w-weduction i-in a vawidatow's a-active staked amount in the c-case that they awe offwine. (✿oωo) i.e. if a vawidatow is inactive fow some amount of time, eithew due t-to a pawtition ow othewwise, /(^•ω•^) the a-amount of theiw stake that is c-considewed ‘active’ \(ewigibwe to eawn wewawds\) m-may be weduced. 🥺 this design w-wouwd be stwuctuwed t-to hewp wong-wived p-pawtitions t-to eventuawwy w-weach finawity on theiw wespective chains as the % of nyon-voting totaw stake is weduced ovew time untiw a supewmajowity c-can be a-achieved by the a-active vawidatows in each pawtition. ʘwʘ s-simiwawwy, UwU upon we-engaging, XD the ‘active’ amount staked w-wiww come back o-onwine at some defined wate. (✿oωo) diffewent w-wates of stake weduction may be considewed d-depending on t-the size of the pawtition/active s-set. :3

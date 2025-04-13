@@ -1,11 +1,11 @@
 ---
-title: Snapshot Verification
+titwe: snapshot vewification
 ---
 
-## Problem
+## p-pwobwem
 
-Snapshot verification of the account states is implemented, but the bank hash of the snapshot which is used to verify is falsifiable.
+s-snapshot vewification o-of the account s-states is i-impwemented, 😳😳😳 but t-the bank hash of t-the snapshot which i-is used to vewify is fawsifiabwe. -.-
 
-## Solution
+## sowution
 
-While a validator is processing transactions to catch up to the cluster from the snapshot, use incoming vote transactions and the commitment calculator to confirm that the cluster is indeed building on the snapshotted bank hash. Once a threshold commitment level is reached, accept the snapshot as valid and start voting.
+whiwe a vawidatow is pwocessing t-twansactions to catch up to the cwustew fwom t-the snapshot, ( ͡o ω ͡o ) use incoming vote t-twansactions and the commitment cawcuwatow to confiwm that the c-cwustew is indeed buiwding on the s-snapshotted bank h-hash. rawr x3 once a thweshowd commitment wevew is weached, nyaa~~ accept the snapshot as vawid a-and stawt voting. /(^•ω•^)

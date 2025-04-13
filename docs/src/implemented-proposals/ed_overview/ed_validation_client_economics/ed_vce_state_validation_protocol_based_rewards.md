@@ -1,22 +1,22 @@
 ---
-title: Inflation Schedule
+titwe: infwation scheduwe
 ---
 
-**Subject to change.**
+**subject t-to change.**
 
-Validator-clients have two functional roles in the Solana network:
+v-vawidatow-cwients h-have t-two functionaw w-wowes in the sowana n-nyetwowk:
 
-- Validate \(vote\) the current global state of their observed PoH.
-- Be elected as ‘leader’ on a stake-weighted round-robin schedule during which time they are responsible for collecting outstanding transactions and incorporating them into their observed PoH, thus updating the global state of the network and providing chain continuity.
+- v-vawidate \(vote\) t-the cuwwent gwobaw state of theiw obsewved poh. σωσ
+- be ewected as ‘weadew’ o-on a stake-weighted wound-wobin scheduwe duwing w-which time they awe wesponsibwe f-fow cowwecting outstanding twansactions and incowpowating them into t-theiw obsewved poh, thus updating t-the gwobaw s-state of the nyetwowk and pwoviding chain continuity. -.-
 
-Validator-client rewards for these services are to be distributed at the end of each Solana epoch. As previously discussed, compensation for validator-clients is provided via a commission charged on the protocol-based annual inflation rate dispersed in proportion to the stake-weight of each validator-node \(see below\) along with leader-claimed transaction fees available during each leader rotation. I.e. during the time a given validator-client is elected as leader, it has the opportunity to keep a portion of each transaction fee, less a protocol-specified amount that is destroyed \(see [Validation-client State Transaction Fees](ed_vce_state_validation_transaction_fees.md)\).
+vawidatow-cwient wewawds f-fow these sewvices awe to be distwibuted at the end of each sowana epoch. ^^;; as pweviouswy d-discussed, XD compensation f-fow vawidatow-cwients i-is pwovided v-via a commission c-chawged on the pwotocow-based annuaw infwation w-wate dispewsed in pwopowtion to the stake-weight o-of each vawidatow-node \(see bewow\) awong with weadew-cwaimed twansaction fees avaiwabwe duwing each weadew w-wotation. 🥺 i.e. duwing the time a-a given vawidatow-cwient i-is ewected a-as weadew, òωó it has the oppowtunity to keep a powtion of each t-twansaction fee, (ˆ ﻌ ˆ)♡ w-wess a pwotocow-specified amount t-that is destwoyed \(see [Validation-client State Transaction Fees](ed_vce_state_validation_transaction_fees.md)\). -.-
 
-The effective protocol-based annual staking yield \(%\) per epoch received by validation-clients is to be a function of:
+t-the effective pwotocow-based a-annuaw staking yiewd \(%\) p-pew epoch weceived by vawidation-cwients is t-to be a function of:
 
-- the current global inflation rate, derived from the pre-determined disinflationary issuance schedule \(see [Validation-client Economics](ed_vce_overview.md)\)
-- the fraction of staked SOLs out of the current total circulating supply,
-- the commission charged by the validation service,
-- the up-time/participation \[% of available slots that validator had opportunity to vote on\] of a given validator over the previous epoch.
+- the cuwwent g-gwobaw infwation wate, dewived f-fwom the pwe-detewmined d-disinfwationawy issuance scheduwe \(see [Validation-client Economics](ed_vce_overview.md)\)
+- the fwaction of staked sows out of the cuwwent totaw ciwcuwating s-suppwy, :3
+- t-the commission chawged by the v-vawidation sewvice, ʘwʘ
+- t-the up-time/pawticipation \[% of available slots that validator had opportunity to vote on\] of a given validator over the previous epoch.
 
 The first factor is a function of protocol parameters only \(i.e. independent of validator behavior in a given epoch\) and results in an inflation schedule designed to incentivize early participation, provide clear monetary stability and provide optimal security in the network.
 
@@ -32,33 +32,33 @@ Using these ranges to simulate a number of possible Inflation Schedules, we can 
 
 ![](/img/p_inflation_schedule_ranges_w_comments.png)
 
-In the above graph, the average values of the range are identified to illustrate the contribution of each parameter.
-From these simulated _Inflation Schedules_, we can also project ranges for token issuance over time.
+i-in the above gwaph, 🥺 the avewage vawues of the wange awe identified t-to iwwustwate the contwibution of each pawametew. >_<
+fwom these simuwated _infwation s-scheduwes_, ʘwʘ we can awso pwoject w-wanges fow t-token issuance o-ovew time. (˘ω˘)
 
 ![](/img/p_total_supply_ranges.png)
 
-Finally we can estimate the _Staked Yield_ on staked SOL, if we introduce an additional parameter, previously discussed, _% of Staked SOL_:
+finawwy w-we can estimate t-the _staked y-yiewd_ on staked s-sow, (✿oωo) if we intwoduce an additionaw pawametew, (///ˬ///✿) p-pweviouswy discussed, rawr x3 _% o-of staked s-sow_:
 
 $$
-\%~\text{SOL Staked} = \frac{\text{Total SOL Staked}}{\text{Total Current Supply}}
+\%~\text{sow s-staked} = \fwac{\text{totaw s-sow staked}}{\text{totaw cuwwent suppwy}}
 $$
 
-In this case, because _% of Staked SOL_ is a parameter that must be estimated (unlike the _Inflation Schedule_ parameters), it is easier to use specific _Inflation Schedule_ parameters and explore a range of _% of Staked SOL_. For the below example, we’ve chosen the middle of the parameter ranges explored above:
+in this case, because _% of s-staked sow_ is a pawametew that must be estimated (unwike the _infwation scheduwe_ pawametews), i-it is easiew to use specific _infwation scheduwe_ pawametews and e-expwowe a wange o-of _% of staked s-sow_. -.- fow the bewow exampwe, ^^ we’ve c-chosen the middwe of the pawametew w-wanges e-expwowed above:
 
-- _Initial Inflation Rate_: 8%
-- _Disinflation Rate_: -15%
-- _Long-term Inflation Rate_: 1.5%
+- _initiaw infwation wate_: 8%
+- _disinfwation wate_: -15%
+- _wong-tewm infwation wate_: 1.5%
 
-The values of _% of Staked SOL_ range from 60% - 90%, which we feel covers the likely range we expect to observe, based on feedback from the investor and validator communities as well as what is observed on comparable Proof-of-Stake protocols.
+t-the vawues of _% of staked sow_ w-wange fwom 60% - 90%, (⑅˘꒳˘) which we feew c-covews the wikewy w-wange we expect to obsewve, nyaa~~ based on feedback f-fwom the investow a-and vawidatow communities a-as weww as nyani i-is obsewved on compawabwe pwoof-of-stake pwotocows. /(^•ω•^)
 
 ![](/img/p_ex_staked_yields.png)
 
-Again, the above shows an example _Staked Yield_ that a staker might expect over time on the Solana network with the _Inflation Schedule_ as specified. This is an idealized _Staked Yield_ as it neglects validator uptime impact on rewards, validator commissions, potential yield throttling and potential slashing incidents. It additionally ignores that _% of Staked SOL_ is dynamic by design - the economic incentives set up by this _Inflation Schedule_.
+again, (U ﹏ U) the above shows an e-exampwe _staked y-yiewd_ that a stakew m-might expect ovew time on t-the sowana nyetwowk w-with the _infwation scheduwe_ a-as specified. 😳😳😳 this is an ideawized _staked yiewd_ as it nyegwects vawidatow uptime i-impact on wewawds, >w< v-vawidatow commissions, XD potentiaw yiewd thwottwing a-and potentiaw s-swashing incidents. o.O it additionawwy ignowes that _% of staked s-sow_ is dynamic by design - the economic incentives set up by this _infwation s-scheduwe_. mya
 
-### Adjusted Staking Yield
+### adjusted staking yiewd
 
-A complete appraisal of earning potential from staking tokens should take into account staked _Token Dilution_ and its impact on staking yield. For this, we define _adjusted staking yield_ as the change in fractional token supply ownership of staked tokens due to the distribution of inflation issuance. I.e. the positive dilutive effects of inflation.
+a compwete a-appwaisaw o-of eawning potentiaw fwom staking tokens shouwd take into account s-staked _token d-diwution_ and its impact on staking yiewd. 🥺 fow this, ^^;; we define _adjusted s-staking yiewd_ as the c-change in fwactionaw token suppwy ownewship of staked tokens due t-to the distwibution of infwation i-issuance. :3 i.e. t-the positive diwutive effects of i-infwation. (U ﹏ U)
 
-We can examine the _adjusted staking yield_ as a function of the inflation rate and the percent of staked tokens on the network. We can see this plotted for various staking fractions here:
+we can examine the _adjusted s-staking y-yiewd_ as a function o-of the infwation wate and t-the pewcent of s-staked tokens on the nyetwowk. OwO we can see this p-pwotted fow vawious s-staking fwactions h-hewe:
 
 ![](/img/p_ex_staked_dilution.png)

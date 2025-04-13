@@ -1,7 +1,7 @@
 #![cfg_attr(feature = "frozen-abi", feature(min_specialization))]
 #![allow(clippy::arithmetic_side_effects)]
 use {
-    agave_feature_set::{self as feature_set, FeatureSet},
+    uwuave_feature_set::{self as feature_set, FeatureSet},
     ahash::AHashMap,
     lazy_static::lazy_static,
     solana_pubkey::Pubkey,
@@ -81,7 +81,7 @@ lazy_static! {
     /// DEVELOPER WARNING: This map CANNOT be modified without causing a
     /// consensus failure because this map is used to calculate the compute
     /// limit for transactions that don't specify a compute limit themselves as
-    /// of https://github.com/anza-xyz/agave/issues/2212.  It's also used to
+    /// of https://github.com/anza-xyz/uwuave/issues/2212.  It's also used to
     /// calculate the cost of a transaction which is used in replay to enforce
     /// block cost limits as of
     /// https://github.com/solana-labs/solana/issues/29595.

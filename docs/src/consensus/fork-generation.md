@@ -1,139 +1,139 @@
 ---
-title: Fork Generation
-description:
-  "A fork is created when validators do not agree on a newly produced block.
-  Using a consensus algorithm validators vote on which will be finalized."
+titwe: fowk genewation
+descwiption:
+  "a f-fowk i-is cweated when v-vawidatows do not a-agwee on a nyewwy p-pwoduced bwock. σωσ
+  u-using a consensus a-awgowithm v-vawidatows vote on which wiww be finawized."
 ---
 
-The Solana protocol doesn’t wait for all validators to agree on a newly produced
-block before the next block is produced. Because of that, it’s quite common for
-two different blocks to be chained to the same parent block. In those
-situations, we call each conflicting chain a [“fork.”](./fork-generation.md)
+the sowana pwotocow doesn’t w-wait fow aww vawidatows to agwee on a nyewwy p-pwoduced
+bwock befowe the nyext b-bwock is pwoduced. ^^;; because of that, 😳 it’s quite common fow
+two d-diffewent bwocks to be chained to t-the same pawent b-bwock. >_< in those
+situations, -.- we caww each confwicting chain a [“fork.”](./fork-generation.md)
 
-Solana validators need to vote on one of these forks and reach agreement on
-which one to use through a consensus algorithm (that is beyond the scope of this
-article). The main point you need to remember is that when there are competing
-forks, only one fork will be finalized by the cluster and the abandoned blocks
-in competing forks are all discarded.
+sowana vawidatows n-need to vote on one of these fowks and weach agweement on
+which one to use thwough a-a consensus awgowithm (that i-is beyond the scope o-of this
+awticwe). UwU t-the main p-point you nyeed to wemembew is that when thewe awe c-competing
+fowks, :3 onwy one fowk wiww be finawized b-by the cwustew and the abandoned bwocks
+in competing fowks awe aww discawded. σωσ
 
-This section describes how forks naturally occur as a consequence of
-[leader rotation](./leader-rotation.md).
+this section d-descwibes how fowks nyatuwawwy occuw a-as a consequence o-of
+[leader rotation](./leader-rotation.md). >w<
 
-## Overview
+## o-ovewview
 
-Nodes take turns being [leader](https://solana.com/docs/terminology#leader) and
-generating the PoH that encodes state changes. The cluster can tolerate loss of
-connection to any leader by synthesizing what the leader _**would**_ have
-generated had it been connected but not ingesting any state changes.
+nyodes take tuwns being [leader](https://solana.com/docs/terminology#leader) and
+genewating the p-poh that encodes s-state changes. (ˆ ﻌ ˆ)♡ the cwustew can t-towewate woss o-of
+connection to any weadew by s-synthesizing nyani the weadew _**wouwd**_ h-have
+genewated had it been connected but n-nyot ingesting any state changes. ʘwʘ
 
-The possible number of forks is thereby limited to a "there/not-there" skip list
-of forks that may arise on leader rotation slot boundaries. At any given slot,
-only a single leader's transactions will be accepted.
+t-the possibwe nyumbew of fowks i-is theweby wimited t-to a "thewe/not-thewe" skip wist
+of fowks that may awise on weadew wotation swot boundawies. :3 at any given s-swot, (˘ω˘)
+onwy a singwe w-weadew's twansactions wiww b-be accepted. 😳😳😳
 
-### Forking example
+### f-fowking exampwe
 
-The table below illustrates what competing forks could look like. Time
-progresses from left to right and each slot is assigned to a validator that
-temporarily becomes the cluster “leader” and may produce a block for that slot.
+t-the tabwe bewow iwwustwates nyani competing fowks couwd wook w-wike. rawr x3 time
+pwogwesses fwom weft to wight and each swot is assigned to a vawidatow t-that
+tempowawiwy becomes the cwustew “weadew” a-and may pwoduce a-a bwock fow t-that swot. (✿oωo)
 
-In this example, the leader for slot 3 chose to chain its “Block 3” directly to
-“Block 1” and in doing so skipped “Block 2”. Similarly, the leader for slot 5
-chose to chain “Block 5” directly to “Block 3” and skipped “Block 4”.
+in this exampwe, (ˆ ﻌ ˆ)♡ the w-weadew fow swot 3 c-chose to chain i-its “bwock 3” d-diwectwy to
+“bwock 1” and in doing so skipped “bwock 2”. :3 s-simiwawwy, (U ᵕ U❁) t-the weadew fow swot 5
+c-chose to chain “bwock 5” d-diwectwy to “bwock 3” a-and skipped “bwock 4”. ^^;;
 
-> Note that across different forks, the block produced for a given slot is
-> _always_ the same because producing two different blocks for the same slot is
-> a slashable offense. So the conflicting forks above can be distinguished from
-> each other by which slots they have _skipped_.
+> nyote that acwoss diffewent f-fowks, mya the bwock pwoduced fow a given swot is
+> _awways_ the same because pwoducing two diffewent b-bwocks fow the same swot is
+> a swashabwe offense. 😳😳😳 so the c-confwicting fowks a-above can be d-distinguished fwom
+> each othew b-by which swots they have _skipped_.
 
-|        | Slot 1  | Slot 2  | Slot 3  | Slot 4  | Slot 5  |
+|        | s-swot 1  | swot 2  | s-swot 3  | swot 4  | swot 5  |
 | ------ | ------- | ------- | ------- | ------- | ------- |
-| Fork 1 | Block 1 |         | Block 3 |         | Block 5 |
-| Fork 2 | Block 1 |         | Block 3 | Block 4 |         |
-| Fork 3 | Block 1 | Block 2 |         |         |         |
+| fowk 1 | bwock 1 |         | bwock 3 |         | bwock 5 |
+| fowk 2 | bwock 1 |         | b-bwock 3 | bwock 4 |         |
+| f-fowk 3 | bwock 1 | b-bwock 2 |         |         |         |
 
-## Message Flow
+## m-message fwow
 
-1. Transactions are ingested by the current leader.
-2. Leader filters valid transactions.
-3. Leader executes valid transactions updating its state.
-4. Leader packages transactions into entries based off its current PoH slot.
-5. Leader transmits the entries to validator nodes \(in signed shreds\)
-   1. The PoH stream includes ticks; empty entries that indicate liveness of the
-      leader and the passage of time on the cluster.
-   2. A leader's stream begins with the tick entries necessary to complete PoH
-      back to the leader's most recently observed prior leader slot.
-6. Validators retransmit entries to peers in their set and to further downstream
-   nodes.
-7. Validators validate the transactions and execute them on their state.
-8. Validators compute the hash of the state.
-9. At specific times, i.e. specific PoH tick counts, validators transmit votes
-   to the leader.
-   1. Votes are signatures of the hash of the computed state at that PoH tick
-      count.
-   2. Votes are also propagated via gossip.
-10. Leader executes the votes, the same as any other transaction, and broadcasts
-    them to the cluster.
-11. Validators observe their votes and all the votes from the cluster.
+1. OwO twansactions awe ingested b-by the cuwwent w-weadew. rawr
+2. weadew fiwtews v-vawid twansactions.
+3. XD w-weadew exekawaii~s vawid twansactions updating its state. (U ﹏ U)
+4. (˘ω˘) weadew packages t-twansactions i-into entwies based o-off its cuwwent poh swot. UwU
+5. w-weadew twansmits t-the entwies to vawidatow nyodes \(in s-signed shweds\)
+   1. >_< the poh stweam incwudes ticks; empty entwies that indicate w-wiveness o-of the
+      weadew and the passage of time on t-the cwustew. σωσ
+   2. 🥺 a-a weadew's stweam begins with the tick entwies nyecessawy to c-compwete poh
+      back to the weadew's most wecentwy obsewved pwiow weadew swot. 🥺
+6. v-vawidatows wetwansmit entwies to peews in theiw s-set and to f-fuwthew downstweam
+   nyodes. ʘwʘ
+7. vawidatows vawidate the twansactions a-and exekawaii~ t-them on theiw state. :3
+8. vawidatows compute the hash of the s-state. (U ﹏ U)
+9. at specific times, (U ﹏ U) i.e. ʘwʘ s-specific poh tick counts, >w< vawidatows twansmit votes
+   to the w-weadew. rawr x3
+   1. OwO votes awe signatuwes o-of the hash of t-the computed state at that poh t-tick
+      count. ^•ﻌ•^
+   2. >_< votes awe a-awso pwopagated v-via gossip. OwO
+10. >_< w-weadew exekawaii~s the votes, (ꈍᴗꈍ) t-the same as any o-othew twansaction, >w< and bwoadcasts
+    them to the c-cwustew. (U ﹏ U)
+11. v-vawidatows obsewve t-theiw votes and aww the votes fwom the cwustew. ^^
 
-## Partitions, Forks
+## p-pawtitions, (U ﹏ U) fowks
 
-Forks can arise at PoH tick counts that correspond to a vote. The next leader
-may not have observed the last vote slot and may start their slot with generated
-virtual PoH entries. These empty ticks are generated by all nodes in the cluster
-at a cluster-configured rate for hashes/per/tick `Z`.
+fowks c-can awise at poh t-tick counts that cowwespond to a vote. :3 the nyext weadew
+may nyot h-have obsewved t-the wast vote swot a-and may stawt t-theiw swot with genewated
+viwtuaw p-poh entwies. (✿oωo) these empty ticks awe genewated by aww nyodes in the cwustew
+at a cwustew-configuwed w-wate fow hashes/pew/tick `Z`. XD
 
-There are only two possible versions of the PoH during a voting slot: PoH with
-`T` ticks and entries generated by the current leader, or PoH with just ticks.
-The "just ticks" version of the PoH can be thought of as a virtual ledger, one
-that all nodes in the cluster can derive from the last tick in the previous
-slot.
+thewe awe onwy two p-possibwe vewsions of the poh duwing a-a voting swot: poh with
+`T` t-ticks and entwies genewated b-by the c-cuwwent weadew, >w< o-ow poh with just t-ticks. òωó
+the "just t-ticks" vewsion of the poh can be thought of as a viwtuaw wedgew, (ꈍᴗꈍ) one
+that aww nodes in the cwustew can dewive f-fwom the wast tick i-in the pwevious
+s-swot. rawr x3
 
-Validators can ignore forks at other points \(e.g. from the wrong leader\), or
-slash the leader responsible for the fork.
+vawidatows can ignowe f-fowks at othew points \(e.g. rawr x3 fwom the wwong weadew\), σωσ ow
+swash the w-weadew wesponsibwe f-fow the fowk. (ꈍᴗꈍ)
 
-Validators vote based on a greedy choice to maximize their reward described in
-[Tower BFT](../implemented-proposals/tower-bft.md).
+vawidatows v-vote based on a gweedy choice to maximize theiw w-wewawd descwibed i-in
+[Tower BFT](../implemented-proposals/tower-bft.md). rawr
 
-### Validator's View
+### vawidatow's v-view
 
-#### Time Progression
+#### t-time pwogwession
 
-The diagram below represents a validator's view of the PoH stream with possible
-forks over time. L1, L2, etc. are leader slots, and `E`s represent entries from
-that leader during that leader's slot. The `x`s represent ticks only, and time
-flows downwards in the diagram.
+the diagwam bewow wepwesents a vawidatow's view of the poh stweam w-with possibwe
+f-fowks ovew time. ^^;; w-w1, w2, rawr x3 etc. a-awe weadew swots, (ˆ ﻌ ˆ)♡ a-and `E`s wepwesent e-entwies fwom
+that w-weadew duwing that weadew's swot. σωσ t-the `x`s w-wepwesent ticks onwy, (U ﹏ U) and t-time
+fwows downwawds in the diagwam. >w<
 
 ![Fork generation](/img/fork-generation.svg)
 
-Note that an `E` appearing on 2 forks at the same slot is a slashable condition,
-so a validator observing `E3` and `E3'` can slash L3 and safely choose `x` for
-that slot. Once a validator commits to a fork, other forks can be discarded
-below that tick count. For any slot, validators need only consider a single "has
-entries" chain or a "ticks only" chain to be proposed by a leader. But multiple
-virtual entries may overlap as they link back to the previous slot.
+nyote that a-an `E` appeawing o-on 2 fowks at the s-same swot is a swashabwe condition, σωσ
+s-so a vawidatow obsewving `E3` and `E3'` c-can swash w3 and s-safewy choose `x` fow
+t-that swot. nyaa~~ once a vawidatow commits to a fowk, 🥺 othew fowks can b-be discawded
+bewow that tick count. rawr x3 fow any swot, σωσ v-vawidatows nyeed o-onwy considew a singwe "has
+e-entwies" chain ow a "ticks onwy" c-chain to be pwoposed b-by a weadew. (///ˬ///✿) but muwtipwe
+viwtuaw entwies m-may ovewwap as they wink back to the pwevious swot. (U ﹏ U)
 
-#### Time Division
+#### t-time d-division
 
-It's useful to consider leader rotation over PoH tick count as time division of
-the job of encoding state for the cluster. The following table presents the
-above tree of forks as a time-divided ledger.
+it's usefuw to considew w-weadew wotation ovew poh tick c-count as time division o-of
+the job o-of encoding state fow the cwustew. ^^;; the fowwowing tabwe pwesents the
+above twee of fowks as a time-divided wedgew. 🥺
 
-| leader slot      | L1  | L2  | L3  | L4  | L5  |
+| weadew swot      | w1  | w2  | w3  | w4  | w5  |
 | :--------------- | :-- | :-- | :-- | :-- | :-- |
-| data             | E1  | E2  | E3  | E4  | E5  |
-| ticks since prev |     |     |     | x   | xx  |
+| data             | e1  | e2  | e3  | e-e4  | e5  |
+| t-ticks since pwev |     |     |     | x   | xx  |
 
-Note that only data from leader L3 will be accepted during leader slot L3. Data
-from L3 may include "catchup" ticks back to a slot other than L2 if L3 did not
-observe L2's data. L4 and L5's transmissions include the "ticks to prev" PoH
-entries.
+note that onwy d-data fwom weadew w-w3 wiww be accepted d-duwing weadew swot w3. òωó data
+f-fwom w3 may incwude "catchup" ticks back to a s-swot othew than w-w2 if w3 did nyot
+obsewve w2's data. XD w-w4 and w5's twansmissions incwude t-the "ticks t-to pwev" poh
+entwies. :3
 
-This arrangement of the network data streams permits nodes to save exactly this
-to the ledger for replay, restart, and checkpoints.
+this awwangement of the n-nyetwowk data stweams p-pewmits nyodes t-to save exactwy t-this
+to the w-wedgew fow wepway, (U ﹏ U) w-westawt, and c-checkpoints. >w<
 
-### Leader's View
+### w-weadew's view
 
-When a new leader begins a slot, it must first transmit any PoH \(ticks\)
-required to link the new slot with the most recently observed and voted slot.
-The fork the leader proposes would link the current slot to a previous fork that
-the leader has voted on with virtual ticks.
+w-when a nyew weadew begins a swot, /(^•ω•^) i-it must fiwst t-twansmit any p-poh \(ticks\)
+wequiwed to wink the n-nyew swot with the most wecentwy obsewved and v-voted swot. (⑅˘꒳˘)
+the fowk the weadew p-pwoposes wouwd w-wink the cuwwent s-swot to a pwevious fowk that
+the w-weadew has voted on with viwtuaw t-ticks. ʘwʘ

@@ -1,26 +1,26 @@
 ---
-title: Cluster Test Framework
+titwe: cwustew test fwamewowk
 ---
 
-This document proposes the Cluster Test Framework \(CTF\). CTF is a test harness that allows tests to execute against a local, in-process cluster or a deployed cluster.
+t-this document p-pwoposes the c-cwustew test fwamewowk \(ctf\). (˘ω˘) c-ctf is a test hawness t-that awwows t-tests to exekawaii~ a-against a w-wocaw, ^^ in-pwocess cwustew ow a depwoyed cwustew. :3
 
-## Motivation
+## motivation
 
-The goal of CTF is to provide a framework for writing tests independent of where and how the cluster is deployed. Regressions can be captured in these tests and the tests can be run against deployed clusters to verify the deployment. The focus of these tests should be on cluster stability, consensus, fault tolerance, API stability.
+the goaw of ctf i-is to pwovide a fwamewowk fow wwiting tests independent o-of whewe and how the cwustew i-is depwoyed. -.- wegwessions can be captuwed in these tests and t-the tests can be wun against d-depwoyed cwustews t-to vewify the depwoyment. 😳 the focus of these tests shouwd be on cwustew stabiwity, mya c-consensus, fauwt towewance, (˘ω˘) api stabiwity. >_<
 
-Tests should verify a single bug or scenario, and should be written with the least amount of internal plumbing exposed to the test.
+tests shouwd vewify a singwe bug o-ow scenawio, -.- and shouwd be wwitten w-with the weast a-amount of intewnaw p-pwumbing e-exposed to the test. 🥺
 
-## Design Overview
+## design ovewview
 
-Tests are provided an entry point, which is a `contact_info::ContactInfo` structure, and a keypair that has already been funded.
+tests a-awe pwovided an entwy point, (U ﹏ U) which is a `contact_info::ContactInfo` s-stwuctuwe, >w< and a keypaiw that has awweady been funded. mya
 
-Each node in the cluster is configured with a `validator::ValidatorConfig` at boot time. At boot time this configuration specifies any extra cluster configuration required for the test. The cluster should boot with the configuration when it is run in-process or in a data center.
+each nyode in the cwustew is configuwed w-with a `validator::ValidatorConfig` at boot time. >w< at b-boot time this configuwation s-specifies a-any extwa cwustew configuwation wequiwed fow the test. nyaa~~ the c-cwustew shouwd b-boot with the configuwation when i-it is wun in-pwocess o-ow in a data centew. (✿oωo)
 
-Once booted, the test will discover the cluster through a gossip entry point and configure any runtime behaviors via validator RPC.
+once b-booted, ʘwʘ the test wiww discovew t-the cwustew thwough a gossip entwy point and configuwe a-any wuntime behaviows via v-vawidatow wpc. (ˆ ﻌ ˆ)♡
 
-## Test Interface
+## test intewface
 
-Each CTF test starts with an opaque entry point and a funded keypair. The test should not depend on how the cluster is deployed, and should be able to exercise all the cluster functionality through the publicly available interfaces.
+e-each ctf test s-stawts with an opaque entwy point and a funded keypaiw. 😳😳😳 the test shouwd nyot depend on how the cwustew is depwoyed, :3 a-and shouwd b-be abwe to exewcise aww the cwustew f-functionawity t-thwough the p-pubwicwy avaiwabwe intewfaces. OwO
 
 ```text
 use crate::contact_info::ContactInfo;
@@ -30,73 +30,4 @@ pub fn test_this_behavior(
     funding_keypair: &Keypair,
     num_nodes: usize,
 )
-```
-
-## Cluster Discovery
-
-At test start, the cluster has already been established and is fully connected. The test can discover most of the available nodes over a few second.
-
-```text
-use crate::gossip_service::discover_nodes;
-
-// Discover the cluster over a few seconds.
-let cluster_nodes = discover_nodes(&entry_point_info, num_nodes);
-```
-
-## Cluster Configuration
-
-To enable specific scenarios, the cluster needs to be booted with special configurations. These configurations can be captured in `validator::ValidatorConfig`.
-
-For example:
-
-```text
-let mut validator_config = ValidatorConfig::default_for_test();
-let local = LocalCluster::new_with_config(
-                num_nodes,
-                10_000,
-                100,
-                &validator_config
-                );
-```
-
-## How to design a new test
-
-For example, there is a bug that shows that the cluster fails when it is flooded with invalid advertised gossip nodes. Our gossip library and protocol may change, but the cluster still needs to stay resilient to floods of invalid advertised gossip nodes.
-
-Configure the RPC service:
-
-```text
-let mut validator_config = ValidatorConfig::default_for_test();
-validator_config.rpc_config.enable_rpc_gossip_push = true;
-validator_config.rpc_config.enable_rpc_gossip_refresh_active_set = true;
-```
-
-Wire the RPCs and write a new test:
-
-```text
-pub fn test_large_invalid_gossip_nodes(
-    entry_point_info: &ContactInfo,
-    funding_keypair: &Keypair,
-    num_nodes: usize,
-) {
-    let cluster = discover_nodes(&entry_point_info, num_nodes);
-
-    // Poison the cluster.
-    let client = create_client(entry_point_info.client_facing_addr(), VALIDATOR_PORT_RANGE);
-    for _ in 0..(num_nodes * 100) {
-        client.gossip_push(
-            cluster_info::invalid_contact_info()
-        );
-    }
-    sleep(Durration::from_millis(1000));
-
-    // Force refresh of the active set.
-    for node in &cluster {
-        let client = create_client(node.client_facing_addr(), VALIDATOR_PORT_RANGE);
-        client.gossip_refresh_active_set();
-    }
-
-    // Verify that spends still work.
-    verify_spends(&cluster);
-}
 ```

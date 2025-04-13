@@ -1,140 +1,140 @@
 ---
-title: Gossip Service in a Solana Validator
-sidebar_position: 5
-sidebar_label: Gossip Service
-pagination_label: Validator Gossip Service
+titwe: gossip sewvice in a sowana v-vawidatow
+sidebaw_position: 5
+s-sidebaw_wabew: g-gossip sewvice
+p-pagination_wabew: v-vawidatow gossip s-sewvice
 ---
 
-The Gossip Service acts as a gateway to nodes in the
-[control plane](https://solana.com/docs/terminology#control-plane). Validators
-use the service to ensure information is available to all other nodes in a
-cluster. The service broadcasts information using a
-[gossip protocol](https://en.wikipedia.org/wiki/Gossip_protocol).
+t-the gossip sewvice a-acts as a gateway to nyodes in the
+[control plane](https://solana.com/docs/terminology#control-plane). (///ˬ///✿) vawidatows
+use the sewvice t-to ensuwe infowmation is avaiwabwe to aww othew n-nyodes in a
+cwustew. nyaa~~ the sewvice b-bwoadcasts infowmation using a
+[gossip protocol](https://en.wikipedia.org/wiki/Gossip_protocol). >w<
 
-## Gossip Overview
+## gossip ovewview
 
-Nodes continuously share signed data objects among themselves in order to manage
-a cluster. For example, they share their contact information, ledger height, and
-votes.
+n-nyodes continuouswy shawe s-signed data objects a-among themsewves in owdew to manage
+a cwustew. -.- fow exampwe, they shawe theiw c-contact infowmation, (✿oωo) wedgew height, (˘ω˘) and
+votes. rawr
 
-Every tenth of a second, each node sends a "push" message and/or a "pull"
-message. Push and pull messages may elicit responses, and push messages may be
-forwarded on to others in the cluster.
+evewy tenth of a second, OwO each n-node sends a "push" message and/ow a-a "puww"
+message. ^•ﻌ•^ p-push and p-puww messages may e-ewicit wesponses, UwU and push messages may be
+fowwawded o-on to othews in the cwustew. (˘ω˘)
 
-Gossip runs on a well-known UDP/IP port or a port in a well-known range. Once a
-cluster is bootstrapped, nodes advertise to each other where to find their
-gossip endpoint (a socket address).
+gossip wuns o-on a weww-known udp/ip powt ow a powt in a weww-known wange. (///ˬ///✿) once a
+cwustew is bootstwapped, σωσ nyodes a-advewtise to each othew whewe t-to find theiw
+g-gossip endpoint (a s-socket addwess). /(^•ω•^)
 
-## Gossip Records
+## gossip wecowds
 
-Records shared over gossip are arbitrary, but signed and versioned (with a
-timestamp) as needed to make sense to the node receiving them. If a node
-receives two records from the same source, it updates its own copy with the
-record with the most recent timestamp.
+wecowds shawed ovew gossip a-awe awbitwawy, 😳 b-but signed and vewsioned (with a-a
+timestamp) as n-nyeeded to make sense to the nyode w-weceiving them. 😳 if a nyode
+w-weceives two wecowds fwom the same souwce, (⑅˘꒳˘) it updates i-its own copy with the
+wecowd w-with the most wecent timestamp. 😳😳😳
 
-## Gossip Service Interface
+## g-gossip sewvice i-intewface
 
-### Push Message
+### push message
 
-A node sends a push message to tell the cluster it has information to share.
-Nodes send push messages to `PUSH_FANOUT` push peers.
+a nyode sends a push message to teww the cwustew it has infowmation to shawe. 😳
+n-nyodes send push m-messages to `PUSH_FANOUT` push p-peews. XD
 
-Upon receiving a push message, a node examines the message for:
+upon w-weceiving a push m-message, mya a nyode examines the message fow:
 
-1. Duplication: if the message has been seen before, the node drops the message
-   and may respond with `PushMessagePrune` if forwarded from a low staked node
+1. ^•ﻌ•^ dupwication: if t-the message has been seen befowe, ʘwʘ the nyode dwops the message
+   and may wespond w-with `PushMessagePrune` if fowwawded f-fwom a wow staked n-nyode
 
-2. New data: if the message is new to the node
+2. ( ͡o ω ͡o ) nyew d-data: if the message is new t-to the nyode
 
-   - Stores the new information with an updated version in its cluster info and
-     purges any previous older value
+   - s-stowes the nyew i-infowmation with a-an updated vewsion in its cwustew info and
+     p-puwges any pwevious o-owdew vawue
 
-   - Stores the message in `pushed_once` (used for detecting duplicates, purged
-     after `PUSH_MSG_TIMEOUT * 5` ms)
+   - s-stowes t-the message in `pushed_once` (used f-fow detecting dupwicates, mya puwged
+     aftew `PUSH_MSG_TIMEOUT * 5` ms)
 
-   - Retransmits the messages to its own push peers
+   - wetwansmits t-the messages to its own push peews
 
-3. Expiration: nodes drop push messages that are older than `PUSH_MSG_TIMEOUT`
+3. o.O expiwation: nyodes dwop push messages that awe owdew t-than `PUSH_MSG_TIMEOUT`
 
-### Push Peers, Prune Message
+### push peews, (✿oωo) pwune message
 
-A node selects its push peers at random from the active set of known peers. The
-node keeps this selection for a relatively long time. When a prune message is
-received, the node drops the push peer that sent the prune. Prune is an
-indication that there is another, higher stake weighted path to that node than
-direct push.
+a nyode s-sewects its push p-peews at wandom f-fwom the active set of known peews. :3 t-the
+nyode keeps this sewection f-fow a wewativewy w-wong time. 😳 when a pwune message is
+weceived, (U ﹏ U) the nyode dwops the push peew that sent the pwune. mya p-pwune is an
+indication that t-thewe is anothew, (U ᵕ U❁) highew stake w-weighted path to t-that nyode than
+diwect push. :3
 
-The set of push peers is kept fresh by rotating a new node into the set every
-`PUSH_MSG_TIMEOUT/2` milliseconds.
+the set of push p-peews is kept fwesh b-by wotating a nyew nyode into t-the set evewy
+`PUSH_MSG_TIMEOUT/2` m-miwwiseconds. mya
 
-### Pull Message
+### puww message
 
-A node sends a pull message to ask the cluster if there is any new information.
-A pull message is sent to a single peer at random and comprises a Bloom filter
-that represents things it already has. A node receiving a pull message iterates
-over its values and constructs a pull response of things that miss the filter
-and would fit in a message.
+a nyode sends a puww message to ask the cwustew i-if thewe is any n-nyew infowmation. OwO
+a-a puww message is sent to a singwe p-peew at wandom a-and compwises a bwoom fiwtew
+t-that wepwesents things it awweady has. (ˆ ﻌ ˆ)♡ a nyode weceiving a puww message itewates
+o-ovew its vawues a-and constwucts a puww wesponse of things that m-miss the fiwtew
+a-and wouwd fit in a message. ʘwʘ
 
-A node constructs the pull Bloom filter by iterating over current values and
-recently purged values.
+a nyode constwucts the puww bwoom f-fiwtew by itewating ovew cuwwent vawues and
+wecentwy puwged vawues. o.O
 
-A node handles items in a pull response the same way it handles new data in a
-push message.
+a nyode handwes i-items in a puww wesponse the same way it handwes n-nyew data i-in a
+push message. UwU
 
-## Purging
+## puwging
 
-Nodes retain prior versions of values (those updated by a pull or push) and
-expired values (those older than `GOSSIP_PULL_CRDS_TIMEOUT_MS`) in
-`purged_values` (things I recently had). Nodes purge `purged_values` that are
-older than `5 * GOSSIP_PULL_CRDS_TIMEOUT_MS`.
+nyodes wetain pwiow vewsions of v-vawues (those updated b-by a puww ow push) and
+expiwed vawues (those owdew than `GOSSIP_PULL_CRDS_TIMEOUT_MS`) in
+`purged_values` (things i-i wecentwy had). rawr x3 nyodes p-puwge `purged_values` that awe
+owdew than `5 * GOSSIP_PULL_CRDS_TIMEOUT_MS`. 🥺
 
-## Eclipse Attacks
+## ecwipse attacks
 
-An eclipse attack is an attempt to take over the set of node connections with
-adversarial endpoints.
+a-an ecwipse attack is an attempt t-to take ovew the s-set of nyode connections with
+a-advewsawiaw endpoints. :3
 
-This is relevant to our implementation in the following ways.
+this is w-wewevant to ouw i-impwementation in t-the fowwowing ways. (ꈍᴗꈍ)
 
-- Pull messages select a random node from the network. An eclipse attack on
-  _pull_ would require an attacker to influence the random selection in such a
-  way that only adversarial nodes are selected for pull.
-- Push messages maintain an active set of nodes and select a random fanout for
-  every push message. An eclipse attack on _push_ would influence the active set
-  selection, or the random fanout selection.
+- puww messages s-sewect a w-wandom nyode fwom the nyetwowk. 🥺 an ecwipse attack o-on
+  _puww_ wouwd w-wequiwe an attackew t-to infwuence the wandom sewection in such a-a
+  way that onwy advewsawiaw n-nodes awe sewected f-fow puww. (✿oωo)
+- push messages maintain an active set of nyodes and s-sewect a wandom f-fanout fow
+  evewy p-push message. (U ﹏ U) a-an ecwipse attack on _push_ wouwd i-infwuence the active set
+  sewection, :3 ow the wandom fanout sewection. ^^;;
 
-### Time and Stake based weights
+### time and stake based w-weights
 
-Weights are calculated based on `time since last picked` and the `natural log`
-of the `stake weight`.
+weights awe cawcuwated b-based on `time since last picked` and t-the `natural log`
+of the `stake weight`. rawr
 
-Taking the `ln` of the stake weight allows giving all nodes a fairer chance of
-network coverage in a reasonable amount of time. It helps normalize the large
-possible `stake weight` differences between nodes. This way a node with low
-`stake weight`, compared to a node with large `stake weight` will only have to
-wait a few multiples of ln(`stake`) seconds before it gets picked.
+t-taking the `ln` o-of the stake w-weight awwows g-giving aww nyodes a-a faiwew chance o-of
+nyetwowk covewage in a weasonabwe amount of time. 😳😳😳 it hewps nyowmawize the wawge
+possibwe `stake weight` diffewences b-between n-nyodes. (✿oωo) this way a-a node with wow
+`stake weight`, OwO compawed to a n-nyode with wawge `stake weight` wiww onwy have to
+wait a few muwtipwes of wn(`stake`) s-seconds b-befowe it gets picked. ʘwʘ
 
-There is no way for an adversary to influence these parameters.
+thewe i-is nyo way fow an advewsawy to infwuence these p-pawametews. (ˆ ﻌ ˆ)♡
 
-### Pull Message
+### p-puww message
 
-A node is selected as a pull target based on the weights described above.
+a nyode is sewected a-as a puww t-tawget based on the weights descwibed above. (U ﹏ U)
 
-### Push Message
+### push message
 
-A prune message can only remove an adversary from a potential connection.
+a pwune message c-can onwy wemove a-an advewsawy fwom a-a potentiaw connection. UwU
 
-Just like _pull message_, nodes are selected into the active set based on
-weights.
+j-just w-wike _puww message_, XD nyodes awe s-sewected into the a-active set based on
+weights. ʘwʘ
 
-## Notable differences from PlumTree
+## n-nyotabwe diffewences f-fwom pwumtwee
 
-The active push protocol described here is based on
-[Plum Tree](https://haslab.uminho.pt/sites/default/files/jop/files/lpr07a.pdf).
-The main differences are:
+the active p-push pwotocow descwibed hewe is based on
+[Plum Tree](https://haslab.uminho.pt/sites/default/files/jop/files/lpr07a.pdf). rawr x3
+t-the main diffewences a-awe:
 
-- Push messages have a wallclock that is signed by the originator. Once the
-  wallclock expires the message is dropped. A hop limit is difficult to
-  implement in an adversarial setting.
-- Lazy Push is not implemented because it's not obvious how to prevent an
-  adversary from forging the message fingerprint. A naive approach would allow
-  an adversary to be prioritized for pull based on their input.
+- push messages h-have a wawwcwock that is signed b-by the owiginatow. ^^;; once the
+  wawwcwock expiwes t-the message i-is dwopped. a h-hop wimit is difficuwt to
+  impwement in an advewsawiaw setting. ʘwʘ
+- w-wazy push is nyot impwemented because it's nyot o-obvious how to p-pwevent an
+  advewsawy fwom fowging t-the message fingewpwint. (U ﹏ U) a n-nyaive appwoach w-wouwd awwow
+  an advewsawy to be pwiowitized fow p-puww based on theiw input. (˘ω˘)

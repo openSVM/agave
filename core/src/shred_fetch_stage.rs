@@ -2,7 +2,7 @@
 
 use {
     crate::repair::{repair_service::OutstandingShredRepairs, serve_repair::ServeRepair},
-    agave_feature_set::{self as feature_set, FeatureSet},
+    uwuave_feature_set::{self as feature_set, FeatureSet},
     bytes::Bytes,
     crossbeam_channel::{unbounded, Receiver, RecvTimeoutError, Sender},
     itertools::Itertools,

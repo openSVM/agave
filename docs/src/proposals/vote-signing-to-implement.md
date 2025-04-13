@@ -1,116 +1,116 @@
 ---
-title: Secure Vote Signing
+titwe: secuwe vote signing
 ---
 
-## Secure Vote Signing
+## s-secuwe vote s-signing
 
-This design describes additional vote signing behavior that will make the process more secure.
+this d-design descwibes a-additionaw vote s-signing behaviow t-that wiww make t-the pwocess mowe s-secuwe. :3
 
-Currently, Solana implements a vote-signing service that evaluates each vote to ensure it does not violate a slashing condition. The service could potentially have different variations, depending on the hardware platform capabilities. In particular, it could be used in conjunction with a secure enclave \(such as SGX\). The enclave could generate an asymmetric key, exposing an API for user \(untrusted\) code to sign the vote transactions, while keeping the vote-signing private key in its protected memory.
+cuwwentwy, mya sowana impwements a vote-signing sewvice that evawuates each v-vote to ensuwe it does nyot viowate a swashing c-condition. OwO the sewvice couwd potentiawwy h-have diffewent vawiations, (ˆ ﻌ ˆ)♡ depending on the hawdwawe p-pwatfowm capabiwities. ʘwʘ in pawticuwaw, o.O i-it couwd be u-used in conjunction with a secuwe encwave \(such as sgx\). UwU the encwave couwd genewate a-an asymmetwic key, rawr x3 exposing an api fow usew \(untwusted\) code to sign the vote twansactions, 🥺 w-whiwe keeping the vote-signing p-pwivate key i-in its pwotected m-memowy.
 
-The following sections outline how this architecture would work:
+the fowwowing s-sections outwine how this awchitectuwe w-wouwd wowk:
 
-### Message Flow
+### message fwow
 
-1. The node initializes the enclave at startup
+1. :3 the nyode initiawizes t-the encwave at stawtup
 
-   - The enclave generates an asymmetric key and returns the public key to the
+   - the encwave genewates an asymmetwic key and wetuwns the pubwic k-key to the
 
-     node
+     nyode
 
-   - The keypair is ephemeral. A new keypair is generated on node bootup. A
+   - t-the keypaiw is e-ephemewaw. (ꈍᴗꈍ) a nyew k-keypaiw is genewated on nyode bootup. 🥺 a
 
-     new keypair might also be generated at runtime based on some to be determined
+     nyew keypaiw might a-awso be genewated a-at wuntime based on some to b-be detewmined
 
-     criteria.
+     c-cwitewia. (✿oωo)
 
-   - The enclave returns its attestation report to the node
+   - the encwave w-wetuwns its attestation wepowt t-to the nyode
 
-2. The node performs attestation of the enclave \(e.g using Intel's IAS APIs\)
+2. (U ﹏ U) the nyode pewfowms attestation o-of the encwave \(e.g using intew's i-ias apis\)
 
-   - The node ensures that the Secure Enclave is running on a TPM and is
+   - the nyode ensuwes t-that the secuwe e-encwave is wunning on a tpm and is
 
-     signed by a trusted party
+     signed by a twusted pawty
 
-3. The stakeholder of the node grants ephemeral key permission to use its stake.
+3. :3 the stakehowdew of the nyode gwants e-ephemewaw key pewmission t-to use its stake. ^^;;
 
-   This process is to be determined.
+   t-this pwocess is t-to be detewmined. rawr
 
-4. The node's untrusted, non-enclave software calls trusted enclave software
+4. t-the nyode's untwusted, 😳😳😳 nyon-encwave softwawe cawws twusted e-encwave softwawe
 
-   using its interface to sign transactions and other data.
+   using its intewface to sign twansactions and othew data. (✿oωo)
 
-   - In case of vote signing, the node needs to verify the PoH. The PoH
+   - i-in case of vote signing, OwO the n-nyode nyeeds to v-vewify the poh. ʘwʘ t-the poh
 
-     verification is an integral part of signing. The enclave would be
+     vewification is a-an integwaw pawt o-of signing. (ˆ ﻌ ˆ)♡ the e-encwave wouwd be
 
-     presented with some verifiable data to check before signing the vote.
+     p-pwesented with some vewifiabwe data to check b-befowe signing t-the vote. (U ﹏ U)
 
-   - The process of generating the verifiable data in untrusted space is to be determined
+   - t-the pwocess o-of genewating the v-vewifiabwe data in untwusted space is to be detewmined
 
-### PoH Verification
+### poh v-vewification
 
-1. When the node votes on an en entry `X`, there's a lockout period `N`, for
+1. UwU when the nyode votes on an en entwy `X`, XD thewe's a wockout pewiod `N`, ʘwʘ f-fow
 
-   which it cannot vote on a fork that does not contain `X` in its history.
+   which it cannot vote on a fowk that does nyot contain `X` i-in its histowy. rawr x3
 
-2. Every time the node votes on the derivative of `X`, say `X+y`, the lockout
+2. e-evewy time the n-nyode votes on the dewivative o-of `X`, ^^;; say `X+y`, ʘwʘ t-the wockout
 
-   period for `X` increases by a factor `F` \(i.e. the duration node cannot vote on
+   p-pewiod fow `X` incweases by a factow `F` \(i.e. the duwation nyode cannot vote o-on
 
-   a fork that does not contain `X` increases\).
+   a fowk that does nyot contain `X` i-incweases\). (U ﹏ U)
 
-   - The lockout period for `X+y` is still `N` until the node votes again.
+   - the wockout p-pewiod fow `X+y` i-is stiww `N` untiw the nyode votes again. (˘ω˘)
 
-3. The lockout period increment is capped \(e.g. factor `F` applies maximum 32
+3. t-the wockout p-pewiod incwement is capped \(e.g. (ꈍᴗꈍ) f-factow `F` a-appwies maximum 32
 
-   times\).
+   times\). /(^•ω•^)
 
-4. The signing enclave must not sign a vote that violates this policy. This
+4. the signing encwave must nyot s-sign a vote that v-viowates this powicy. >_< t-this
 
    means
 
-   - Enclave is initialized with `N`, `F` and `Factor cap`
-   - Enclave stores `Factor cap` number of entry IDs on which the node had
+   - encwave i-is initiawized w-with `N`, `F` and `Factor cap`
+   - encwave s-stowes `Factor cap` nyumbew of entwy ids on which the nyode had
 
-     previously voted
+     pweviouswy v-voted
 
-   - The sign request contains the entry ID for the new vote
-   - Enclave verifies that new vote's entry ID is on the correct fork
+   - t-the sign wequest contains the entwy id fow t-the nyew vote
+   - e-encwave vewifies that nyew vote's entwy id is on the cowwect f-fowk
 
-     \(following the rules \#1 and \#2 above\)
+     \(fowwowing the wuwes \#1 and \#2 above\)
 
-### Ancestor Verification
+### ancestow vewification
 
-This is alternate, albeit, less certain approach to verifying voting fork. 1. The validator maintains an active set of nodes in the cluster 2. It observes the votes from the active set in the last voting period 3. It stores the ancestor/last_tick at which each node voted 4. It sends new vote request to vote-signing service
+t-this is awtewnate, σωσ awbeit, ^^;; wess cewtain appwoach t-to vewifying v-voting fowk. 😳 1. the vawidatow maintains an active set of nyodes i-in the cwustew 2. >_< i-it obsewves the votes fwom the active set in the wast voting pewiod 3. -.- i-it stowes the ancestow/wast_tick a-at which each nyode voted 4. UwU it sends nyew vote wequest t-to vote-signing sewvice
 
-- It includes previous votes from nodes in the active set, and their
+- it i-incwudes pwevious v-votes fwom nyodes in the active s-set, :3 and theiw
 
-  corresponding ancestors
+  cowwesponding a-ancestows
 
-  1. The signer checks if the previous votes contains a vote from the validator,
+  1. σωσ t-the signew checks i-if the pwevious votes contains a-a vote fwom the v-vawidatow, >w<
 
-     and the vote ancestor matches with majority of the nodes
+     and the vote ancestow matches w-with majowity o-of the nyodes
 
-- It signs the new vote if the check is successful
-- It asserts \(raises an alarm of some sort\) if the check is unsuccessful
+- i-it signs the nyew vote if the check is successfuw
+- i-it assewts \(waises an awawm o-of some sowt\) i-if the check is unsuccessfuw
 
-The premise is that the validator can be spoofed at most once to vote on incorrect data. If someone hijacks the validator and submits a vote request for bogus data, that vote will not be included in the PoH \(as it'll be rejected by the cluster\). The next time the validator sends a request to sign the vote, the signing service will detect that validator's last vote is missing \(as part of
+the pwemise is that the vawidatow c-can be spoofed a-at most once to v-vote on incowwect d-data. if someone hijacks the vawidatow a-and submits a vote wequest fow bogus data, (ˆ ﻌ ˆ)♡ that vote wiww nyot be incwuded in the poh \(as i-it'ww be wejected by the cwustew\). ʘwʘ t-the nyext time the vawidatow s-sends a wequest to sign the v-vote, :3 the signing sewvice wiww d-detect that vawidatow's w-wast vote i-is missing \(as p-pawt of
 
-## 5 above\).
+## 5 a-above\). (˘ω˘)
 
-### Fork determination
+### fowk detewmination
 
-Due to the fact that the enclave cannot process PoH, it has no direct knowledge of fork history of a submitted validator vote. Each enclave should be initiated with the current _active set_ of public keys. A validator should submit its current vote along with the votes of the active set \(including itself\) that it observed in the slot of its previous vote. In this way, the enclave can surmise the votes accompanying the validator's previous vote and thus the fork being voted on. This is not possible for the validator's initial submitted vote, as it will not have a 'previous' slot to reference. To account for this, a short voting freeze should apply until the second vote is submitted containing the votes within the active set, along with it's own vote, at the height of the initial vote.
+due to the fact that the encwave cannot pwocess poh, 😳😳😳 it has nyo diwect knowwedge o-of fowk histowy o-of a submitted v-vawidatow vote. rawr x3 each encwave shouwd b-be initiated with the cuwwent _active set_ of pubwic keys. (✿oωo) a-a vawidatow shouwd s-submit its cuwwent vote awong w-with the votes of the active set \(incwuding itsewf\) that it o-obsewved in the s-swot of its pwevious vote. (ˆ ﻌ ˆ)♡ in this w-way, :3 the encwave c-can suwmise the votes accompanying the vawidatow's pwevious vote and thus the f-fowk being voted o-on. (U ᵕ U❁) this is nyot p-possibwe fow t-the vawidatow's i-initiaw submitted vote, ^^;; as it wiww n-nyot have a 'pwevious' s-swot to wefewence. mya to a-account fow this, 😳😳😳 a-a showt voting fweeze shouwd a-appwy untiw the second vote is submitted containing t-the votes within the active s-set, OwO awong with i-it's own vote, rawr at the height of t-the initiaw vote.
 
-### Enclave configuration
+### encwave configuwation
 
-A staking client should be configurable to prevent voting on inactive forks. This mechanism should use the client's known active set `N_active` along with a threshold vote `N_vote` and a threshold depth `N_depth` to determine whether or not to continue voting on a submitted fork. This configuration should take the form of a rule such that the client will only vote on a fork if it observes more than `N_vote` at `N_depth`. Practically, this represents the client from confirming that it has observed some probability of economic finality of the submitted fork at a depth where an additional vote would create a lockout for an undesirable amount of time if that fork turns out not to be live.
+a s-staking cwient shouwd b-be configuwabwe t-to pwevent voting on inactive fowks. XD this mechanism shouwd u-use the cwient's known active set `N_active` awong with a thweshowd v-vote `N_vote` a-and a thweshowd depth `N_depth` t-to detewmine whethew ow nyot to c-continue voting o-on a submitted fowk. (U ﹏ U) this configuwation shouwd t-take the fowm of a wuwe such that the cwient wiww o-onwy vote on a-a fowk if it obsewves mowe than `N_vote` at `N_depth`. (˘ω˘) p-pwacticawwy, UwU this wepwesents the c-cwient fwom confiwming t-that it h-has obsewved some pwobabiwity of economic finawity of the submitted fowk at a depth whewe an additionaw vote wouwd cweate a wockout fow an undesiwabwe amount of time if that fowk tuwns out nyot to be wive. >_<
 
-### Challenges
+### c-chawwenges
 
-1. Generation of verifiable data in untrusted space for PoH verification in the
+1. σωσ g-genewation of vewifiabwe data in untwusted space f-fow poh vewification i-in the
 
-   enclave.
+   e-encwave. 🥺
 
-2. Need infrastructure for granting stake to an ephemeral key.
+2. nyeed infwastwuctuwe f-fow gwanting stake to an e-ephemewaw key. 🥺

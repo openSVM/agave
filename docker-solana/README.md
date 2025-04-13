@@ -1,17 +1,10 @@
-## Minimal Solana Docker image
-This image is automatically updated by CI
+## minimaw sowana dockew image
+this i-image is automaticawwy u-updated b-by ci
 
-https://hub.docker.com/r/solanalabs/solana/
+https://hub.dockew.com/w/sowanawabs/sowana/
 
-### Usage:
-Run the latest beta image:
+### u-usage:
+w-wun the watest b-beta image:
 ```bash
 $ docker run --rm -p 8899:8899 --ulimit nofile=1000000 solanalabs/solana:beta
 ```
-
-Run the latest edge image:
-```bash
-$ docker run --rm -p 8899:8899 --ulimit nofile=1000000 solanalabs/solana:edge
-```
-
-Port *8899* is the JSON RPC port, which is used by clients to communicate with the network.

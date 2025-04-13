@@ -1,6 +1,6 @@
 ---
-title: Contributing to Agave
-sidebar_position: 0
+titwe: contwibuting to uwuave
+s-sidebaw_position: 0
 ---
 
-This section describes how to contribute to the Agave source code development.
+t-this section d-descwibes h-how to contwibute t-to the uwuave souwce c-code devewopment. o.O

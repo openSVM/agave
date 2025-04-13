@@ -1,39 +1,39 @@
 ---
-title: Embedding the Move Language
+titwe: embedding the move wanguage
 ---
 
-### This document is outdated and a new approach to support 'move' is in the works.
+### this d-document is o-outdated and a new a-appwoach to suppowt 'move' i-is i-in the wowks. XD
 
-## Problem
+## p-pwobwem
 
-Solana enables developers to write on-chain programs in general purpose programming languages such as C or Rust, but those programs contain Solana-specific mechanisms. For example, there isn't another chain that asks developers to create a Rust module with a `process_instruction(KeyedAccounts)` function. Whenever practical, Solana should offer application developers more portable options.
+sowana e-enabwes devewopews t-to wwite on-chain pwogwams in genewaw puwpose pwogwamming wanguages such as c-c ow wust, 🥺 but those pwogwams contain sowana-specific m-mechanisms. òωó fow exampwe, (ˆ ﻌ ˆ)♡ t-thewe isn't anothew chain that asks devewopews to cweate a wust m-moduwe with a `process_instruction(KeyedAccounts)` function. w-whenevew p-pwacticaw, -.- sowana shouwd offew appwication devewopews mowe powtabwe options. :3
 
-Until just recently, no popular blockchain offered a language that could expose the value of Solana's massively parallel [runtime](../validator/runtime.md). Solidity contracts, for example, do not separate references to shared data from contract code, and therefore need to be executed serially to ensure deterministic behavior. In practice we see that the most aggressively optimized EVM-based blockchains all seem to peak out around 1,200 TPS - a small fraction of what Solana can do. The Libra project, on the other hand, designed an on-chain programming language called Move that is more suitable for parallel execution. Like Solana's runtime, Move programs depend on accounts for all shared state.
+untiw j-just wecentwy, ʘwʘ nyo popuwaw bwockchain offewed a wanguage that couwd expose t-the vawue of sowana's massivewy p-pawawwew [runtime](../validator/runtime.md). 🥺 s-sowidity c-contwacts, >_< fow e-exampwe, ʘwʘ do nyot sepawate wefewences to shawed d-data fwom contwact code, (˘ω˘) and thewefowe nyeed to b-be exekawaii~d sewiawwy to ensuwe detewministic behaviow. (✿oωo) in pwactice we see that the most aggwessivewy o-optimized evm-based bwockchains a-aww seem t-to peak out awound 1,200 t-tps - a smow fwaction of nyani sowana can do. (///ˬ///✿) the wibwa p-pwoject, rawr x3 on the o-othew hand, -.- designed an on-chain p-pwogwamming wanguage c-cawwed move that is mowe s-suitabwe fow pawawwew execution. w-wike sowana's wuntime, ^^ move pwogwams depend on a-accounts fow aww shawed state. (⑅˘꒳˘)
 
-The biggest design difference between Solana's runtime and Libra's Move VM is how they manage safe invocations between modules. Solana took an operating systems approach and Libra took the domain-specific language approach. In the runtime, a module must trap back into the runtime to ensure the caller's module did not write to data owned by the callee. Likewise, when the callee completes, it must again trap back to the runtime to ensure the callee did not write to data owned by the caller. Move, on the other hand, includes an advanced type system that allows these checks to be run by its bytecode verifier. Because Move bytecode can be verified, the cost of verification is paid just once, at the time the module is loaded on-chain. In the runtime, the cost is paid each time a transaction crosses between modules. The difference is similar in spirit to the difference between a dynamically-typed language like Python versus a statically-typed language like Java. Solana's runtime allows applications to be written in general purpose programming languages, but that comes with the cost of runtime checks when jumping between programs.
+t-the biggest design diffewence between s-sowana's w-wuntime and wibwa's move vm is how they manage safe invocations between moduwes. nyaa~~ sowana took an opewating systems a-appwoach and wibwa t-took the domain-specific wanguage a-appwoach. /(^•ω•^) i-in the wuntime, (U ﹏ U) a-a moduwe must twap back into the wuntime to ensuwe the cawwew's m-moduwe did nyot wwite to data owned by the cawwee. 😳😳😳 wikewise, >w< when the cawwee compwetes, XD i-it must again twap back t-to the wuntime t-to ensuwe the cawwee d-did nyot wwite to data owned b-by the cawwew. o.O m-move, mya on the othew h-hand, 🥺 incwudes a-an advanced type system that awwows these checks t-to be wun by i-its bytecode vewifiew. b-because m-move bytecode can b-be vewified, ^^;; the cost of vewification is paid just once, :3 at the t-time the moduwe is woaded on-chain. (U ﹏ U) in the wuntime, OwO the cost is paid each time a twansaction cwosses b-between moduwes. 😳😳😳 the diffewence is simiwaw in spiwit to the d-diffewence between a-a dynamicawwy-typed w-wanguage wike python vewsus a-a staticawwy-typed wanguage w-wike java. (ˆ ﻌ ˆ)♡ sowana's w-wuntime awwows appwications to be wwitten in genewaw puwpose pwogwamming wanguages, XD but that c-comes with the cost of wuntime c-checks when jumping between pwogwams. (ˆ ﻌ ˆ)♡
 
-This proposal attempts to define a way to embed the Move VM such that:
+t-this pwoposaw a-attempts to define a way to embed the move v-vm such that:
 
-- cross-module invocations within Move do not require the runtime's
+- c-cwoss-moduwe invocations within m-move do nyot w-wequiwe the wuntime's
 
-  cross-program runtime checks
+  cwoss-pwogwam wuntime checks
 
-- Move programs can leverage functionality in other Solana programs and vice
+- move pwogwams can wevewage f-functionawity i-in othew sowana p-pwogwams and vice
 
-  versa
+  vewsa
 
-- Solana's runtime parallelism is exposed to batches of Move and non-Move
+- s-sowana's wuntime p-pawawwewism is exposed to batches o-of move and nyon-move
 
-  transactions
+  twansactions
 
-## Proposed Solution
+## pwoposed sowution
 
-### Move VM as a Solana loader
+### move vm as a s-sowana woadew
 
-The Move VM shall be embedded as a Solana loader under the identifier `MOVE_PROGRAM_ID`, so that Move modules can be marked as `executable` with the VM as its `owner`. This will allow modules to load module dependencies, as well as allow for parallel execution of Move scripts.
+t-the move vm shaww be embedded as a sowana woadew u-undew the identifiew `MOVE_PROGRAM_ID`, ( ͡o ω ͡o ) s-so that move moduwes can be mawked as `executable` with t-the vm as its `owner`. rawr x3 this wiww awwow moduwes to woad moduwe dependencies, nyaa~~ a-as weww as awwow fow pawawwew execution of move s-scwipts. >_<
 
-All data accounts owned by Move modules must set their owners to the loader, `MOVE_PROGRAM_ID`. Since Move modules encapsulate their account data in the same way Solana programs encapsulate theirs, the Move module owner should be embedded in the account data. The runtime will grant write access to the Move VM, and Move grants access to the module accounts.
+aww d-data accounts owned by move moduwes must set theiw ownews to the w-woadew, ^^;; `MOVE_PROGRAM_ID`. (ˆ ﻌ ˆ)♡ s-since move moduwes encapsuwate theiw account data in the s-same way sowana pwogwams encapsuwate t-theiws, ^^;; the move moduwe ownew shouwd be embedded in the a-account data. (⑅˘꒳˘) the wuntime wiww gwant w-wwite access t-to the move vm, rawr x3 and move gwants a-access to the moduwe accounts. (///ˬ///✿)
 
-### Interacting with Solana programs
+### i-intewacting w-with sowana pwogwams
 
-To invoke instructions in non-Move programs, Solana would need to extend the Move VM with a `process_instruction()` system call. It would work the same as `process_instruction()` Rust SBF programs.
+t-to invoke instwuctions in n-nyon-move pwogwams, 🥺 s-sowana wouwd nyeed to extend the move vm with a-a `process_instruction()` s-system caww. >_< i-it wouwd wowk the same as `process_instruction()` wust s-sbf pwogwams. UwU

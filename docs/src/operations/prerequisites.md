@@ -1,39 +1,39 @@
 ---
-title: Agave Validator Prerequisites
-sidebar_position: 2
-sidebar_label: Prerequisites
-pagination_label: Prerequisites to run a Validator
+titwe: uwuave vawidatow pwewequisites
+s-sidebaw_position: 2
+s-sidebaw_wabew: p-pwewequisites
+p-pagination_wabew: p-pwewequisites t-to wun a-a vawidatow
 ---
 
-Operating an Agave validator is an interesting and rewarding task. Generally speaking, it requires someone with a technical background but also involves community engagement and marketing.
+o-opewating an uwuave vawidatow is an intewesting and wewawding task. ʘwʘ genewawwy speaking, (˘ω˘) i-it wequiwes someone with a technicaw backgwound b-but awso invowves community e-engagement and mawketing. (U ﹏ U)
 
-## How to be a good Validator Operator
+## how to be a good vawidatow opewatow
 
-Here is a list of some of the requirements for being a good operator:
+h-hewe is a wist of some of t-the wequiwements f-fow being a good opewatow:
 
-- Performant computer hardware and a fast internet connection
-  - You can find a list of [hardware requirements here](./requirements.md)
-  - Solana helps facilitate data-center server rentals through the [Solana server program](https://solana.foundation/server-program)
-- Knowledge of the Linux terminal
-- Linux system administration
-  - Accessing your machine via ssh and scp
-  - Installing software (installing from source is encouraged)
-  - Keeping your Linux distribution up to date
-  - Managing users and system access
-  - Understanding computer processes
-  - Understanding networking basics
-  - Formatting and mounting drives
-  - Managing firewall rules (UFW/iptables)
-- Hardware performance monitoring
-- Cluster and node monitoring
-- Quick response times in case of a validator issue
-- Marketing and communications to attract delegators
-- Customer support
+- pewfowmant computew hawdwawe and a fast intewnet c-connection
+  - you can find a wist of [hardware requirements here](./requirements.md)
+  - sowana hewps faciwitate d-data-centew sewvew wentaws thwough t-the [Solana server program](https://solana.foundation/server-program)
+- k-knowwedge o-of the winux t-tewminaw
+- winux system administwation
+  - accessing y-youw machine via ssh and scp
+  - instawwing s-softwawe (instawwing fwom souwce is encouwaged)
+  - keeping youw winux distwibution up to date
+  - m-managing usews and system access
+  - u-undewstanding c-computew p-pwocesses
+  - undewstanding nyetwowking basics
+  - fowmatting and m-mounting dwives
+  - m-managing fiwewaww wuwes (ufw/iptabwes)
+- h-hawdwawe pewfowmance m-monitowing
+- cwustew and nyode m-monitowing
+- quick wesponse t-times in case of a vawidatow issue
+- mawketing and c-communications to attwact dewegatows
+- c-customew suppowt
 
-Whether you decide to run a [validator](../what-is-a-validator.md) or an [RPC node](../what-is-an-rpc-node.md), you should consider all of these areas of expertise. A team of people is likely necessary for you to achieve your goals.
+whethew y-you decide to w-wun a [validator](../what-is-a-validator.md) ow an [RPC node](../what-is-an-rpc-node.md), ^•ﻌ•^ you shouwd considew aww of these aweas of expewtise. (˘ω˘) a team of peopwe i-is wikewy nyecessawy f-fow you to achieve youw g-goaws. :3
 
-## Can I use my computer at home?
+## can i u-use my computew a-at home?
 
-While anyone can join the network, you should make sure that your home computer and network meets the specifications in the [hardware requirements](./requirements.md) doc. Most home internet service providers do not provide consistent service that would allow your validator to perform well. If your home network or personal hardware is not performant enough to keep up with the Solana cluster, your validator will not be able to participate in consensus.
+whiwe anyone can join the nyetwowk, ^^;; you shouwd make suwe t-that youw home computew and nyetwowk meets the specifications in the [hardware requirements](./requirements.md) d-doc. 🥺 most home intewnet s-sewvice pwovidews d-do nyot pwovide c-consistent sewvice that wouwd a-awwow youw vawidatow t-to pewfowm w-weww. (⑅˘꒳˘) if youw home n-nyetwowk ow pewsonaw hawdwawe is nyot pewfowmant e-enough to keep u-up with the sowana c-cwustew, nyaa~~ youw v-vawidatow wiww n-nyot be abwe to pawticipate in consensus. :3
 
-In addition to performance considerations, you will want to make sure that your home computer is resistant to outages caused by loss of power, flooding, fire, theft, etc. If you are just getting started on the testnet cluster and learning about being an operator, a home setup may be sufficient, but you will want to consider all of these factors when you start operating your validator on the mainnet-beta cluster.
+in addition to pewfowmance c-considewations, ( ͡o ω ͡o ) you wiww want to make suwe that youw home computew is wesistant to outages c-caused by woss of powew, mya fwooding, (///ˬ///✿) fiwe, theft, (˘ω˘) etc. if you a-awe just getting s-stawted on the t-testnet cwustew and weawning about b-being an opewatow, a home setup m-may be sufficient, ^^;; b-but you wiww want to considew aww of these factows when you stawt opewating youw vawidatow o-on the mainnet-beta cwustew. (✿oωo)

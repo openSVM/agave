@@ -4,22 +4,22 @@
   </a>
 </p>
 
-# Solana Geyser Plugin Interface
+# sowana geysew pwugin intewface
 
-This crate enables a plugin to be added into the Solana Validator runtime to
-take actions at the time of account updates or block and transaction processing;
-for example, saving the account state to an external database. The plugin must
-implement the `GeyserPlugin` trait. Please see the details of the
-`geyser_plugin_interface.rs` for the interface definition.
+t-this cwate enabwes a-a pwugin to be a-added into the s-sowana vawidatow w-wuntime to
+take a-actions at the t-time of account u-updates ow bwock and twansaction pwocessing;
+fow exampwe, (˘ω˘) saving the account state t-to an extewnaw database. (⑅˘꒳˘) the pwugin must
+impwement t-the `GeyserPlugin` twait. (///ˬ///✿) p-pwease see the detaiws of the
+`geyser_plugin_interface.rs` fow the intewface d-definition. 😳😳😳
 
-The plugin should produce a `cdylib` dynamic library, which must expose a `C`
-function `_create_plugin()` that instantiates the implementation of the
-interface.
+the pwugin shouwd pwoduce a-a `cdylib` d-dynamic wibwawy, 🥺 which must expose a `C`
+function `_create_plugin()` that instantiates t-the impwementation of the
+intewface. mya
 
-The https://github.com/solana-labs/solana-accountsdb-plugin-postgres repository
-provides an example of how to create a plugin which saves the accounts data into
-an external PostgreSQL database.
+the https://github.com/sowana-wabs/sowana-accountsdb-pwugin-postgwes wepositowy
+pwovides a-an exampwe of how to cweate a-a pwugin which s-saves the accounts d-data into
+an e-extewnaw postgwesqw database. 🥺
 
-More information about Solana is available in the [Solana documentation](https://solana.com/docs).
+mowe infowmation a-about sowana is avaiwabwe in the [Solana documentation](https://solana.com/docs). >_<
 
-Still have questions?  Ask us on [Stack Exchange](https://sola.na/sse)
+stiww have questions?  a-ask us on [Stack Exchange](https://sola.na/sse)

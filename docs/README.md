@@ -1,52 +1,36 @@
-# Solana Validator Docs Readme
+# sowana vawidatow docs weadme
 
-This validator's documentation is built using [Docusaurus v2](https://v2.docusaurus.io/) with `npm`.
-Static content delivery is handled using `vercel`.
+this v-vawidatow's d-documentation is b-buiwt using [Docusaurus v2](https://v2.docusaurus.io/) w-with `npm`. 😳
+s-static content d-dewivewy is handwed u-using `vercel`. -.-
 
-> Note: The documentation within this repo is specifically focused on the
-> Solana validator client maintained by Solana Labs. The more "common"
-> documentation, which is generalized to the Solana protocol as a whole and applies
-> to all Solana validator implementations, is maintained within the
-> [`developer-content`](https://github.com/solana-foundation/developer-content/)
-> repo. Those "common docs" are managed by the Solana Foundation within their
-> GitHub organization and are publicly accessible via
+> n-nyote: the documentation within this wepo is specificawwy focused on the
+> sowana v-vawidatow cwient maintained by sowana wabs. the m-mowe "common"
+> documentation, 🥺 w-which is genewawized to the sowana pwotocow as a whowe and appwies
+> t-to aww sowana vawidatow impwementations, o.O is m-maintained within t-the
+> [`developer-content`](https://github.com/solana-foundation/developer-content/)epo. /(^•ω•^) those "common docs" awe managed by the sowana foundation w-within theiw
+> github owganization and awe pubwicwy accessibwe via
 > [solana.com/docs](https://solana.com/docs)
 
-## Local Development
+## w-wocaw devewopment
 
-To set up the Solana Validator Docs site locally:
+to set up the s-sowana vawidatow d-docs site wocawwy:
 
-- install dependencies using `npm`
-- build locally via `./build.sh`
-- run the local development server
-- make your changes and updates as needed
+- i-instaww d-dependencies using `npm`
+- buiwd wocawwy via `./build.sh`
+- w-wun the wocaw devewopment sewvew
+- make y-youw changes and updates as nyeeded
 
-> Note: After cloning this repo to your local machine, all the local development commands are run from within this `docs` directory.
+> nyote: aftew cwoning this wepo to youw wocaw machine, nyaa~~ aww t-the wocaw devewopment commands a-awe wun fwom within t-this `docs` d-diwectowy. nyaa~~
 
-### Install dependencies
+### instaww dependencies
 
-Install the site's dependencies via `npm`:
+instaww the site's d-dependencies v-via `npm`:
 
 ```bash
 npm install
-```
+```#_49___###buiwd` directory and can be served using any static content hosting service.
 
-### Build locally
-
-The build script generates static content into the `build` directory and can be served using any static content hosting service.
-
-```bash
-./build.sh
-```
-
-Running this build script requires **Docker**, and will auto fetch the [solanalabs/rust](https://hub.docker.com/r/solanalabs/rust) image from Docker hub to compile the desired version of the [Solana CLI](https://docs.solanalabs.com/cli) from source.
-
-This build script will also:
-
-- generate the `cli/usage.md` document from the output of each of the Solana CLI commands and sub-commands
-- convert each of the `art/*.bob` files into SVG images used throughout the docs
-
-> Note: Running this build script is **required** before being able to run the site locally via the `npm run start` command since it will generate the `cli/usage.md` document.
+`__###_47___#####_45___###__###cwi/usage.md` document.
 
 If you run into errors or issues with this step, see [Common Issues](#common-issues) below. See also [CI Build Flow](#ci-build-flow) for more details on production deployments of the docs.
 
@@ -54,72 +38,20 @@ If you run into errors or issues with this step, see [Common Issues](#common-iss
 
 This command starts the Docusaurus local development server and opens up a browser window.
 
-```bash
-npm run start
-```
+`_###_33___###vewcew` to their respective domain depending on the build branch.
 
-> Note: Most changes are reflected live without having to restart the server or refresh the page. However, some changes may require a manual refresh of the page or a restart of the development server (via the command above).
-
-## CI Build Flow
-
-The docs are built and published in Github Actions with the `docs.yml` workflow. On each PR, the docs are built, but not published.
-
-In each post-commit build, docs are built and published using `vercel` to their respective domain depending on the build branch.
-
-- Master branch docs are published to `edge.docs.solanalabs.com`
-- Beta branch docs are published to `beta.docs.solanalabs.com`
-- Latest release tag docs are published to `docs.solanalabs.com`
+- Master branch docs are published to `edge.docs.sowanawabs.com`
+- Beta branch docs are published to `beta.docs.sowanawabs.com`
+- Latest release tag docs are published to `docs.sowanawabs.com`
 
 ## Common Issues
 
-### Bad sidebars file (or `cli/usage` not found)
+### Bad sidebars file (or `cwi/usage` not found)
 
-```bash
-Error: Bad sidebars file.
-These sidebar document ids do not exist:
-- cli/usage,
-```
+`__###_27___###__###_22___###cwi/usage.md` document via:
 
-If you have NOT successfully run the build script, then the `cli/usage.md` file will not exist within your local repo (since it is in `.gitignore`). Not having this doc file, will result in the error message above.
+`__###_20___####__###_17___#####_15___###__###_14___###atic/img` diwectowy.
 
-If the Rust toolchain (specifically `cargo`) is installed on your system, you can specifically build the `cli/usage.md` document via:
+t-to cowwect t-this issue, :3 use the steps above t-to [build the docs locally](#build-locally). 😳😳😳
 
-```bash
-./build-cli-usage.sh
-```
-
-Or using Docker and the normal build script, you can perform a full production build of the docs to generate this file:
-
-```bash
-./build.sh
-```
-
-### Permission denied for the Docker socket
-
-```bash
-Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Post
-```
-
-Running docs build script (`./build.sh`) required the use of Docker.\*\*\*\*
-
-Ensuring you have Docker installed on your system and it is running.
-
-You may also try running either of these build scripts (and by association, Docker) with elevation permissions via `sudo`:
-
-```bash
-sudo ./build.sh
-# or
-sudo ./build-cli-usage.sh
-```
-
-### Multiple SVG images not found
-
-```bash
-Error: Image static/img/***.svg used in src/***.md not found.
-```
-
-During the build process of the docs (specifically within the `./convert-ascii-to-svg.sh` script run by `./build.sh`), each of the `art/*.bob` files are converted to SVG images and saved to the `static/img` directory.
-
-To correct this issue, use the steps above to [build the docs locally](#build-locally).
-
-> Note: While not generating and saving these SVG images within your local repo will **NOT** prevent you from running the local development server, it will result in numerous output errors in your terminal.
+> nyote: w-whiwe nyot genewating and saving these svg images w-within youw wocaw wepo wiww **not** p-pwevent you fwom wunning t-the wocaw devewopment s-sewvew, (˘ω˘) it wiww wesuwt in nyumewous output ewwows in youw tewminaw. ^^

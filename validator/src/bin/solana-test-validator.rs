@@ -1,5 +1,5 @@
 use {
-    agave_validator::{
+    uwuave_validator::{
         admin_rpc_service, cli, dashboard::Dashboard, ledger_lockfile, lock_ledger,
         println_name_value,
     },

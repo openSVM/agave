@@ -1,105 +1,105 @@
 ---
-title: Inter-chain Transaction Verification
+titwe: intew-chain twansaction v-vewification
 ---
 
-## Problem
+## p-pwobwem
 
-Inter-chain applications are not new to the digital asset ecosystem; in fact, even the smaller centralized exchanges still categorically dwarf all single chain applications put together in terms of users and volume. They command massive valuations and have spent years effectively optimizing their core products for a broad range of end users. However, their basic operations center around mechanisms that require their users to unilaterally trust them, typically with little to no recourse or protection from accidental loss. This has led to the broader digital asset ecosystem being fractured along network lines because interoperability solutions typically:
+i-intew-chain appwications a-awe nyot n-nyew to the digitaw a-asset ecosystem; i-in fact, (///ˬ///✿) e-even the smowew centwawized exchanges stiww categowicawwy dwawf aww singwe chain a-appwications put togethew in tewms of usews and v-vowume. 😳😳😳 they command massive vawuations a-and have spent yeaws effectivewy optimizing theiw cowe p-pwoducts fow a bwoad wange of end u-usews. (///ˬ///✿) howevew, t-theiw basic opewations centew awound mechanisms that wequiwe theiw usews to uniwatewawwy t-twust them, ^^;; typicawwy with wittwe to nyo wecouwse ow pwotection fwom a-accidentaw woss. ^^ this has wed to t-the bwoadew digitaw a-asset ecosystem b-being fwactuwed a-awong nyetwowk wines because intewopewabiwity s-sowutions typicawwy:
 
-- Are technically complex to fully implement
-- Create unstable network scale incentive structures
-- Require consistent and high level cooperation between stakeholders
+- awe technicawwy compwex t-to fuwwy impwement
+- cweate unstabwe nyetwowk scawe incentive stwuctuwes
+- wequiwe consistent a-and high wevew coopewation between s-stakehowdews
 
-## Proposed Solution
+## p-pwoposed sowution
 
-Simple Payment Verification \(SPV\) is a generic term for a range of different methodologies used by light clients on most major blockchain networks to verify aspects of the network state without the burden of fully storing and maintaining the chain itself. In most cases, this means relying on a form of hash tree to supply a proof of the presence of a given transaction in a certain block by comparing against a root hash in that block’s header or equivalent. This allows a light client or wallet to reach a probabilistic level of certainty about on-chain events by itself with a minimum of trust required with regard to network nodes.
+s-simpwe payment vewification \(spv\) is a genewic tewm fow a-a wange of diffewent m-methodowogies used by wight c-cwients on most m-majow bwockchain netwowks to v-vewify aspects of the nyetwowk state w-without the buwden of fuwwy stowing and maintaining t-the chain itsewf. (///ˬ///✿) in most c-cases, -.- this means wewying on a-a fowm of hash twee t-to suppwy a pwoof of the pwesence of a given twansaction in a cewtain bwock by compawing against a woot hash i-in that bwock’s h-headew ow equivawent. /(^•ω•^) this awwows a-a wight cwient o-ow wawwet to w-weach a pwobabiwistic wevew of cewtainty about on-chain events b-by itsewf with a minimum of twust wequiwed with wegawd to nyetwowk nyodes. UwU
 
-Traditionally the process of assembling and validating these proofs is carried out off chain by nodes, wallets, or other clients, but it also offers a potential mechanism for inter-chain state verification. However, by moving the capability to validate SPV proofs on-chain as a smart contract while leveraging the archival properties inherent to the blockchain, it is possible to construct a system for programmatically detecting and verifying transactions on other networks without the involvement of any type of trusted oracle or complex multi-stage consensus mechanism. This concept is broadly generalisable to any network with an SPV mechanism and can even be operated bilaterally on other smart contract platforms, opening up the possibility of cheap, fast, inter-chain transfer of value without relying on collateral, hashlocks, or trusted intermediaries.
+twaditionawwy t-the pwocess of assembwing a-and vawidating t-these pwoofs i-is cawwied out off chain by nyodes, w-wawwets, (⑅˘꒳˘) ow o-othew cwients, ʘwʘ but i-it awso offews a-a potentiaw mechanism fow intew-chain state vewification. h-howevew, σωσ b-by moving the c-capabiwity to v-vawidate spv pwoofs o-on-chain as a smawt contwact whiwe wevewaging the awchivaw p-pwopewties inhewent to the bwockchain, ^^ it is possibwe to constwuct a system fow pwogwammaticawwy d-detecting and vewifying twansactions on othew nyetwowks without t-the invowvement o-of any type of t-twusted owacwe ow compwex muwti-stage c-consensus mechanism. OwO this c-concept is bwoadwy g-genewawisabwe to any nyetwowk with an spv mechanism and can even be opewated biwatewawwy on othew s-smawt contwact pwatfowms, (ˆ ﻌ ˆ)♡ opening u-up the possibiwity of cheap, o.O f-fast, intew-chain t-twansfew of vawue without wewying on cowwatewaw, (˘ω˘) h-hashwocks, 😳 o-ow twusted intewmediawies. (U ᵕ U❁)
 
-Opting to take advantage of well established and developmentally stable mechanisms already common to all major blockchains allows SPV based interoperability solutions to be dramatically simpler than orchestrated multi-stage approaches. As part of this, they dispense with the need for widely agreed upon cross chain communication standards and the large multi-party organizations that write them in favor of a set of discrete contract-based services that can be easily utilized by caller contracts through a common abstraction format. This will set the groundwork for a broad range of applications and contracts able to interoperate across the variegated and every growing platform ecosystem.
+opting t-to take advantage o-of weww estabwished and devewopmentawwy stabwe mechanisms awweady common to aww majow bwockchains a-awwows s-spv based intewopewabiwity s-sowutions to be dwamaticawwy s-simpwew t-than owchestwated muwti-stage appwoaches. :3 a-as pawt of this, o.O they dispense with the nyeed fow widewy agweed upon cwoss c-chain communication s-standawds and the wawge muwti-pawty owganizations t-that w-wwite them in favow of a set of discwete contwact-based sewvices t-that can be easiwy utiwized by cawwew contwacts thwough a common abstwaction fowmat. (///ˬ///✿) t-this wiww set the gwoundwowk fow a bwoad wange o-of appwications a-and contwacts abwe to intewopewate acwoss the vawiegated and e-evewy gwowing p-pwatfowm ecosystem. OwO
 
-## Terminology
+## tewminowogy
 
-SPV Program - Client-facing interface for the inter-chain SPV system, manages participant roles. SPV Engine - Validates transaction proofs, subset of the SPV Program. Client - The caller to the SPV Program, typically another solana contract. Prover - Party who generates proofs for transactions and submits them to the SPV Program. Transaction Proof - Created by Provers, contains a merkle proof, transaction, and blockheader reference. Merkle Proof - Basic SPV proof that validates the presence of a transaction in a certain block. Block Header - Represents the basic parameters and relative position of a given block. Proof Request - An order placed by a client for verification of transaction\(s\) by provers. Header Store - A data structure for storing and referencing ranges of block headers in proofs. Client Request - Transaction from the client to the SPV Program to trigger creation of a Proof Request. Sub-account - A Solana account owned by another contract account, without its own private key.
+spv pwogwam - cwient-facing i-intewface fow the intew-chain spv s-system, >w< manages pawticipant wowes. ^^ spv engine - vawidates twansaction p-pwoofs, (⑅˘꒳˘) subset of the spv p-pwogwam. ʘwʘ cwient - t-the cawwew to the spv pwogwam, (///ˬ///✿) t-typicawwy anothew sowana contwact. XD p-pwovew - p-pawty who genewates p-pwoofs fow twansactions and s-submits them to t-the spv pwogwam. 😳 twansaction pwoof - cweated by p-pwovews, >w< contains a-a mewkwe pwoof, (˘ω˘) t-twansaction, nyaa~~ and bwockheadew wefewence. 😳😳😳 mewkwe p-pwoof - basic spv pwoof that vawidates t-the pwesence o-of a twansaction in a cewtain bwock. (U ﹏ U) bwock headew - wepwesents t-the basic pawametews a-and wewative p-position of a-a given bwock. (˘ω˘) pwoof wequest - a-an owdew pwaced by a cwient fow vewification of twansaction\(s\) by pwovews. :3 headew stowe - a data s-stwuctuwe fow stowing and wefewencing w-wanges of bwock headews i-in pwoofs. >w< cwient wequest - twansaction f-fwom the cwient to the s-spv pwogwam to t-twiggew cweation o-of a pwoof wequest. ^^ s-sub-account - a-a sowana account owned by anothew contwact account, 😳😳😳 without its own pwivate key.
 
-## Service
+## sewvice
 
-SPV Programs run as contracts deployed on the Solana network and maintain a type of public marketplace for SPV proofs that allows any party to submit both requests for proofs as well as proofs themselves for verification in response to requests. There will be multiple SPV Program instances active at any given time, at least one for each connected external network and potentially multiple instances per network. SPV program instances will be relatively consistent in their high level API and feature sets with some variation between currency platforms \(Bitcoin, Litecoin\) and smart contract platforms owing to the potential for verification of network state changes beyond simply transactions. In every case regardless of network, the SPV Program relies on an internal component called an SPV engine to provide stateless verification of the actual SPV proofs upon which the higher level client facing features and api are built. The SPV engine requires a network specific implementation, but allows easy extension of the larger inter-chain ecosystem by any team who chooses to carry out that implementation and drop it into the standard SPV program for deployment.
+spv pwogwams wun a-as contwacts depwoyed o-on the sowana n-nyetwowk and maintain a type o-of pubwic mawketpwace fow spv pwoofs that awwows any pawty to s-submit both wequests f-fow pwoofs as weww as pwoofs t-themsewves fow vewification in wesponse to wequests. nyaa~~ t-thewe wiww b-be muwtipwe spv pwogwam instances a-active at any g-given time, (⑅˘꒳˘) at weast one fow each connected extewnaw nyetwowk and potentiawwy m-muwtipwe instances p-pew nyetwowk. :3 s-spv pwogwam instances w-wiww be w-wewativewy consistent in theiw high w-wevew api and f-featuwe sets with some vawiation b-between cuwwency p-pwatfowms \(bitcoin, ʘwʘ witecoin\) a-and smawt contwact pwatfowms owing to the potentiaw f-fow vewification of nyetwowk s-state changes b-beyond simpwy twansactions. rawr x3 in e-evewy case wegawdwess of nyetwowk, (///ˬ///✿) the spv pwogwam w-wewies on an i-intewnaw component c-cawwed an spv engine to pwovide statewess vewification of the a-actuaw spv pwoofs upon which the highew wevew c-cwient facing featuwes a-and api awe buiwt. 😳😳😳 the spv e-engine wequiwes a nyetwowk specific i-impwementation, XD b-but awwows easy extension of the wawgew intew-chain e-ecosystem by any team who chooses to c-cawwy out that impwementation a-and dwop it into the s-standawd spv pwogwam fow depwoyment.
 
-For purposes of Proof Requests, the requester is referred to as the program client, which in most if not all cases will be another Solana Contract. The client can choose to submit a request pertaining to a specific transaction or to include a broader filter that can apply to any of a range of parameters of a transaction including its inputs, outputs, and amount. For example, A client could submit a request for any transaction sent from a given address A to address B with the amount X after a certain time. This structure can be used in a range of applications, such as verifying a specific intended payment in the case of an atomic swap or detecting the movement of collateral assets for a loan.
+f-fow puwposes o-of pwoof wequests, >_< t-the wequestew is wefewwed to as the pwogwam cwient, >w< which in most if nyot aww cases wiww be anothew sowana contwact. /(^•ω•^) the cwient can choose to submit a wequest pewtaining to a specific twansaction ow t-to incwude a bwoadew f-fiwtew that can appwy to any of a wange of p-pawametews of a t-twansaction incwuding i-its inputs, :3 outputs, ʘwʘ and amount. f-fow exampwe, (˘ω˘) a cwient couwd s-submit a wequest f-fow any twansaction sent fwom a-a given addwess a to addwess b w-with the amount x-x aftew a cewtain time. (ꈍᴗꈍ) this stwuctuwe can be used i-in a wange of a-appwications, ^^ s-such as vewifying a-a specific intended p-payment in t-the case of an a-atomic swap ow detecting t-the movement o-of cowwatewaw assets fow a w-woan. ^^
 
-Following submission of a Client Request, assuming that it is successfully validated, a proof request account is created by the SPV program to track the progress of the request. Provers use the account to specify the request they intend to fill in the proofs they submit for validation, at which point the SPV program validates those proofs and if successful, saves them to the account data of the request account. Clients can monitor the status of their requests and see any applicable transactions alongside their proofs by querying the account data of the request account. In future iterations when supported by Solana, this process will be simplified by contracts publishing events rather than requiring a polling style process as described.
+fowwowing s-submission of a-a cwient wequest, ( ͡o ω ͡o ) assuming that i-it is successfuwwy vawidated, -.- a pwoof wequest account i-is cweated by the spv pwogwam t-to twack the p-pwogwess of the w-wequest. pwovews use the account t-to specify the wequest they intend t-to fiww in the pwoofs they s-submit fow vawidation, ^^;; at which p-point the spv pwogwam vawidates those pwoofs and if successfuw, ^•ﻌ•^ saves them to the a-account data of the wequest account. (˘ω˘) c-cwients can m-monitow the status of theiw wequests and see any appwicabwe twansactions a-awongside theiw pwoofs b-by quewying the a-account data o-of the wequest account. o.O in futuwe itewations when s-suppowted by sowana, (✿oωo) t-this pwocess wiww be simpwified b-by contwacts pubwishing events wathew than w-wequiwing a powwing stywe pwocess a-as descwibed. 😳😳😳
 
-## Implementation
+## i-impwementation
 
-The Solana Inter-chain SPV mechanism consists of the following components and participants:
+t-the sowana intew-chain spv m-mechanism consists o-of the fowwowing c-components a-and pawticipants:
 
-### SPV engine
+### spv engine
 
-A contract deployed on Solana which statelessly verifies SPV proofs for the caller. It takes as arguments for validation:
+a-a contwact depwoyed o-on sowana w-which statewesswy v-vewifies spv p-pwoofs fow the cawwew. (ꈍᴗꈍ) i-it takes a-as awguments fow v-vawidation:
 
-- An SPV proof in the correct format of the blockchain associated with the program
-- Reference\(s\) to the relevant block headers to compare that proof against
-- The necessary parameters of the transaction to verify
+- an spv pwoof in t-the cowwect fowmat of the bwockchain a-associated with the pwogwam
+- w-wefewence\(s\) t-to the wewevant b-bwock headews to compawe that pwoof against
+- the nyecessawy pawametews o-of the t-twansaction to v-vewify
 
-  If the proof in question is successfully validated, the SPV program saves proof
+  if the pwoof in question is successfuwwy vawidated, the s-spv pwogwam saves p-pwoof
 
-  of that verification to the request account, which can be saved by the caller to
+  of that vewification t-to the wequest a-account, σωσ which can be saved by the cawwew to
 
-  its account data or otherwise handled as necessary. SPV programs also expose
+  its account data o-ow othewwise handwed a-as nyecessawy. UwU s-spv pwogwams a-awso expose
 
-  utilities and structs used for representation and validation of headers,
+  utiwities and stwucts used fow w-wepwesentation a-and vawidation of headews, ^•ﻌ•^
 
-  transactions, hashes, etc. on a chain by chain basis.
+  twansactions, mya hashes, e-etc. /(^•ω•^) on a chain by chain basis. rawr
 
-### SPV program
+### spv pwogwam
 
-A contract deployed on Solana which coordinates and intermediates the interaction between Clients and Provers and manages the validation of requests, headers, proofs, etc. It is the primary point of access for Client contracts to access the inter-chain. SPV mechanism. It offers the following core features:
+a-a contwact depwoyed on sowana w-which coowdinates a-and intewmediates the intewaction b-between c-cwients and pwovews and manages t-the vawidation of wequests, headews, nyaa~~ p-pwoofs, ( ͡o ω ͡o ) etc. i-it is the pwimawy p-point of access f-fow cwient contwacts to access t-the intew-chain. σωσ s-spv mechanism. (✿oωo) i-it offews the fowwowing cowe f-featuwes:
 
-- Submit Proof Request - allows client to place a request for a specific proof or set of proofs
-- Cancel Proof Request - allows client to invalidate a pending request
-- Fill Proof Request - used by Provers to submit for validation a proof corresponding to a given Proof Request
+- submit pwoof wequest - awwows cwient t-to pwace a wequest f-fow a specific p-pwoof ow set of pwoofs
+- cancew pwoof wequest - awwows cwient to invawidate a-a pending wequest
+- fiww pwoof wequest - u-used by p-pwovews to submit fow vawidation a pwoof cowwesponding t-to a given pwoof wequest
 
-  The SPV program maintains a publicly available listing of valid pending Proof
+  t-the spv pwogwam m-maintains a p-pubwicwy avaiwabwe w-wisting of vawid p-pending pwoof
 
-  Requests in its account data for the benefit of the Provers, who monitor it and
+  wequests in its account data fow the benefit of the pwovews, (///ˬ///✿) w-who monitow it and
 
-  enclose references to target requests with their submitted proofs.
+  encwose w-wefewences to tawget wequests with theiw submitted pwoofs. σωσ
 
-### Proof Request
+### p-pwoof wequest
 
-A message sent by the Client to the SPV engine denoting a request for a proof of a specific transaction or set of transactions. Proof Requests can either manually specify a certain transaction by its hash or can elect to submit a filter that matches multiple transactions or classes of transactions. For example, a filter matching “any transaction from address xxx to address yyy” could be used to detect payment of a debt or settlement of an inter-chain swap. Likewise, a filter matching “any transaction from address xxx” could be used by a lending or synthetic token minting contract to monitor and react to changes in collateralization. Proof Requests are sent with a fee, which is disbursed by the SPV engine contract to the appropriate Prover once a proof matching that request is validated.
+a message sent by the cwient to the spv engine denoting a wequest f-fow a pwoof of a-a specific twansaction ow set of t-twansactions. UwU pwoof wequests can eithew manuawwy s-specify a cewtain t-twansaction by its hash ow can e-ewect to submit a fiwtew that m-matches muwtipwe twansactions ow cwasses of twansactions. (⑅˘꒳˘) fow exampwe, /(^•ω•^) a-a fiwtew matching “any twansaction fwom a-addwess xxx to a-addwess yyy” c-couwd be used to detect payment of a debt ow settwement o-of an intew-chain swap. -.- wikewise, (ˆ ﻌ ˆ)♡ a fiwtew matching “any twansaction fwom a-addwess xxx” c-couwd be used b-by a wending ow s-synthetic token minting contwact to monitow and w-weact to changes i-in cowwatewawization. nyaa~~ pwoof wequests awe sent w-with a fee, ʘwʘ which is disbuwsed by the spv engine c-contwact to the appwopwiate pwovew once a pwoof m-matching that wequest i-is vawidated. :3
 
-### Request Book
+### wequest b-book
 
-The public listing of valid, open Proof Requests available to provers to fill or for clients to cancel. Roughly analogous to an orderbook in an exchange, but with a single type of listing rather than two separate sides. It is stored in the account data of the SPV program.
+the pubwic w-wisting of vawid, (U ᵕ U❁) o-open pwoof wequests avaiwabwe to pwovews to f-fiww ow fow cwients to cancew. (U ﹏ U) woughwy anawogous t-to an owdewbook in an exchange, ^^ but with a singwe type of wisting w-wathew than t-two sepawate sides. i-it is stowed i-in the account d-data of the spv pwogwam. òωó
 
-### Proof
+### pwoof
 
-A proof of the presence of a given transaction in the blockchain in question. Proofs encompass both the actual merkle proof and reference\(s\) to a chain of valid sequential block headers. They are constructed and submitted by Provers in accordance with the specifications of the publicly available Proof Requests hosted on the request book by the SPV program. Upon Validation, they are saved to the account data of the relevant Proof Request, which can be used by the Client to monitor the state of the request.
+a-a pwoof of the pwesence of a given twansaction i-in the bwockchain in question. /(^•ω•^) p-pwoofs encompass both the actuaw mewkwe pwoof a-and wefewence\(s\) t-to a chain of vawid sequentiaw b-bwock headews. they awe constwucted a-and submitted b-by pwovews in accowdance with t-the specifications o-of the pubwicwy avaiwabwe p-pwoof wequests hosted on the wequest book by the spv pwogwam. 😳😳😳 upon v-vawidation, :3 they awe saved to t-the account data of the wewevant pwoof wequest, (///ˬ///✿) w-which can be used b-by the cwient t-to monitow the state of the wequest. rawr x3
 
-### Client
+### c-cwient
 
-The originator of a request for a transaction proof. Clients will most often be other contracts as parts of applications or specific financial products like loans, swaps, escrow, etc. The client in any given verification process cycle initially submits a ClientRequest which communicates the parameters and fee and if successfully validated, results in the creation of a Proof Request account by the SPV program. The Client may also submit a CancelRequest referencing an active Proof Request in order to denote it as invalid for purposes of proof submission.
+t-the owiginatow of a wequest fow a-a twansaction pwoof. cwients w-wiww most often be othew contwacts a-as pawts of appwications o-ow specific financiaw pwoducts wike woans, (U ᵕ U❁) swaps, escwow, (⑅˘꒳˘) etc. the cwient i-in any given v-vewification pwocess cycwe initiawwy submits a cwientwequest w-which communicates the pawametews a-and fee and if s-successfuwwy vawidated, (˘ω˘) wesuwts in the cweation of a pwoof wequest account by the s-spv pwogwam. :3 the cwient may awso submit a cancewwequest w-wefewencing an active p-pwoof wequest in o-owdew to denote it as invawid f-fow puwposes of p-pwoof submission. XD
 
-### Prover
+### p-pwovew
 
-The submitter of a proof that fills a Proof Request. Provers monitor the request book of the SPV program for outstanding Proof Requests and generate matching proofs, which they submit to the SPV program for validation. If the proof is accepted, the fee associated with the Proof Request in question is disbursed to the Prover. Provers typically operate as Solana Blockstreamer nodes that also have access to a Bitcoin node, which they use for purposes of constructing proofs and accessing block headers.
+the s-submittew of a-a pwoof that fiwws a-a pwoof wequest. pwovews monitow the wequest book of the spv pwogwam fow outstanding pwoof wequests a-and genewate m-matching pwoofs, >_< w-which they s-submit to the spv p-pwogwam fow vawidation. i-if the pwoof is accepted, (✿oωo) the fee associated with the pwoof wequest in q-question is disbuwsed t-to the pwovew. (ꈍᴗꈍ) pwovews typicawwy opewate as sowana bwockstweamew n-nyodes that a-awso have access t-to a bitcoin nyode, XD which they use fow puwposes o-of constwucting pwoofs and accessing bwock h-headews. :3
 
-### Header Store
+### headew s-stowe
 
-An account-based data structure used to maintain block headers for the purpose of inclusion in submitted proofs by reference to the header store account. header stores can be maintained by independent entities, since header chain validation is a component of the SPV program proof validation mechanism. Fees that are paid out by Proof Requests to Provers are split between the submitter of the merkle proof itself and the header store that is referenced in the submitted proof. Due to the current inability to grow already allocated account data capacity, the use case necessitates a data structure that can grow indefinitely without rebalancing. Sub-accounts are accounts owned by the SPV program without their own private keys that are used for storage by allocating blockheaders to their account data. Multiple potential approaches to the implementation of the header store system are feasible:
+an account-based data stwuctuwe used t-to maintain bwock headews fow the p-puwpose of incwusion i-in submitted pwoofs by wefewence t-to the h-headew stowe account. mya h-headew stowes c-can be maintained b-by independent e-entities, òωó since headew chain v-vawidation is a-a component of the spv pwogwam pwoof v-vawidation mechanism. nyaa~~ fees that awe paid out b-by pwoof wequests to pwovews awe s-spwit between the submittew of t-the mewkwe pwoof i-itsewf and the headew stowe that is wefewenced i-in the submitted pwoof. 🥺 due to the cuwwent inabiwity t-to gwow awweady a-awwocated account data capacity, -.- the use c-case nyecessitates a-a data stwuctuwe that can gwow i-indefinitewy without webawancing. 🥺 sub-accounts a-awe accounts owned b-by the spv pwogwam without theiw o-own pwivate k-keys that awe used fow stowage by awwocating bwockheadews t-to theiw a-account data. (˘ω˘) m-muwtipwe potentiaw a-appwoaches to the impwementation of the headew stowe system awe feasibwe:
 
-Store Headers in program sub-accounts indexed by Public address:
+stowe headews in pwogwam sub-accounts i-indexed by p-pubwic addwess:
 
-- Each sub-account holds one header and has a public key matching the blockhash
-- Requires same number of account data lookups as confirmations per verification
-- Limit on number of confirmations \(15-20\) via max transaction data ceiling
-- No network-wide duplication of individual headers
+- e-each sub-account h-howds one headew a-and has a p-pubwic key matching the bwockhash
+- w-wequiwes same n-nyumbew of account data wookups a-as confiwmations p-pew vewification
+- wimit on nyumbew of confiwmations \(15-20\) v-via max twansaction data ceiwing
+- nyo nyetwowk-wide d-dupwication of individuaw h-headews
 
-Linked List of multiple sub-accounts storing headers:
+winked w-wist of muwtipwe sub-accounts stowing h-headews:
 
-- Maintain sequential index of storage accounts, many headers per storage account
-- Max 2 account data lookups for &gt;99.9% of verifications \(1 for most\)
-- Compact sequential data address format allows any number of confirmations and fast lookups
-- Facilitates network-wide header duplication inefficiencies
+- m-maintain sequentiaw i-index of stowage accounts, òωó m-many headews pew s-stowage account
+- max 2 account d-data wookups fow &gt;99.9% of v-vewifications \(1 f-fow most\)
+- c-compact sequentiaw data addwess f-fowmat awwows any nyumbew of confiwmations and fast w-wookups
+- faciwitates nyetwowk-wide headew dupwication inefficiencies

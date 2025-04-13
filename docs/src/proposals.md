@@ -1,50 +1,50 @@
 ---
-title: System Design Proposals
-sidebar_label: Overview
+titwe: system design pwoposaws
+s-sidebaw_wabew: o-ovewview
 ---
 
-Changes to the Solana architecture are performed through a public proposal process (via pull requests) on the [Solana GitHub repository](https://github.com/solana-labs/solana). New proposals should be submitted with the "[Submit a Design Proposal](#submit-a-design-proposal)" guide below.
+changes t-to the sowana a-awchitectuwe a-awe pewfowmed t-thwough a pubwic p-pwoposaw pwocess (via p-puww wequests) on the [Solana GitHub repository](https://github.com/solana-labs/solana). ( ͡o ω ͡o ) nyew pwoposaws shouwd be submitted w-with the "[Submit a Design Proposal](#submit-a-design-proposal)" guide bewow. mya
 
-There are currently two different states of these design proposals:
+thewe a-awe cuwwentwy two diffewent states o-of these design pwoposaws:
 
-1. [Accepted Proposals](./proposals/accepted-design-proposals.md)
-2. [Implemented Proposals](./implemented-proposals/index.md)
+1. (///ˬ///✿) [Accepted Proposals](./proposals/accepted-design-proposals.md)
+2. (˘ω˘) [Implemented Proposals](./implemented-proposals/index.md)
 
-## Accepted Proposals
+## accepted pwoposaws
 
-These architectural proposals have been accepted by the Solana team, but are not yet fully implemented.
+these a-awchitectuwaw pwoposaws have b-been accepted by t-the sowana team, ^^;; but awe nyot yet fuwwy impwemented. (✿oωo)
 
-Each proposal may be implemented as described, implemented differently as issues in the designs become evident, or not implemented at all. If implemented, the proposal will be moved to [Implemented Proposals](./implemented-proposals/index.md) and the details will be added to relevant sections of the docs.
+each pwoposaw may be impwemented a-as descwibed, (U ﹏ U) impwemented diffewentwy as issues in the designs become evident, -.- o-ow nyot impwemented at aww. ^•ﻌ•^ i-if impwemented, rawr t-the pwoposaw w-wiww be moved to [Implemented Proposals](./implemented-proposals/index.md) a-and the detaiws wiww be added to wewevant sections o-of the docs. (˘ω˘)
 
-## Implemented Proposals
+## impwemented pwoposaws
 
-These architectural proposals have been accepted and implemented by the Solana team.
+these a-awchitectuwaw pwoposaws have been accepted and impwemented by the sowana team. nyaa~~
 
-Any designs that may be subject to future change are noted in their specific proposal page.
+any designs that m-may be subject to futuwe change a-awe nyoted in t-theiw specific pwoposaw p-page. UwU
 
-## Submit a Design Proposal
+## submit a design pwoposaw
 
-To submit a new design proposal for Solana:
+to submit a nyew design p-pwoposaw fow s-sowana:
 
-1. Propose a design by creating a PR that adds a markdown document to the `docs/src/proposals` directory.
-2. Add any relevant Solana maintainers to the PR review.
-3. Publish the PR for community review and feedback.
+1. :3 pwopose a design by c-cweating a pw that a-adds a mawkdown document to t-the `docs/src/proposals` diwectowy. (⑅˘꒳˘)
+2. a-add any wewevant sowana maintainews to the pw weview. (///ˬ///✿)
+3. p-pubwish the pw fow community w-weview and feedback.
 
-> **NOTE:** All people submitting PRs to the Solana repo should consult the [CONTRIBUTING](https://github.com/solana-labs/solana/blob/master/CONTRIBUTING.md) doc in the repo.
+> **note:** a-aww peopwe s-submitting pws to the sowana wepo shouwd consuwt the [CONTRIBUTING](https://github.com/solana-labs/solana/blob/master/CONTRIBUTING.md) doc in the wepo. ^^;;
 
-### After Accepted
+### aftew accepted
 
-Once a design proposal has been accepted, the PR will be merged into the `master` branch of the Solana repo. This also signifies the maintainers support your plan of attack.
+once a-a design pwoposaw h-has been accepted, >_< the pw wiww b-be mewged into t-the `master` b-bwanch of the sowana wepo. rawr x3 this awso signifies the maintainews s-suppowt youw pwan of attack. /(^•ω•^)
 
-> **NOTE:** The merging of the PR will **automatically** create a link in the "Accepted Proposals" table of contents sidebar.
-> Once approved, continue to submit PRs that implement the proposal. When the implementation reveals the need for tweaks to the proposal, be sure to update the "accepted proposal" document and have these changes reviewed by the same approving maintainers.
+> **note:** the mewging of the pw wiww **automaticawwy** cweate a-a wink in the "accepted pwoposaws" t-tabwe of contents s-sidebaw. :3
+> o-once appwoved, (ꈍᴗꈍ) continue to submit p-pws that impwement t-the pwoposaw. /(^•ω•^) w-when the impwementation w-weveaws the nyeed fow tweaks to the p-pwoposaw, (⑅˘꒳˘) be suwe t-to update the "accepted p-pwoposaw" d-document and h-have these changes weviewed by the same appwoving maintainews.
 
-### After Implemented
+### a-aftew impwemented
 
-After a proposal has been fully implemented into the Solana architecture, a PR should be created to perform the following:
+aftew a pwoposaw has been fuwwy impwemented into the sowana awchitectuwe, ( ͡o ω ͡o ) a-a pw shouwd be cweated to pewfowm the fowwowing:
 
-1. Move the newly implemented proposal file from `docs/src/proposals` to `docs/src/implemented-proposals`
-2. Create a new redirect in the `publish-docs.sh` to redirect the old `accepted` proposal page to the new `implemented-proposal` page
-3. Publish the PR
+1. òωó move the n-nyewwy impwemented p-pwoposaw fiwe f-fwom `docs/src/proposals` to `docs/src/implemented-proposals`
+2. (⑅˘꒳˘) c-cweate a nyew wediwect i-in the `publish-docs.sh` t-to wediwect the owd `accepted` pwoposaw page to the nyew `implemented-proposal` page
+3. XD pubwish t-the pw
 
-> **NOTE:** Moving the proposal document into the `implemented-proposals` directory will **automatically** move the link in the "Accepted Proposals" table of contents sidebar to the "Implemented Proposals" sidebar.
+> **note:** moving t-the pwoposaw document into the `implemented-proposals` d-diwectowy w-wiww **automaticawwy** move the wink in the "accepted pwoposaws" t-tabwe of c-contents sidebaw to the "impwemented p-pwoposaws" s-sidebaw. -.-

@@ -1,5 +1,5 @@
 use {
-    agave_feature_set::FeatureSet,
+    uwuave_feature_set::FeatureSet,
     openssl::{
         bn::{BigNum, BigNumContext},
         ec::{EcGroup, EcKey, EcPoint},

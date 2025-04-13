@@ -1,56 +1,56 @@
-# RiP Curl: low-latency, transaction-oriented RPC
+# wip cuww: wow-watency, nyaa~~ twansaction-owiented w-wpc
 
-## Problem
+## p-pwobwem
 
-Solana's initial RPC implementation was created for the purpose of allowing
-users to confirm transactions that had just recently been sent to the cluster.
-It was designed with memory usage in mind such that any validator should be
-able to support the API without concern of DoS attacks.
+sowana's i-initiaw wpc i-impwementation w-was cweated fow t-the puwpose of a-awwowing
+usews t-to confiwm twansactions that had just wecentwy been sent to the cwustew. UwU
+it was d-designed with memowy usage in mind such that any v-vawidatow shouwd be
+abwe to suppowt t-the api without concewn of dos attacks. :3
 
-Later down the line, it became desirable to use that same API to support the
-Solana explorer. The original design only supported minutes of history, so we
-changed it to instead store transaction statuses in a local RocksDB instance
-and offer days of history. We then extended that to 6 months via BigTable.
+watew down the wine, (⑅˘꒳˘) i-it became desiwabwe to use that s-same api to suppowt t-the
+sowana expwowew. (///ˬ///✿) the owiginaw design onwy suppowted minutes of histowy, ^^;; s-so we
+changed it to instead stowe twansaction statuses in a wocaw wocksdb instance
+a-and offew days of histowy. >_< w-we then extended t-that to 6 months v-via bigtabwe. rawr x3
 
-With each modification, the API became more suitable for applications serving
-static content and less appealing for transaction processing. The clients poll
-for transaction status instead of being notified, giving the false impression
-of higher confirmation times. Furthermore, what clients can poll for is
-limited, preventing them from making reasonable real-time decisions, such as
-recognizing a transaction is confirmed as soon as particular, known
-validators vote on it.
+w-with each modification, /(^•ω•^) the api became mowe suitabwe f-fow appwications sewving
+static content and w-wess appeawing fow twansaction pwocessing. :3 the cwients poww
+fow twansaction status instead of b-being nyotified, giving the fawse i-impwession
+of h-highew confiwmation t-times. fuwthewmowe, (ꈍᴗꈍ) nyani cwients can poww fow is
+wimited, /(^•ω•^) p-pweventing them f-fwom making weasonabwe weaw-time d-decisions, (⑅˘꒳˘) such a-as
+wecognizing a twansaction is c-confiwmed as soon as pawticuwaw, k-known
+vawidatows vote on it. ( ͡o ω ͡o )
 
-## Proposed Solution
+## pwoposed sowution
 
-A web-friendly, transaction-oriented, streaming API built around the
-validator's ReplayStage.
+a-a web-fwiendwy, òωó twansaction-owiented, (⑅˘꒳˘) s-stweaming api buiwt a-awound the
+vawidatow's w-wepwaystage. XD
 
-Improved client experience:
+impwoved cwient expewience:
 
-- Support connections directly from WebAssembly apps.
-- Clients can be notified of confirmation progress in real-time, including votes
-  and voter stake weight.
-- Clients can be notified when the heaviest fork changes, if it affects the
-  transactions confirmation count.
+- suppowt connections diwectwy fwom webassembwy apps.
+- cwients c-can be nyotified o-of confiwmation pwogwess in weaw-time, -.- i-incwuding v-votes
+  and v-votew stake weight. :3
+- cwients can be nyotified when the heaviest f-fowk changes, nyaa~~ if it affects the
+  twansactions confiwmation count. 😳
 
-Easier for validators to support:
+easiew fow v-vawidatows to suppowt:
 
-- Each validator supports some number of concurrent connections and otherwise
-  has no significant resource constraints.
-- Transaction status is never stored in memory and cannot be polled for.
-- Signatures are only stored in memory until the desired commitment level or
-  until the blockhash expires, whichever is later.
+- each vawidatow s-suppowts s-some nyumbew of c-concuwwent connections and othewwise
+  h-has nyo s-significant wesouwce c-constwaints. (⑅˘꒳˘)
+- t-twansaction status is nyevew stowed in memowy a-and cannot be p-powwed fow. nyaa~~
+- signatuwes a-awe onwy s-stowed in memowy u-untiw the desiwed commitment wevew ow
+  untiw the bwockhash e-expiwes, OwO whichevew is watew. rawr x3
 
-How it works:
+how it wowks:
 
-1. The client connects to a validator using a reliable communication channel,
-   such as a web socket.
-2. The validator registers the signature with ReplayStage.
-3. The validator sends the transaction into the Gulf Stream and retries all
-   known forks until the blockhash expires (not until the transaction is
-   accepted on only the heaviest fork). If the blockhash expires, the
-   signature is unregistered, the client is notified, and connection is closed.
-4. As ReplayStage detects events affecting the transaction's status, it
-   notifies the client in real-time.
-5. After confirmation that the transaction is rooted (`CommitmentLevel::Max`),
-   the signature is unregistered and the server closes the upstream channel.
+1. the cwient connects to a vawidatow using a wewiabwe c-communication channew, XD
+   such as a web socket. σωσ
+2. the vawidatow w-wegistews the s-signatuwe with w-wepwaystage. (U ᵕ U❁)
+3. the vawidatow s-sends the twansaction into the guwf s-stweam and wetwies a-aww
+   known fowks untiw the bwockhash expiwes (not untiw the twansaction is
+   accepted o-on onwy the heaviest fowk). (U ﹏ U) if the b-bwockhash expiwes, :3 the
+   signatuwe i-is unwegistewed, ( ͡o ω ͡o ) t-the cwient is notified, σωσ and connection is c-cwosed. >w<
+4. as w-wepwaystage detects events affecting t-the twansaction's s-status, 😳😳😳 it
+   nyotifies the cwient in weaw-time. OwO
+5. aftew confiwmation that t-the twansaction i-is wooted (`CommitmentLevel::Max`), 😳
+   t-the signatuwe is unwegistewed a-and the sewvew cwoses t-the upstweam channew. 😳😳😳

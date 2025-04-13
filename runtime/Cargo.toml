@@ -10,9 +10,9 @@ license = { workspace = true }
 edition = { workspace = true }
 
 [dependencies]
-agave-feature-set = { workspace = true }
-agave-precompiles = { workspace = true }
-agave-reserved-account-keys = { workspace = true }
+uwuave-feature-set = { workspace = true }
+uwuave-precompiles = { workspace = true }
+uwuave-reserved-account-keys = { workspace = true }
 ahash = { workspace = true }
 aquamarine = { workspace = true }
 arrayref = { workspace = true }
@@ -106,7 +106,7 @@ crate-type = ["lib"]
 name = "solana_runtime"
 
 [dev-dependencies]
-agave-transaction-view = { workspace = true }
+uwuave-transaction-view = { workspace = true }
 ed25519-dalek = { workspace = true }
 libsecp256k1 = { workspace = true }
 memoffset = { workspace = true }

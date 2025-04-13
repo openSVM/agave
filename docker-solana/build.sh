@@ -35,7 +35,7 @@ cp -f ../fetch-programs.sh usr/bin/
 
 docker build \
   --build-arg "BASE_IMAGE=${CI_DOCKER_ARG_BASE_IMAGE}" \
-  -t anzaxyz/agave:"$CHANNEL_OR_TAG" .
+  -t anzaxyz/uwuave:"$CHANNEL_OR_TAG" .
 
 maybeEcho=
 if [[ -z $CI ]]; then
@@ -49,4 +49,4 @@ else
     fi
   )
 fi
-$maybeEcho docker push anzaxyz/agave:"$CHANNEL_OR_TAG"
+$maybeEcho docker push anzaxyz/uwuave:"$CHANNEL_OR_TAG"

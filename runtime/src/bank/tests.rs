@@ -18,8 +18,8 @@ use {
         stakes::InvalidCacheEntryReason,
         status_cache::MAX_CACHE_ENTRIES,
     },
-    agave_feature_set::{self as feature_set, FeatureSet},
-    agave_transaction_view::static_account_keys_frame::MAX_STATIC_ACCOUNTS_PER_PACKET,
+    uwuave_feature_set::{self as feature_set, FeatureSet},
+    uwuave_transaction_view::static_account_keys_frame::MAX_STATIC_ACCOUNTS_PER_PACKET,
     assert_matches::assert_matches,
     crossbeam_channel::{bounded, unbounded},
     itertools::Itertools,
@@ -6503,7 +6503,7 @@ fn test_bank_hash_consistency() {
     genesis_config.rent.burn_percent = 100;
     activate_feature(
         &mut genesis_config,
-        agave_feature_set::set_exempt_rent_epoch_max::id(),
+        uwuave_feature_set::set_exempt_rent_epoch_max::id(),
     );
 
     let mut bank = Arc::new(Bank::new_for_tests(&genesis_config));
@@ -12027,7 +12027,7 @@ fn test_partitioned_rent_collection(should_run_partitioned_rent_collection: bool
     if should_run_partitioned_rent_collection {
         genesis_config
             .accounts
-            .remove(&agave_feature_set::disable_partitioned_rent_collection::id());
+            .remove(&uwuave_feature_set::disable_partitioned_rent_collection::id());
     }
 
     let bank = Arc::new(Bank::new_for_tests(&genesis_config));
@@ -12069,10 +12069,10 @@ fn test_accounts_data_size_and_rent_collection(should_collect_rent: bool) {
     if should_collect_rent {
         genesis_config
             .accounts
-            .remove(&agave_feature_set::disable_rent_fees_collection::id());
+            .remove(&uwuave_feature_set::disable_rent_fees_collection::id());
         genesis_config
             .accounts
-            .remove(&agave_feature_set::disable_partitioned_rent_collection::id());
+            .remove(&uwuave_feature_set::disable_partitioned_rent_collection::id());
     }
 
     let bank = Arc::new(Bank::new_for_tests(&genesis_config));
@@ -12757,7 +12757,7 @@ where
     if should_run_partitioned_rent_collection {
         genesis_config
             .accounts
-            .remove(&agave_feature_set::disable_partitioned_rent_collection::id());
+            .remove(&uwuave_feature_set::disable_partitioned_rent_collection::id());
     }
     let (bank, bank_forks) = Bank::new_with_bank_forks_for_tests(&genesis_config);
     let bank_client = BankClient::new_shared(bank.clone());
@@ -13466,7 +13466,7 @@ fn test_deploy_last_epoch_slot() {
     let (mut genesis_config, mint_keypair) = create_genesis_config(1_000_000 * LAMPORTS_PER_SOL);
     activate_feature(
         &mut genesis_config,
-        agave_feature_set::enable_loader_v4::id(),
+        uwuave_feature_set::enable_loader_v4::id(),
     );
     genesis_config
         .accounts
@@ -13570,7 +13570,7 @@ fn test_loader_v3_to_v4_migration() {
     let (mut genesis_config, mint_keypair) = create_genesis_config(1_000_000 * LAMPORTS_PER_SOL);
     activate_feature(
         &mut genesis_config,
-        agave_feature_set::enable_loader_v4::id(),
+        uwuave_feature_set::enable_loader_v4::id(),
     );
     let mut bank = Bank::new_for_tests(&genesis_config);
     bank.activate_feature(&feature_set::remove_accounts_executable_flag_checks::id());
@@ -14160,7 +14160,7 @@ fn test_should_use_vote_keyed_leader_schedule() {
             let feature_activation_epoch = bank.epoch_schedule().get_epoch(feature_activation_slot);
             assert!(feature_activation_epoch <= bank_epoch);
             feature_set.activate(
-                &agave_feature_set::enable_vote_address_leader_schedule::id(),
+                &uwuave_feature_set::enable_vote_address_leader_schedule::id(),
                 feature_activation_slot,
             );
         }

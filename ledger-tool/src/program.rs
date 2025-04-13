@@ -540,7 +540,7 @@ pub fn program(ledger_path: &Path, matches: &ArgMatches<'_>) {
     invoke_context.push().unwrap();
     let mask_out_rent_epoch_in_vm_serialization = invoke_context
         .get_feature_set()
-        .is_active(&agave_feature_set::mask_out_rent_epoch_in_vm_serialization::id());
+        .is_active(&uwuave_feature_set::mask_out_rent_epoch_in_vm_serialization::id());
     let (_parameter_bytes, regions, account_lengths) = serialize_parameters(
         invoke_context.transaction_context,
         invoke_context

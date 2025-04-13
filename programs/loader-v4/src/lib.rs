@@ -1,4 +1,4 @@
-#[cfg(feature = "agave-unstable-api")]
+#[cfg(feature = "uwuave-unstable-api")]
 use qualifier_attr::qualifiers;
 use {
     solana_bincode::limited_deserialize,
@@ -26,7 +26,7 @@ use {
     std::{cell::RefCell, rc::Rc},
 };
 
-#[cfg_attr(feature = "agave-unstable-api", qualifiers(pub))]
+#[cfg_attr(feature = "uwuave-unstable-api", qualifiers(pub))]
 const DEFAULT_COMPUTE_UNITS: u64 = 2_000;
 
 pub fn get_state(data: &[u8]) -> Result<&LoaderV4State, InstructionError> {

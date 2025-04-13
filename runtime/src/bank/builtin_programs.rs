@@ -2,7 +2,7 @@
 mod tests {
     use {
         crate::bank::*,
-        agave_feature_set::FeatureSet,
+        uwuave_feature_set::FeatureSet,
         solana_sdk::{ed25519_program, genesis_config::create_genesis_config},
     };
 
@@ -71,7 +71,7 @@ mod tests_core_bpf_migration {
             tests::{create_genesis_config, new_bank_from_parent_with_bank_forks},
             Bank,
         },
-        agave_feature_set::FeatureSet,
+        uwuave_feature_set::FeatureSet,
         solana_builtins::{
             core_bpf_migration::CoreBpfMigrationConfig,
             prototype::{BuiltinPrototype, StatelessBuiltinPrototype},

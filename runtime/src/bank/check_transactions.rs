@@ -1,6 +1,6 @@
 use {
     super::{Bank, BankStatusCache},
-    agave_feature_set::FeatureSet,
+    uwuave_feature_set::FeatureSet,
     solana_accounts_db::blockhash_queue::BlockhashQueue,
     solana_fee::{calculate_fee_details, FeeFeatures},
     solana_perf::perf_libs,
@@ -238,7 +238,7 @@ impl Bank {
     ) -> Option<(Pubkey, AccountSharedData, NonceData)> {
         let require_static_nonce_account = self
             .feature_set
-            .is_active(&agave_feature_set::require_static_nonce_account::id());
+            .is_active(&uwuave_feature_set::require_static_nonce_account::id());
         let nonce_address = message.get_durable_nonce(require_static_nonce_account)?;
         let nonce_account = self.get_account_with_fixed_root(nonce_address)?;
         let nonce_data =

@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://solana.com">
-    <img alt="Solana" src="https://i.imgur.com/0vfIMHo.png" width="250" />
+    🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺🥺
   </a>
 </p>
 
@@ -9,21 +9,21 @@
 [![Build status](https://badge.buildkite.com/8cc350de251d61483db98bdfc895b9ea0ac8ffa4a32ee850ed.svg?branch=master)](https://buildkite.com/solana-labs/solana/builds?branch=master)
 [![codecov](https://codecov.io/gh/solana-labs/solana/branch/master/graph/badge.svg)](https://codecov.io/gh/solana-labs/solana)
 
-# Agave - A Solana Validator Implementation
+# uwuave🥺 - a sowana vawidatow impwementation
 
-Agave is a high-performance blockchain platform designed for scalability and speed. This repository contains the Agave validator implementation, a fork of the Solana blockchain.
+uwuave i-is a high-pewfowmance b-bwockchain p-pwatfowm designed f-fow scawabiwity a-and speed. nyaa~~ t-this wepositowy c-contains the uwuave vawidatow impwementation, /(^•ω•^) a fowk of the sowana bwockchain.
 
-## Project Overview
+## pwoject ovewview
 
-Agave is built on the foundation of Solana's architecture, featuring:
+uwuave is buiwt on the foundation of sowana's a-awchitectuwe, rawr featuwing:
 
-- High throughput with thousands of transactions per second
-- Low transaction fees (fractions of a penny)
-- Fast block times (~400ms)
-- Energy-efficient Proof of Stake consensus mechanism
-- Smart contract support via the Solana Virtual Machine (SVM)
+- high t-thwoughput with thousands of twansactions pew second
+- wow twansaction f-fees (fwactions of a p-penny)
+- fast bwock t-times (~400ms)
+- enewgy-efficient pwoof of stake consensus mechanism
+- smawt c-contwact suppowt via the sowana viwtuaw machine (svm)
 
-### Architecture Overview
+### awchitectuwe ovewview
 
 ```mermaid
 graph TD
@@ -34,69 +34,3 @@ graph TD
     B -->|Gossip Protocol| E[Other Validators]
     F[RPC Client] -->|API Requests| B
 ```
-
-## Repository Structure
-
-The repository is organized into several key components:
-
-- **core**: Main blockchain functionality including consensus, networking, and transaction processing
-- **validator**: The node implementation that validates transactions and maintains the blockchain
-- **svm**: The Solana Virtual Machine that executes smart contracts
-- **runtime**: The execution environment for transactions
-- **programs**: Built-in smart contracts that provide core functionality
-- **ledger**: Storage and management of the blockchain data
-- **rpc**: API for interacting with the blockchain
-- **cli**: Command-line tools for interacting with the blockchain
-
-## Getting Started
-
-### Building from Source
-
-#### Prerequisites
-
-- Rust and Cargo (latest stable version)
-- System dependencies (Ubuntu example):
-  ```bash
-  sudo apt-get update
-  sudo apt-get install libssl-dev libudev-dev pkg-config zlib1g-dev llvm clang cmake make libprotobuf-dev protobuf-compiler libclang-dev
-  ```
-
-#### Build Steps
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/anza-xyz/agave.git
-   cd agave
-   ```
-
-2. Build the project:
-   ```bash
-   ./cargo build
-   ```
-
-For production use, build a release version:
-   ```bash
-   ./cargo build --release
-   ```
-
-### Running a Validator
-
-To run a validator node, see the detailed instructions in the [validator documentation](docs/src/running-validator/validator-start.md).
-
-### Development and Testing
-
-- Run tests: `./cargo test`
-- Start a local testnet: See [local testnet documentation](docs/src/clusters/benchmark.md)
-- Access the development cluster: Connect to `devnet.solana.com`
-
-## Documentation
-
-Comprehensive documentation is available in the `docs` directory and on the [official documentation website](https://docs.anza.xyz).
-
-## Contributing
-
-Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting a pull request.
-
-## License
-
-Agave is licensed under the [Apache License 2.0](LICENSE).

@@ -25,7 +25,7 @@ use {
         },
         validator::{BlockProductionMethod, TransactionStructure},
     },
-    agave_banking_stage_ingress_types::BankingPacketReceiver,
+    uwuave_banking_stage_ingress_types::BankingPacketReceiver,
     conditional_mod::conditional_vis_mod,
     crossbeam_channel::{unbounded, Receiver, Sender},
     histogram::Histogram,
@@ -646,7 +646,7 @@ mod tests {
     use {
         super::*,
         crate::banking_trace::{BankingTracer, Channels},
-        agave_banking_stage_ingress_types::BankingPacketBatch,
+        uwuave_banking_stage_ingress_types::BankingPacketBatch,
         crossbeam_channel::{unbounded, Receiver},
         itertools::Itertools,
         solana_entry::entry::{self, Entry, EntrySlice},

@@ -23,7 +23,7 @@ if [[ -n $CI_PULL_REQUEST ]]; then
   else
     echo "couldn't parse owner and repo. use defaults"
     owner="anza-xyz"
-    repo="agave"
+    repo="uwuave"
   fi
 
   # ref: https://github.com/cli/cli/issues/5368#issuecomment-1087515074
@@ -161,8 +161,8 @@ EOF
 
 trigger_secondary_step() {
   cat  >> "$output_file" <<"EOF"
-  - name: "Trigger Build on agave-secondary"
-    trigger: "agave-secondary"
+  - name: "Trigger Build on uwuave-secondary"
+    trigger: "uwuave-secondary"
     branches: "!pull/*"
     async: true
     soft_fail: true
@@ -337,7 +337,7 @@ if [[ -n $BUILDKITE_TAG ]]; then
   start_pipeline "Tag pipeline for $BUILDKITE_TAG"
 
   annotate --style info --context release-tag \
-    "https://github.com/anza-xyz/agave/releases/$BUILDKITE_TAG"
+    "https://github.com/anza-xyz/uwuave/releases/$BUILDKITE_TAG"
 
   # Jump directly to the secondary build to publish release artifacts quickly
   trigger_secondary_step
@@ -355,7 +355,7 @@ if [[ $BUILDKITE_BRANCH =~ ^pull ]]; then
 
   # Add helpful link back to the corresponding Github Pull Request
   annotate --style info --context pr-backlink \
-    "Github Pull Request: https://github.com/anza-xyz/agave/$BUILDKITE_BRANCH"
+    "Github Pull Request: https://github.com/anza-xyz/uwuave/$BUILDKITE_BRANCH"
 
   pull_or_push_steps
   exit 0

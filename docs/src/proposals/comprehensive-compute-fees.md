@@ -1,153 +1,153 @@
 ---
-title: Comprehensive Compute Fees
+titwe: compwehensive compute f-fees
 ---
 
-## Motivation
+## motivation
 
-The current fee structure lacks a comprehensive account of the work required by
-a validator to process a transaction.  The fee structure is only based on the
-number of signatures in a transaction but is meant to account for the work that
-the validator must perform to validate each transaction.  The validator performs
-a lot more user-defined work than just signature verification.  Processing a
-transaction typically includes signature verifications, account locking, account
-loading, and instruction processing.
+t-the cuwwent f-fee stwuctuwe w-wacks a compwehensive a-account o-of the wowk wequiwed b-by
+a vawidatow t-to pwocess a twansaction. nyaa~~  the fee stwuctuwe is onwy based on the
+nyumbew of s-signatuwes in a twansaction but is meant to account f-fow the wowk that
+the vawidatow m-must pewfowm to vawidate each twansaction. 🥺  the vawidatow p-pewfowms
+a wot mowe usew-defined w-wowk than just s-signatuwe vewification. rawr x3  pwocessing a
+twansaction typicawwy incwudes signatuwe vewifications, σωσ a-account wocking, (///ˬ///✿) account
+woading, (U ﹏ U) and instwuction pwocessing. ^^;;
 
-## Proposed Solution
+## p-pwoposed sowution
 
-The following solution does not specify what native token costs are to be
-associated with the new fee structure.  Instead, it sets the criteria and
-provides the knobs that a cost model can use to determine those costs.
+the fowwowing s-sowution does nyot s-specify nyani n-native token costs a-awe to be
+associated with the nyew fee stwuctuwe. 🥺  i-instead, òωó it sets the cwitewia and
+pwovides t-the knobs that a cost modew can use to detewmine those costs. XD
 
-### Fee
+### fee
 
-The goal of the fees is to cover the computation cost of processing a
-transaction.  Each of the fee categories below will be represented as a compute
-unit cost that, when added together, encompasses the entire cost of processing
-the transaction.  By calculating the total cost of the transaction, the runtime
-can charge a more representative fee and make better transaction scheduling
-decisions.
+the goaw of the fees i-is to covew the computation cost o-of pwocessing a
+t-twansaction.  each o-of the fee categowies bewow wiww be wepwesented as a compute
+u-unit cost that, :3 w-when added togethew, (U ﹏ U) encompasses t-the entiwe cost o-of pwocessing
+the twansaction. >w<  b-by cawcuwating the totaw cost o-of the twansaction, /(^•ω•^) the wuntime
+can chawge a mowe w-wepwesentative fee and make bettew t-twansaction scheduwing
+decisions. (⑅˘꒳˘)
 
-A fee could be calculated based on:
+a-a fee couwd b-be cawcuwated based on:
 
-1. Number of signatures
-   - Fixed rate per signature
-2. Number of write locks
-   - Fixed rate per writable account
-3. Data byte cost
-   - Fixed rate per byte of the sum of the length all a transactions instruction
+1. ʘwʘ nyumbew of signatuwes
+   - fixed wate pew signatuwe
+2. rawr x3 nyumbew of wwite wocks
+   - f-fixed wate pew w-wwitabwe account
+3. (˘ω˘) data byte c-cost
+   - fixed w-wate pew byte of t-the sum of the wength aww a twansactions instwuction
      data
-4. Account sizes
-   - Account sizes can't be known up-front but can account for a considerable
-     amount of the load the transaction incurs on the network.  The payer will
-     be charged for a maximum account size (10m) upfront and refunded the
-     difference after the actual account sizes are known.
-5. Compute budget
-   - Each transaction will be given a default transaction-wide compute budget of
-     200k units with the option of requesting a larger budget via a compute
-     budget instruction up to a maximum of 1m units.  This budget is used to
-     limit the time it takes to process a transaction.  The compute budget
-     portion of the fee will be charged up-front based on the default or
-     requested amount.  After processing, the actual number of units consumed
-     will be known, and the payer will be refunded the difference, so the payer
-     only pays for what they used.  Builtin programs will have a fixed cost
-     while SBF program's cost will be measured at runtime.
-6. Precompiled programs
-   - Precompiled programs are performing compute-intensive operations.  The work
-     incurred by a precompiled program is predictable based on the instruction's
-     data array.  Therefore a cost will be assigned per precompiled program
-     based on the parsing of instruction data.  Because precompiled programs are
-     processed outside of the bank, their compute cost will not be reflected in
-     the compute budget and will not be used in transaction scheduling
-     decisions. The methods used to determine the fixed cost of the components
-     above are described in
+4. o.O a-account sizes
+   - account sizes can't be known up-fwont but can account fow a-a considewabwe
+     amount of the w-woad the twansaction i-incuws on t-the netwowk. 😳  the payew wiww
+     b-be chawged fow a-a maximum account s-size (10m) upfwont a-and wefunded the
+     diffewence aftew the a-actuaw account s-sizes awe known. o.O
+5. c-compute budget
+   - e-each twansaction w-wiww be given a defauwt twansaction-wide compute budget o-of
+     200k units with the option of wequesting a wawgew budget via a compute
+     budget instwuction u-up to a maximum of 1m units. ^^;;  this budget is used to
+     w-wimit the time i-it takes to pwocess a-a twansaction. ( ͡o ω ͡o )  the compute b-budget
+     powtion of the fee w-wiww be chawged u-up-fwont based on the defauwt ow
+     wequested amount. ^^;;  aftew pwocessing, ^^;; the actuaw nyumbew of u-units consumed
+     wiww be known, XD a-and the payew wiww be wefunded t-the diffewence, 🥺 s-so the payew
+     onwy pays fow nyani they used. (///ˬ///✿)  b-buiwtin pwogwams w-wiww have a fixed cost
+     w-whiwe sbf pwogwam's c-cost wiww be measuwed at wuntime. (U ᵕ U❁)
+6. pwecompiwed pwogwams
+   - pwecompiwed p-pwogwams awe pewfowming c-compute-intensive o-opewations. ^^;;  the wowk
+     i-incuwwed b-by a pwecompiwed pwogwam is pwedictabwe b-based on the instwuction's
+     data awway. ^^;;  thewefowe a cost wiww be assigned p-pew pwecompiwed p-pwogwam
+     based on the pawsing of instwuction d-data. rawr  because p-pwecompiwed pwogwams awe
+     pwocessed outside of the bank, (˘ω˘) t-theiw compute cost wiww nyot be wefwected in
+     the compute budget and wiww n-nyot be used in twansaction scheduwing
+     decisions. 🥺 t-the methods u-used to detewmine the fixed cost of the components
+     above a-awe descwibed i-in
      [#19627](https://github.com/solana-labs/solana/issues/19627)
 
-### Cost model
+### cost modew
 
-The cost model is used to assess what load a transaction will incur during
-in-slot processing and then make decisions on how to best schedule transaction
-into batches.
+the cost modew is used t-to assess nyani woad a twansaction w-wiww incuw duwing
+in-swot pwocessing and then make decisions o-on how to best scheduwe twansaction
+i-into batches. nyaa~~
 
-The cost model's criteria are identical to the fee's criteria except for
-signatures and precompiled programs.  These two costs are incurred before a
-transaction is scheduled and therefore do not affect how long a transaction
-takes within a slot to process.
+t-the cost modew's cwitewia awe i-identicaw to the fee's cwitewia e-except fow
+signatuwes a-and pwecompiwed p-pwogwams. :3  these two costs a-awe incuwwed befowe a-a
+twansaction is scheduwed and thewefowe do n-nyot affect how w-wong a twansaction
+t-takes within a swot to pwocess. /(^•ω•^)
 
-### Cache account sizes and use them instead of the max
+### cache a-account sizes and use them instead o-of the max
 
-https://github.com/solana-labs/solana/issues/20511
+https://github.com/sowana-wabs/sowana/issues/20511
 
-### Requestable compute budget caps and heap sizes
+### w-wequestabwe compute budget caps and heap sizes
 
-The precompiled
+the pwecompiwed
 [ComputeBudget](https://github.com/solana-labs/solana/blob/00929f836348d76cb3503d0ba5f76f0d275bcc66/sdk/src/compute_budget.rs#L34)
-program can be used to request higher transaction-wide compute budget caps and
-program heap sizes.  The requested increases will be reflected in the
-transaction's fee.
+p-pwogwam can b-be used to wequest h-highew twansaction-wide c-compute budget caps a-and
+pwogwam heap sizes. ^•ﻌ•^  the wequested incweases wiww be wefwected in the
+twansaction's fee. UwU
 
-### Fees for precompiled program failures
+### f-fees fow pwecompiwed pwogwam f-faiwuwes
 
-https://github.com/solana-labs/solana/issues/20481
+https://github.com/sowana-wabs/sowana/issues/20481
 
-### Rate governing
+### wate govewning
 
-Current rate governing needs to be re-assessed.  Fees are being rate
-governed down to their minimums because the number of signatures in each slot is
-far lower than the "target" signatures per slot.
+c-cuwwent wate govewning nyeeds t-to be we-assessed. 😳😳😳  fees awe being w-wate
+govewned d-down to theiw minimums b-because t-the nyumbew of signatuwes i-in each swot is
+faw wowew than the "tawget" signatuwes pew swot. OwO
 
-Instead of using the number of signatures to rate govern, the cost model will
-feed back information based on the batch/queue load it is seeing.  The fees will
-sit at a target rate and only increase if the load goes above a specified but to
-be determined threshold.  The governing will be applied across all the fee
-criteria.
+instead of using the nyumbew of signatuwes t-to wate govewn, ^•ﻌ•^ t-the cost m-modew wiww
+feed back infowmation b-based on the batch/queue woad it is seeing. (ꈍᴗꈍ)  the fees wiww
+sit a-at a tawget wate a-and onwy incwease if the woad goes a-above a specified but to
+be detewmined thweshowd.  t-the govewning w-wiww be appwied acwoss aww t-the fee
+cwitewia. (⑅˘꒳˘)
 
-### Deterministic fees
+### d-detewministic fees
 
-Solana's fees are currently deterministic based on a given blockhash.  This
-determinism is a nice feature that simplifies client interactions.  An example
-is when draining an account that is also the payer, the transaction issuer can
-pre-compute the fee and then set the entire remaining balance to be transferred
-out without worrying that the fee will change leaving a very small amount
-remaining in the account.  Another example is for offline signing, the payer
-signer can guarantee what fee that will be charged for the transaction based on
-the nonce's blockhash.
+sowana's fees awe cuwwentwy detewministic based on a g-given bwockhash. (⑅˘꒳˘)  t-this
+detewminism i-is a nyice featuwe t-that simpwifies c-cwient intewactions. (ˆ ﻌ ˆ)♡  an exampwe
+i-is when dwaining a-an account that is awso t-the payew, /(^•ω•^) the twansaction i-issuew can
+pwe-compute t-the fee and then set the entiwe wemaining bawance t-to be twansfewwed
+out without w-wowwying that t-the fee wiww change weaving a vewy s-smow amount
+wemaining in the account. òωó  anothew e-exampwe is fow o-offwine signing, (⑅˘꒳˘) t-the payew
+signew can guawantee nyani fee that wiww be chawged f-fow the twansaction based on
+the nyonce's bwockhash. (U ᵕ U❁)
 
-Determinism is achieved in two ways:
-- blockhash queue contains a list of recent (<=~2min) blockhashes and a
-  `lamports_per_signature` value.  The blockhash queue is one of the snapshot's
-  serialized members and thus bank hash depends on it.
-- Nonce accounts used for offline signing contain a `lamports_per_signature`
-  value in its account data
+d-detewminism i-is achieved in two ways:
+- bwockhash q-queue contains a wist of w-wecent (<=~2min) b-bwockhashes and a
+  `lamports_per_signature` vawue. >w<  the b-bwockhash queue is one of the snapshot's
+  sewiawized m-membews and t-thus bank hash depends on it. σωσ
+- n-nyonce accounts used fow offwine s-signing contain a-a `lamports_per_signature`
+  v-vawue in its account data
 
-In both cases, when a transaction is assessed a fee, the
-`lamports_per_signature` to use is looked up (either in the queue or in the
-nonce account's data) using the transaction's blockhash.
+in both cases, -.- when a twansaction is assessed a fee, o.O the
+`lamports_per_signature` to use is wooked up (eithew in the queue ow in the
+nyonce account's data) using the twansaction's bwockhash. ^^
 
-This currently comes with the following challenges:
-- Exposing the `FeeCalculator` object to the clients (holds the
-  `lamports_per_signature`) makes it hard to evolve the fee criteria due to
-  backward-compatibility.  This issue is being solved by deprecating the
-  `FeeCalculator` object and instead the new apis take a message and return a
-  fee.
-- Blockhash queue entries contain the fee criteria specifics and are part of the
-  bankhash so evolving the fees over time involves more work/risk
-- Nonce accounts store the fee criteria directly in their account data so
-  evolving the fees over time requires changes to nonce account data and data
-  size.
+t-this cuwwentwy c-comes with the fowwowing chawwenges:
+- exposing t-the `FeeCalculator` o-object t-to the cwients (howds the
+  `lamports_per_signature`) m-makes it hawd to evowve t-the fee cwitewia d-due to
+  backwawd-compatibiwity. >_<  this issue i-is being sowved by depwecating t-the
+  `FeeCalculator` o-object and instead the nyew apis take a message a-and wetuwn a-a
+  fee. >w<
+- bwockhash q-queue entwies c-contain the f-fee cwitewia specifics a-and awe pawt o-of the
+  bankhash s-so evowving t-the fees ovew time invowves mowe w-wowk/wisk
+- nyonce a-accounts stowe t-the fee cwitewia diwectwy in t-theiw account data so
+  evowving the fees ovew t-time wequiwes changes to nyonce a-account data and d-data
+  size. >_<
 
-Two solutions to the latter two challenges
-- Get rid of the concept of deterministic fees.  Clients ask via RPC to
-  calculate the current fee estimate and the actual fee is assessed when the
-  transaction is processed.  Fee changes will be governed and change slowly
-  based on network load so the fee differences will be small within the 2min
-  window.  Nonce accounts no longer store the fee criteria but instead a fee
-  cap.  If the assessed fee at the time of processing exceeds the cap then the
-  transaction fails.  This solution removes fee criteria entirely from the
-  blockhash queue and nonce accounts and removes the need for either of those to
-  evolve if there is a need for fee criteria to evolve.
-- Retain the concept of deterministic fees.  Clients ask via RPC to calculate
-  the current fee and pass in a blockhash that fee will be associated with.
-  Blockhash queue and nonce accounts switch to a versioned but internal "Fee"
-  object (similar to "FeeCalculator").  Each time there is a need for fees to
-  evolve the fee object will add a new version and new blockhash queue entries
-  and new nonce accounts will use the new version.
+t-two sowutions to the wattew two c-chawwenges
+- get wid of the concept o-of detewministic fees. >w<  cwients a-ask via wpc to
+  cawcuwate the c-cuwwent fee estimate and the actuaw fee is assessed when the
+  twansaction is p-pwocessed. rawr  fee changes wiww be g-govewned and change s-swowwy
+  based on nyetwowk woad so the fee diffewences wiww b-be smow within the 2min
+  window. rawr x3  n-nyonce accounts n-nyo wongew stowe t-the fee cwitewia but instead a fee
+  cap. ( ͡o ω ͡o )  i-if the assessed f-fee at the time of pwocessing exceeds t-the cap then the
+  twansaction faiws. (˘ω˘)  this s-sowution wemoves fee cwitewia e-entiwewy fwom the
+  b-bwockhash queue a-and nyonce accounts and wemoves t-the nyeed fow e-eithew of those t-to
+  evowve if t-thewe is a nyeed fow fee cwitewia t-to evowve. 😳
+- w-wetain the concept o-of detewministic f-fees. OwO  cwients a-ask via wpc to c-cawcuwate
+  the c-cuwwent fee and p-pass in a bwockhash that fee wiww b-be associated with. (˘ω˘)
+  bwockhash q-queue and nyonce accounts switch t-to a vewsioned b-but intewnaw "fee"
+  o-object (simiwaw to "feecawcuwatow"). òωó  each time thewe is a nyeed fow fees t-to
+  evowve the f-fee object wiww a-add a nyew vewsion and nyew bwockhash queue entwies
+  and nyew n-nyonce accounts w-wiww use the nyew vewsion. ( ͡o ω ͡o )

@@ -1442,7 +1442,7 @@ mod tests {
     use {
         super::*,
         crate::repair::repair_response,
-        agave_feature_set::FeatureSet,
+        uwuave_feature_set::FeatureSet,
         solana_gossip::{contact_info::ContactInfo, socketaddr, socketaddr_any},
         solana_ledger::{
             blockstore::make_many_slot_entries,

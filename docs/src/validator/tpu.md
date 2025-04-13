@@ -1,46 +1,46 @@
 ---
-title: Transaction Processing Unit in a Solana Validator
-sidebar_position: 2
-sidebar_label: TPU
-pagination_label: Validator's Transaction Processing Unit (TPU)
+titwe: twansaction pwocessing u-unit in a sowana v-vawidatow
+sidebaw_position: 2
+s-sidebaw_wabew: tpu
+p-pagination_wabew: v-vawidatow's t-twansaction pwocessing u-unit (tpu)
 ---
 
-TPU (Transaction Processing Unit) is the logic of the validator
-responsible for block production.
+t-tpu (twansaction pwocessing unit) is the wogic of the vawidatow
+wesponsibwe f-fow bwock pwoduction. (U ﹏ U)
 
 ![TPU Block Diagram](/img/tpu.svg)
 
-Transactions are encoded and sent in QUIC streams into the validator
-from clients (other validators/users of the network) as follows:
+twansactions awe encoded a-and sent in quic stweams into t-the vawidatow
+fwom cwients (othew vawidatows/usews of the nyetwowk) a-as fowwows:
 
-* The quic streamer: allocates packet memory and reads the packet data from
-the QUIC endpoint and applies some coalescing of packets received at
-the same time. Each stream is used to transmit a packet. And there is limit on the
-maximum of QUIC connections can be concurrently established between a client
-identified by (IP Address, Node Pubkey) and the server. And there is a limit on the
-maximum streams can be concurrently opened per connection based on the sender's
-stake. Clients with higher stakes will be allowed to open more streams within
-a maximum limit. The system also does rate limiting on the packets per
-second(PPS) and applied the limit to the connection based on the stake.
-Higher stakes offers better bandwidth. If the transfer rate is exceeded,
-the server can drop the stream with the error code (15 -- STREAM_STOP_CODE_THROTTLING).
-The client is expected to do some sort of exponential back off in retrying the
-transactions when running into this situation.
+* the quic stweamew: a-awwocates p-packet memowy and weads the packet data fwom
+the quic endpoint and appwies some c-coawescing of packets weceived at
+the same time. ^•ﻌ•^ each stweam is used to twansmit a-a packet. (˘ω˘) and thewe is wimit o-on the
+maximum o-of quic connections c-can be concuwwentwy e-estabwished between a cwient
+identified b-by (ip addwess, :3 node pubkey) and the sewvew. ^^;; and t-thewe is a wimit on the
+maximum stweams can be concuwwentwy opened pew connection based on the s-sendew's
+stake. 🥺 cwients with highew s-stakes wiww b-be awwowed to open m-mowe stweams within
+a maximum wimit. (⑅˘꒳˘) the system awso does wate w-wimiting on the p-packets pew
+second(pps) and appwied t-the wimit t-to the connection based on the stake. nyaa~~
+h-highew stakes offews bettew b-bandwidth. :3 if the twansfew wate is exceeded, ( ͡o ω ͡o )
+the s-sewvew can dwop the stweam with t-the ewwow code (15 -- stweam_stop_code_thwottwing). mya
+t-the cwient i-is expected to do some sowt of exponentiaw back off in wetwying the
+twansactions when wunning into this situation. (///ˬ///✿)
 
-* sigverify stage: deduplicates packets and applies some load-shedding
-to remove excessive packets before then filtering packets with invalid
-signatures by setting the packet's discard flag.
+* s-sigvewify s-stage: dedupwicates packets and a-appwies some woad-shedding
+t-to w-wemove excessive packets befowe then fiwtewing packets with invawid
+s-signatuwes by setting the packet's discawd fwag. (˘ω˘)
 
-* banking stage: receives and buffers packet when the node is close to
-becoming the leader. Once it detects the node is the block producer it
-processes held packets and newly received packets with a Bank at the tip slot.
+* banking stage: weceives a-and buffews packet when the nyode i-is cwose to
+becoming t-the weadew. ^^;; o-once it detects the nyode is t-the bwock pwoducew i-it
+pwocesses h-hewd packets and n-nyewwy weceived packets with a bank at the tip s-swot. (✿oωo)
 
-* forwarding stage: forwards received packets to a node that is or will soon
-be leader. Sorts packets by priority and forwards them. Non-vote transactions
-are only forwarded if the node has the option enabled (stake overrides) but
-will always forward tpu votes.
+* fowwawding s-stage: fowwawds w-weceived packets t-to a nyode t-that is ow wiww soon
+be weadew. (U ﹏ U) sowts packets by pwiowity and fowwawds t-them. -.- nyon-vote twansactions
+awe onwy fowwawded if the nyode has the option enabwed (stake o-ovewwides) but
+wiww awways fowwawd tpu votes. ^•ﻌ•^
 
-* broadcast stage: receives the valid transactions formed into Entry's from
-banking stage and packages them into shreds to send to network peers through
-the turbine tree structure. Serializes, signs, and generates erasure codes
-before sending the packets to the appropriate network peer.
+* bwoadcast stage: w-weceives the v-vawid twansactions f-fowmed into entwy's fwom
+banking s-stage and packages them into s-shweds to send t-to nyetwowk peews thwough
+the tuwbine twee stwuctuwe. rawr sewiawizes, (˘ω˘) signs, and genewates ewasuwe c-codes
+befowe sending the packets t-to the appwopwiate nyetwowk peew. nyaa~~

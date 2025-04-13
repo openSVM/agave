@@ -1,54 +1,54 @@
 ---
-title: Validator Frequently Asked Questions
-sidebar_label: Frequently Asked Questions
+titwe: vawidatow fwequentwy asked q-questions
+sidebaw_wabew: f-fwequentwy a-asked questions
 ---
 
-### What is Agave? How is it different from other possible Solana validators?
+### n-nyani is uwuave? h-how is it diffewent f-fwom othew p-possibwe sowana v-vawidatows?
 
-Solana is an open source, decentralized, proof-of-stake blockchain. It is therefore possible for multiple distinct teams to fork and maintain their own validator software. The original Solana validator was maintained by Solana Labs. A new organization, Anza, was formed in 2024 consisting of former Solana Labs core engineering members. Anza forked the Solana validator and renamed it to Agave (this project). Agave is the version of the original Solana validator maintained by the team at Anza. As of the writing of this FAQ, Agave is the most popular validator client for the Solana network, but it is likely in the future there may be several validators running in parallel to help support the network. We recommend checking the community and doing research before making a selection.
+sowana is an open souwce, ( ͡o ω ͡o ) decentwawized, σωσ pwoof-of-stake bwockchain. >w< i-it is thewefowe possibwe fow muwtipwe distinct t-teams to fowk and maintain theiw o-own vawidatow softwawe. the owiginaw sowana vawidatow was maintained b-by sowana wabs. 😳😳😳 a nyew owganization, OwO a-anza, w-was fowmed in 2024 consisting of fowmew sowana wabs cowe engineewing membews. 😳 a-anza fowked the sowana vawidatow and wenamed it to uwuave (this pwoject). 😳😳😳 uwuave is t-the vewsion of the owiginaw sowana v-vawidatow maintained b-by the t-team at anza. (˘ω˘) as o-of the wwiting of this faq, ʘwʘ uwuave is the most p-popuwaw vawidatow cwient fow the sowana nyetwowk, ( ͡o ω ͡o ) b-but it is wikewy in the futuwe thewe may be sevewaw vawidatows wunning in pawawwew to hewp suppowt t-the nyetwowk. o.O we wecommend c-checking the community a-and doing w-weseawch befowe making a sewection. >w<
 
-### What is a validator?
+### nyani is a vawidatow?
 
-A validator is a computer that runs a software program to verify transactions that are added to the Solana blockchain.  A validator can be a voting validator or a non voting validator. To learn more, see [what is a validator](./what-is-a-validator.md).
+a-a vawidatow is a-a computew that wuns a softwawe p-pwogwam to vewify t-twansactions that awe added to t-the sowana bwockchain. 😳  a vawidatow c-can be a voting vawidatow ow a non voting vawidatow. 🥺 t-to weawn mowe, rawr x3 see [what is a validator](./what-is-a-validator.md). o.O
 
-### What is an RPC node?
+### n-nyani is an wpc nyode?
 
-An RPC node is also a computer that runs the validator software.  Typically, an RPC node does not vote on the network.  Instead the RPC node's job is to respond to API requests.  See [what is an rpc node](./what-is-an-rpc-node.md) for more information.
+an wpc n-nyode is awso a c-computew that wuns the vawidatow softwawe. rawr  typicawwy, an wpc nyode does nyot vote on the nyetwowk. ʘwʘ  instead the w-wpc nyode's job i-is to wespond to api wequests. 😳😳😳  s-see [what is an rpc node](./what-is-an-rpc-node.md) f-fow mowe infowmation. ^^;;
 
-### What is a cluster?
+### n-nyani is a cwustew?
 
-For a definition and an overview of the topic, see [what is a cluster?](./clusters/index.md). Solana maintains several clusters. For details on each, see [Solana clusters](./clusters/available.md).
+fow a definition and an ovewview of the topic, o.O s-see [what is a cluster?](./clusters/index.md). (///ˬ///✿) sowana maintains sevewaw cwustews. σωσ fow detaiws on each, nyaa~~ s-see [Solana clusters](./clusters/available.md). ^^;;
 
-### What is Proof of Stake?
+### nyani is p-pwoof of stake?
 
-Proof of Stake (PoS) is a blockchain architecture. Solana is a Proof of Stake blockchain. To read more, see [Proof of Stake](./what-is-a-validator.md#proof-of-stake).
+p-pwoof of stake (pos) i-is a bwockchain awchitectuwe. ^•ﻌ•^ s-sowana is a-a pwoof of stake b-bwockchain. σωσ to w-wead mowe, -.- see [Proof of Stake](./what-is-a-validator.md#proof-of-stake). ^^;;
 
-### What is Proof of Work? Is running a Solana validator the same as mining?
+### nyani is pwoof of wowk? is wunning a-a sowana v-vawidatow the same a-as mining?
 
-No, a Solana validator uses Proof of Stake. It does not use Proof of Work (often called mining). See [Proof of Work: For Contrast](./what-is-a-validator.md#proof-of-stake).
+nyo, XD a-a sowana vawidatow u-uses pwoof of stake. 🥺 it does nyot use pwoof of wowk (often c-cawwed mining). òωó see [Proof of Work: For Contrast](./what-is-a-validator.md#proof-of-stake). (ˆ ﻌ ˆ)♡
 
-### Who can operate a validator?
+### who can opewate a vawidatow?
 
-Anyone can operate a validator.  All Solana clusters are permissionless. A new operator can choose to join at any time.
+anyone can opewate a vawidatow. -.-  a-aww sowana cwustews awe pewmissionwess. :3 a nyew opewatow c-can choose to j-join at any time. ʘwʘ
 
-### Is there a validator set or limited number of validators that can operate?
+### i-is thewe a vawidatow set o-ow wimited nyumbew of vawidatows t-that can opewate?
 
-No, all Solana clusters are permissionless.  There is no limit to the number of active validators that can participate in consensus.  Validators participating in consensus (voting validators) incur transaction fees for each vote.  A voting validator can expect to incur up to 1.1 SOL per day in vote transaction fees.
+n-nyo, 🥺 aww sowana cwustews awe pewmissionwess. >_<  thewe is nyo wimit to the nyumbew of active vawidatows t-that can pawticipate in c-consensus. ʘwʘ  vawidatows pawticipating i-in consensus (voting v-vawidatows) incuw twansaction fees fow e-each vote. (˘ω˘)  a v-voting vawidatow can expect to incuw u-up to 1.1 sow p-pew day in vote twansaction fees. (✿oωo)
 
-### What are the hardware requirements for running a validator?
+### nyani awe the hawdwawe wequiwements fow w-wunning a vawidatow?
 
-See [validator requirements](./operations/requirements.md).
+s-see [validator requirements](./operations/requirements.md). (///ˬ///✿)
 
-### Can I run my validator at home?
+### c-can i wun my vawidatow at home?
 
-Anyone can join the cluster including home users. You must make sure that your system can perform well and keep up with the cluster. Many home internet connections are not suitable to run a Solana validator.  Most operators choose to operate their validator in a data center either by using a server provider or by supplying your own hardware at a colocation data center.
+a-anyone can join t-the cwustew incwuding home usews. rawr x3 y-you must make suwe that youw system can pewfowm weww and keep up with the cwustew. -.- m-many home i-intewnet connections awe nyot suitabwe to wun a s-sowana vawidatow. ^^  m-most opewatows choose to opewate theiw vawidatow in a data centew e-eithew by using a sewvew pwovidew ow by suppwying youw own hawdwawe at a cowocation d-data centew. (⑅˘꒳˘)
 
-See the [validator requirements](./operations/requirements.md) for more information.
+see the [validator requirements](./operations/requirements.md) fow mowe infowmation. nyaa~~
 
-### What skills does a Solana validator operator need?
+### n-nyani s-skiwws does a sowana vawidatow opewatow need?
 
-See [Solana validator prerequisites](./operations/prerequisites.md).
+see [Solana validator prerequisites](./operations/prerequisites.md). /(^•ω•^)
 
-### What are the economics of running a validator?
+### nani awe t-the economics of w-wunning a vawidatow?
 
-See [economics of running a validator](./operations/validator-or-rpc-node.md#economics-of-running-a-consensus-validator).
+see [economics of running a validator](./operations/validator-or-rpc-node.md#economics-of-running-a-consensus-validator). (U ﹏ U)

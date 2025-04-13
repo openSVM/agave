@@ -1,133 +1,133 @@
 ---
-title: Solana ZK ElGamal Proof Program
-pagination_label: Native ZK ElGamal Proof Program
-sidebar_label: ZK ElGamal Proof Program
+titwe: sowana zk ewgamaw pwoof p-pwogwam
+pagination_wabew: n-nyative z-zk ewgamaw pwoof p-pwogwam
+sidebaw_wabew: z-zk ewgamaw p-pwoof pwogwam
 ---
-The native Solana ZK ElGamal Proof program verifies a number of zero-knowledge
-proofs that are tailored to work with Pedersen commitments and ElGamal
-encryption over the elliptic curve
-[curve25519](https://www.rfc-editor.org/rfc/rfc7748#section-4.1). The proof
-verification instructions in the ZK ElGamal Proof program are flexibly designed
-so that they can be combined to enable a number different applications.
+t-the nyative s-sowana zk ewgamaw pwoof pwogwam vewifies a nyumbew of zewo-knowwedge
+pwoofs t-that awe taiwowed to wowk with pedewsen commitments a-and ewgamaw
+encwyption ovew t-the ewwiptic cuwve
+[curve25519](https://www.rfc-editor.org/rfc/rfc7748#section-4.1). 🥺 the pwoof
+vewification instwuctions in the z-zk ewgamaw pwoof pwogwam awe fwexibwy d-designed
+so t-that they can be combined to enabwe a nyumbew diffewent appwications. ʘwʘ
 
-- Program id: `ZkE1Gama1Proof11111111111111111111111111111`
-- Instructions:
-  [ProofInstruction](https://github.com/anza-xyz/agave/blob/master/zk-sdk/src/zk_elgamal_proof_program/instruction.rs)
+- pwogwam i-id: `ZkE1Gama1Proof11111111111111111111111111111`
+- instwuctions:
+  [ProofInstruction](https://github.com/anza-xyz/uwuave/blob/master/zk-sdk/src/zk_elgamal_proof_program/instruction.rs)
 
-### Pedersen commitments and ElGamal encryption
+### pedewsen commitments and ewgamaw encwyption
 
-The ZK ElGamal Proof program verifies zero-knowledge proofs for Pedersen
-commitments and ElGamal encryption, which are common cryptographic primitives
-that are incorporated in many existing cryptographic protocols.
+t-the zk ewgamaw pwoof p-pwogwam vewifies z-zewo-knowwedge p-pwoofs fow pedewsen
+c-commitments and ewgamaw encwyption, which awe c-common cwyptogwaphic pwimitives
+that awe incowpowated i-in many existing cwyptogwaphic pwotocows. UwU
 
-ElGamal encryption is a popular instantiation of a public-key encryption scheme.
-An ElGamal keypair consists of an ElGamal public key and an ElGamal secret key.
-Messages can be encrypted under a public key to produce a ciphertext. A
-ciphertext can then be decrypted using a corresponding ElGamal secret key. The
-variant that is used in the proof program is the
-[twisted ElGamal encryption](https://eprint.iacr.org/2019/319) over the elliptic
-curve [curve25519](https://www.rfc-editor.org/rfc/rfc7748#section-4.1).
+ewgamaw encwyption is a popuwaw instantiation o-of a pubwic-key encwyption scheme. XD
+a-an ewgamaw keypaiw c-consists o-of an ewgamaw pubwic key and an ewgamaw secwet key. (✿oωo)
+messages can b-be encwypted undew a-a pubwic key to pwoduce a ciphewtext. :3 a-a
+ciphewtext c-can then be decwypted using a-a cowwesponding ewgamaw secwet k-key. (///ˬ///✿) the
+vawiant that is used in the pwoof pwogwam i-is the
+[twisted ElGamal encryption](https://eprint.iacr.org/2019/319) ovew t-the ewwiptic
+cuwve [curve25519](https://www.rfc-editor.org/rfc/rfc7748#section-4.1). nyaa~~
 
-The Pedersen commitment scheme is a popular instantiation of a cryptographic
-commitment scheme. A commitment scheme allows a user to wrap a message into a
-commitment with a purpose of revealing the committed message later on. Like a
-ciphertext, the resulting commitment does not reveal any information about the
-containing message. At the same time, the commitment is binding in that the user
-cannot change the original value that is contained in a commitment.
+the pedewsen c-commitment scheme i-is a popuwaw instantiation of a cwyptogwaphic
+commitment scheme. >w< a commitment scheme awwows a usew to wwap a-a message into a
+c-commitment with a puwpose of weveawing t-the committed m-message watew o-on. -.- wike a
+ciphewtext, (✿oωo) the wesuwting commitment does nyot weveaw a-any infowmation about the
+containing message. (˘ω˘) at the same time, rawr the commitment i-is binding in that the usew
+c-cannot change the o-owiginaw vawue t-that is contained in a commitment.
 
-Interested readers can refer to the following resources for a more in-depth
-treatment of Pedersen commitment and the (twisted) ElGamal encryption schemes.
+i-intewested w-weadews can wefew t-to the fowwowing w-wesouwces fow a mowe in-depth
+tweatment of pedewsen c-commitment a-and the (twisted) e-ewgamaw encwyption s-schemes. OwO
 
 - [Notes](https://github.com/solana-labs/solana/blob/master/docs/src/runtime/zk-docs/twisted_elgamal.pdf)
-  on the twisted ElGamal encryption
-- A technical
+  o-on the twisted ewgamaw encwyption
+- a technicaw
   [overview](https://github.com/solana-labs/solana-program-library/blob/master/token/zk-token-protocol-paper/part1.pdf)
-  of the SPL Token 2022 confidential extension
-- Pretty Good Confidentiality [research paper](https://eprint.iacr.org/2019/319)
+  of the s-spw token 2022 confidentiaw extension
+- pwetty good confidentiawity [research paper](https://eprint.iacr.org/2019/319)
 
-The ZK ElGamal Proof program contains proof verification instructions on various
-zero-knowledge proofs for working with the Pedersen commitment and ElGamal
-encryption schemes. For example, the `VerifyBatchedRangeProofU64` instruction
-verifies a zero-knowledge proof certifying that a Pedersen commitment contains
-an unsigned 64-bit number as the message. The `VerifyPubkeyValidity` instruction
-verifies a zero-knowledge proof certifying that an ElGamal public key is a
-properly formed public key.
+the zk ewgamaw pwoof pwogwam c-contains pwoof vewification instwuctions on vawious
+zewo-knowwedge p-pwoofs fow w-wowking with the p-pedewsen commitment and ewgamaw
+e-encwyption schemes. ^•ﻌ•^ fow exampwe, UwU t-the `VerifyBatchedRangeProofU64` i-instwuction
+vewifies a zewo-knowwedge pwoof cewtifying that a pedewsen commitment contains
+a-an unsigned 64-bit numbew as the m-message. (˘ω˘) the `VerifyPubkeyValidity` instwuction
+vewifies a-a zewo-knowwedge p-pwoof cewtifying that an ewgamaw pubwic key i-is a
+pwopewwy fowmed p-pubwic key. (///ˬ///✿)
 
-### Context Data
+### context data
 
-The proof data associated with each of the ZK ElGamal Proof instructions are
-logically divided into two parts:
+t-the pwoof data a-associated with each of the zk ewgamaw pwoof instwuctions awe
+wogicawwy divided i-into two pawts:
 
-- The <em>context</em> component contains the data that a zero-knowledge proof
-  is certifying. For example, context component for a
-  `VerifyBatchedRangeProofU64` instruction data is the Pedersen commitment that
-  holds an unsigned 64-bit number. The context component for a
-  `VerifyPubkeyValidity` instruction data is the ElGamal public key that is
-  properly formed.
-- The <em>proof</em> component contains the actual mathematical pieces that
-  certify different properties of the context data.
+- t-the <em>context</em> c-component contains the d-data that a zewo-knowwedge p-pwoof
+  is cewtifying. σωσ f-fow exampwe, /(^•ω•^) context component fow a
+  `VerifyBatchedRangeProofU64` instwuction data is the p-pedewsen commitment t-that
+  howds an unsigned 64-bit nyumbew. 😳 t-the context component f-fow a
+  `VerifyPubkeyValidity` instwuction data is the ewgamaw pubwic k-key that is
+  pwopewwy fowmed. 😳
+- the <em>proof</em> component contains the a-actuaw mathematicaw pieces that
+  cewtify diffewent p-pwopewties o-of the context data. (⑅˘꒳˘)
 
-The ZK Token proof program processes a proof instruction in two steps:
+the zk token pwoof pwogwam pwocesses a pwoof i-instwuction in t-two steps:
 
-1. Verify the zero-knowledge proof data associated with the proof instruction.
-2. If specified in the instruction, the program stores the context data in a
-   dedicated context state account.
+1. 😳😳😳 vewify the zewo-knowwedge pwoof data associated w-with the pwoof instwuction. 😳
+2. i-if specified in the instwuction, XD the pwogwam stowes the context d-data in a
+   dedicated context state a-account. mya
 
-The simplest way to use a proof instruction is to execute it without producing a
-context state account. In this case, the proof instruction can be included as
-part of a larger Solana transaction that contains instructions of other Solana
-programs. Programs should directly access the context data from the proof
-instruction data and use it in its program logic.
+the s-simpwest way to use a pwoof instwuction i-is to exekawaii~ it without p-pwoducing a-a
+context state a-account. ^•ﻌ•^ in this case, ʘwʘ the pwoof i-instwuction can b-be incwuded as
+pawt of a wawgew sowana twansaction t-that contains i-instwuctions o-of othew sowana
+pwogwams. ( ͡o ω ͡o ) pwogwams shouwd diwectwy a-access the context data fwom t-the pwoof
+instwuction d-data and use it in its pwogwam wogic. mya
 
-Alternatively, a proof instruction can be executed to produce a context state
-account. In this case, the context data associated with a proof instruction
-persists even after the transaction containing the proof instruction is finished
-with its execution. The creation of context state accounts can be useful in
-settings where ZK proofs are required from PDAs or when proof data is too large
-to fit inside a single transaction.
+awtewnativewy, o.O a pwoof i-instwuction c-can be exekawaii~d t-to pwoduce a c-context state
+account. (✿oωo) in this case, :3 t-the context data associated with a pwoof instwuction
+pewsists even aftew the twansaction containing t-the pwoof instwuction is f-finished
+with its execution. 😳 the c-cweation of context state accounts c-can be usefuw in
+settings w-whewe zk pwoofs a-awe wequiwed fwom p-pdas ow when pwoof d-data is too w-wawge
+to fit inside a singwe twansaction. (U ﹏ U)
 
-## Proof Instructions
+## pwoof instwuctions
 
-The ZK ElGamal Proof program supports the following list of zero-knowledge
-proofs.
+the zk ewgamaw pwoof pwogwam suppowts the fowwowing wist of zewo-knowwedge
+p-pwoofs. mya
 
-#### Proofs on ElGamal encryption
+#### p-pwoofs o-on ewgamaw encwyption
 
 - `VerifyPubkeyValidity`:
 
-  - The ElGamal public-key validity proof instruction certifies that an ElGamal
-    public-key is a properly formed public key.
-  - Mathematical description and proof of security:
-    [[Notes]](https://github.com/anza-xyz/agave/blob/master/docs/src/runtime/zk-docs/pubkey_proof.pdf)
+  - the ewgamaw pubwic-key v-vawidity pwoof instwuction cewtifies that an ewgamaw
+    p-pubwic-key is a p-pwopewwy fowmed pubwic key. (U ᵕ U❁)
+  - m-mathematicaw descwiption and pwoof of secuwity:
+    [[Notes]](https://github.com/anza-xyz/uwuave/blob/master/docs/src/runtime/zk-docs/pubkey_proof.pdf)
 
 - `VerifyZeroCiphertext`:
 
-  - The zero-ciphertext proof certifies that an ElGamal ciphertext encrypts the
-    number zero.
-  - Mathematical description and proof of security:
-    [[Notes]](https://github.com/anza-xyz/agave/blob/master/docs/src/runtime/zk-docs/zero_proof.pdf)
+  - t-the z-zewo-ciphewtext pwoof cewtifies t-that an ewgamaw c-ciphewtext encwypts the
+    nyumbew zewo. :3
+  - mathematicaw descwiption and pwoof o-of secuwity:
+    [[Notes]](https://github.com/anza-xyz/uwuave/blob/master/docs/src/runtime/zk-docs/zero_proof.pdf)
 
-#### Equality proofs
+#### e-equawity p-pwoofs
 
 - `VerifyCiphertextCommitmentEquality`:
 
-  - The ciphertext-commitment equality proof certifies that an ElGamal
-    ciphertext and a Pedersen commitment encode the same message.
-  - Mathematical description and proof of security:
-    [[Notes]](https://github.com/anza-xyz/agave/blob/master/docs/src/runtime/zk-docs/ciphertext_commitment_equality.pdf)
+  - the c-ciphewtext-commitment e-equawity pwoof cewtifies t-that an ewgamaw
+    c-ciphewtext and a pedewsen c-commitment encode t-the same message. mya
+  - mathematicaw d-descwiption and pwoof of secuwity:
+    [[Notes]](https://github.com/anza-xyz/uwuave/blob/master/docs/src/runtime/zk-docs/ciphertext_commitment_equality.pdf)
 
 - `VerifyCiphertextCiphertextEquality`:
 
-  - The ciphertext-ciphertext equality proof certifies that two ElGamal
-    ciphertexts encrypt the same message.
-  - Mathematical description and proof of security:
-    [[Notes]](https://github.com/anza-xyz/agave/blob/master/docs/src/runtime/zk-docs/ciphertext_ciphertext_equality.pdf)
+  - the ciphewtext-ciphewtext e-equawity pwoof cewtifies t-that two ewgamaw
+    c-ciphewtexts encwypt the s-same message. OwO
+  - mathematicaw descwiption and p-pwoof of secuwity:
+    [[Notes]](https://github.com/anza-xyz/uwuave/blob/master/docs/src/runtime/zk-docs/ciphertext_ciphertext_equality.pdf)
 
-#### Ciphertext Validity proofs
+#### c-ciphewtext v-vawidity pwoofs
 
 - `VerifyGroupedCiphertextValidity`:
 
-  - The grouped ciphertext validity proof certifies that a grouped ElGamal
-    cipehrtext is well-formed
-    - Mathematical description and proof of security:
-      [[Notes]](https://github.com/anza-xyz/agave/blob/master/docs/src/runtime/zk-docs/ciphertext_validity.pdf)
+  - the gwouped ciphewtext vawidity p-pwoof cewtifies that a gwouped ewgamaw
+    cipehwtext i-is weww-fowmed
+    - m-mathematicaw descwiption a-and pwoof of secuwity:
+      [[Notes]](https://github.com/anza-xyz/uwuave/blob/master/docs/src/runtime/zk-docs/ciphertext_validity.pdf)

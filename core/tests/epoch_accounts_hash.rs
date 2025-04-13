@@ -3,7 +3,7 @@
 
 use {
     crate::snapshot_utils::create_tmp_accounts_dir_for_tests,
-    agave_feature_set as feature_set,
+    uwuave_feature_set as feature_set,
     log::*,
     solana_accounts_db::{
         accounts_db::CalcAccountsHashDataSource, accounts_hash::CalcAccountsHashConfig,

@@ -1,7 +1,7 @@
 #![feature(test)]
 extern crate test;
 use {
-    agave_feature_set::FeatureSet,
+    uwuave_feature_set::FeatureSet,
     rand::Rng,
     solana_builtins_default_costs::get_builtin_instruction_cost,
     solana_pubkey::Pubkey,

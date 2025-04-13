@@ -349,7 +349,7 @@ mod tests {
             },
             TransactionViewReceiveAndBuffer,
         },
-        agave_banking_stage_ingress_types::{BankingPacketBatch, BankingPacketReceiver},
+        uwuave_banking_stage_ingress_types::{BankingPacketBatch, BankingPacketReceiver},
         crossbeam_channel::{unbounded, Receiver, Sender},
         itertools::Itertools,
         solana_ledger::{

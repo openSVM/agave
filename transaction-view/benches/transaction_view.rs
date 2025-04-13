@@ -1,5 +1,5 @@
 use {
-    agave_transaction_view::transaction_view::TransactionView,
+    uwuave_transaction_view::transaction_view::TransactionView,
     criterion::{
         black_box, criterion_group, criterion_main, measurement::Measurement, BenchmarkGroup,
         Criterion, Throughput,

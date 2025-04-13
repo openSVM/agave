@@ -64,7 +64,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "agave-banking-stage-ingress-types"
+name = "uwuave-banking-stage-ingress-types"
 version = "2.3.0"
 dependencies = [
  "crossbeam-channel",
@@ -72,7 +72,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "agave-feature-set"
+name = "uwuave-feature-set"
 version = "2.3.0"
 dependencies = [
  "ahash 0.8.11",
@@ -83,7 +83,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "agave-geyser-plugin-interface"
+name = "uwuave-geyser-plugin-interface"
 version = "2.3.0"
 dependencies = [
  "log",
@@ -95,10 +95,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "agave-precompiles"
+name = "uwuave-precompiles"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "bincode",
  "digest 0.10.7",
  "ed25519-dalek",
@@ -116,17 +116,17 @@ dependencies = [
 ]
 
 [[package]]
-name = "agave-reserved-account-keys"
+name = "uwuave-reserved-account-keys"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "lazy_static",
  "solana-pubkey",
  "solana-sdk-ids",
 ]
 
 [[package]]
-name = "agave-transaction-view"
+name = "uwuave-transaction-view"
 version = "2.3.0"
 dependencies = [
  "solana-hash",
@@ -2773,8 +2773,8 @@ dependencies = [
 name = "json-rpc-server"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
- "agave-reserved-account-keys",
+ "uwuave-feature-set",
+ "uwuave-reserved-account-keys",
  "base64 0.22.1",
  "bincode",
  "bs58",
@@ -5238,7 +5238,7 @@ dependencies = [
 name = "solana-banks-server"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "bincode",
  "crossbeam-channel",
  "futures 0.3.31",
@@ -5330,7 +5330,7 @@ dependencies = [
 name = "solana-bpf-loader-program"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "bincode",
  "libsecp256k1",
  "num-traits",
@@ -5393,7 +5393,7 @@ dependencies = [
 name = "solana-builtins"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "solana-bpf-loader-program",
  "solana-compute-budget-program",
  "solana-loader-v4-program",
@@ -5411,7 +5411,7 @@ dependencies = [
 name = "solana-builtins-default-costs"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "ahash 0.8.11",
  "lazy_static",
  "log",
@@ -5471,7 +5471,7 @@ name = "solana-cli-output"
 version = "2.3.0"
 dependencies = [
  "Inflector",
- "agave-reserved-account-keys",
+ "uwuave-reserved-account-keys",
  "base64 0.22.1",
  "chrono",
  "clap",
@@ -5618,7 +5618,7 @@ dependencies = [
 name = "solana-compute-budget-instruction"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "log",
  "solana-borsh",
  "solana-builtins-default-costs",
@@ -5692,9 +5692,9 @@ dependencies = [
 name = "solana-core"
 version = "2.3.0"
 dependencies = [
- "agave-banking-stage-ingress-types",
- "agave-feature-set",
- "agave-transaction-view",
+ "uwuave-banking-stage-ingress-types",
+ "uwuave-feature-set",
+ "uwuave-transaction-view",
  "ahash 0.8.11",
  "anyhow",
  "arrayvec",
@@ -5786,7 +5786,7 @@ dependencies = [
 name = "solana-cost-model"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "ahash 0.8.11",
  "lazy_static",
  "log",
@@ -6039,7 +6039,7 @@ dependencies = [
 name = "solana-fee"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "solana-fee-structure",
  "solana-svm-transaction",
 ]
@@ -6102,7 +6102,7 @@ dependencies = [
 name = "solana-geyser-plugin-manager"
 version = "2.3.0"
 dependencies = [
- "agave-geyser-plugin-interface",
+ "uwuave-geyser-plugin-interface",
  "bs58",
  "crossbeam-channel",
  "json5",
@@ -6131,7 +6131,7 @@ dependencies = [
 name = "solana-gossip"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "arrayvec",
  "assert_matches",
  "bincode",
@@ -6330,8 +6330,8 @@ dependencies = [
 name = "solana-ledger"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
- "agave-reserved-account-keys",
+ "uwuave-feature-set",
+ "uwuave-reserved-account-keys",
  "anyhow",
  "assert_matches",
  "bincode",
@@ -6884,7 +6884,7 @@ dependencies = [
 name = "solana-program-runtime"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "base64 0.22.1",
  "bincode",
  "enum-iterator",
@@ -6925,7 +6925,7 @@ dependencies = [
 name = "solana-program-test"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "assert_matches",
  "async-trait",
  "base64 0.22.1",
@@ -7142,7 +7142,7 @@ dependencies = [
 name = "solana-rpc"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "base64 0.22.1",
  "bincode",
  "bs58",
@@ -7301,9 +7301,9 @@ dependencies = [
 name = "solana-runtime"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
- "agave-precompiles",
- "agave-reserved-account-keys",
+ "uwuave-feature-set",
+ "uwuave-precompiles",
+ "uwuave-reserved-account-keys",
  "ahash 0.8.11",
  "aquamarine",
  "arrayref",
@@ -7390,7 +7390,7 @@ dependencies = [
 name = "solana-runtime-transaction"
 version = "2.3.0"
 dependencies = [
- "agave-transaction-view",
+ "uwuave-transaction-view",
  "log",
  "solana-compute-budget",
  "solana-compute-budget-instruction",
@@ -7757,7 +7757,7 @@ dependencies = [
 name = "solana-stake-program"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "bincode",
  "log",
  "solana-account",
@@ -7784,7 +7784,7 @@ dependencies = [
 name = "solana-storage-bigtable"
 version = "2.3.0"
 dependencies = [
- "agave-reserved-account-keys",
+ "uwuave-reserved-account-keys",
  "backoff",
  "bincode",
  "bytes",
@@ -7892,7 +7892,7 @@ dependencies = [
 name = "solana-svm"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "ahash 0.8.11",
  "itertools 0.12.1",
  "log",
@@ -7943,7 +7943,7 @@ dependencies = [
 name = "solana-svm-example-paytube"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "solana-bpf-loader-program",
  "solana-client",
  "solana-compute-budget",
@@ -8092,7 +8092,7 @@ dependencies = [
 name = "solana-test-validator"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "base64 0.22.1",
  "bincode",
  "crossbeam-channel",
@@ -8319,7 +8319,7 @@ name = "solana-transaction-status"
 version = "2.3.0"
 dependencies = [
  "Inflector",
- "agave-reserved-account-keys",
+ "uwuave-reserved-account-keys",
  "base64 0.22.1",
  "bincode",
  "borsh 1.5.7",
@@ -8382,7 +8382,7 @@ dependencies = [
 name = "solana-turbine"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "bincode",
  "bytes",
  "crossbeam-channel",
@@ -8455,7 +8455,7 @@ dependencies = [
 name = "solana-unified-scheduler-pool"
 version = "2.3.0"
 dependencies = [
- "agave-banking-stage-ingress-types",
+ "uwuave-banking-stage-ingress-types",
  "aquamarine",
  "assert_matches",
  "crossbeam-channel",
@@ -8493,7 +8493,7 @@ checksum = "7bbf6d7a3c0b28dd5335c52c0e9eae49d0ae489a8f324917faf0ded65a812c1d"
 name = "solana-version"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "semver",
  "serde",
  "serde_derive",
@@ -8555,7 +8555,7 @@ dependencies = [
 name = "solana-vote-program"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "bincode",
  "log",
  "num-derive",
@@ -8661,7 +8661,7 @@ dependencies = [
 name = "solana-zk-token-proof-program"
 version = "2.3.0"
 dependencies = [
- "agave-feature-set",
+ "uwuave-feature-set",
  "bytemuck",
  "num-derive",
  "num-traits",

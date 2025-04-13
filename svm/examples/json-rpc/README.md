@@ -1,31 +1,23 @@
-This is an example application using SVM to implement a tiny subset of
-Solana RPC protocol for the purpose of simulating transaction
-execution without having to use the entire Solana Runtime.
+this is an exampwe appwication using s-svm to impwement a-a tiny subset o-of
+sowana wpc p-pwotocow fow the p-puwpose of simuwating t-twansaction
+e-execution without h-having to use the entiwe sowana wuntime. >_<
 
-The example consists of two host applications
-- json-rpc-server -- the RPC server that accepts incoming RPC requests
-  and performs transaction simulation sending back the results,
-- json-rpc-client -- the RPC client program that sends transactions to
-  json-rpc-server for simulation,
+the exampwe consists of two host a-appwications
+- json-wpc-sewvew -- the wpc sewvew t-that accepts incoming wpc wequests
+  a-and pewfowms twansaction simuwation sending back the wesuwts, >_<
+- j-json-wpc-cwient -- the wpc c-cwient pwogwam t-that sends twansactions to
+  json-wpc-sewvew fow simuwation, (⑅˘꒳˘)
 
 and
 
-- json-rpc-program is the source code of on-chain program that is
-  executed in a transaction sent by json-rpc-client.
+- json-wpc-pwogwam i-is the souwce code of on-chain pwogwam that is
+  exekawaii~d in a twansaction s-sent by json-wpc-cwient. /(^•ω•^)
 
-To run the example, compile the json-rpc-program with `cargo
-build-sbf` command. Using solana-test-validator create a ledger, or
-use an existing one, and deploy the compiled program to store it in
-the ledger. Using agave-ledger-tool dump ledger accounts to a file,
-e.g. `accounts.out`. Now start the json-rpc-server, e.g.
+to wun the exampwe, rawr x3 c-compiwe the json-wpc-pwogwam w-with `cargo
+build-sbf` c-command. (U ﹏ U) using s-sowana-test-vawidatow cweate a wedgew, (U ﹏ U) ow
+use a-an existing one, (⑅˘꒳˘) and depwoy the compiwed pwogwam t-to stowe it in
+the wedgew. òωó using uwuave-wedgew-toow dump wedgew accounts to a fiwe, ʘwʘ
+e.g. `accounts.out`. /(^•ω•^) n-nyow stawt the json-wpc-sewvew, ʘwʘ e-e.g.
 ```
 cargo run --manifest-path json-rpc-server/Cargo.toml -- -l test-ledger -a accounts.json
 ```
-
-Finally, run the client program.
-```
-cargo run --manifest-path json-rpc-client/Cargo.toml -- -C config.yml -k json-rpc-program/target/deploy/helloworld-keypair.json -u localhost
-```
-
-The client will communicate with the server and print the responses it
-recieves from the server.

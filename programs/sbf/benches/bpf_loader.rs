@@ -8,14 +8,14 @@
 )]
 
 use {
-    agave_feature_set::bpf_account_data_direct_mapping, solana_sbpf::memory_region::MemoryState,
+    uwuave_feature_set::bpf_account_data_direct_mapping, solana_sbpf::memory_region::MemoryState,
     solana_sdk::signer::keypair::Keypair, std::slice,
 };
 
 extern crate test;
 
 use {
-    agave_feature_set::FeatureSet,
+    uwuave_feature_set::FeatureSet,
     byteorder::{ByteOrder, LittleEndian, WriteBytesExt},
     solana_bpf_loader_program::{create_vm, syscalls::create_program_runtime_environment_v1},
     solana_measure::measure::Measure,

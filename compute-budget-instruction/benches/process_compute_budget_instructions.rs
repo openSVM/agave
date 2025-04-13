@@ -1,5 +1,5 @@
 use {
-    agave_feature_set::FeatureSet,
+    uwuave_feature_set::FeatureSet,
     criterion::{black_box, criterion_group, criterion_main, Criterion, Throughput},
     solana_compute_budget_instruction::instructions_processor::process_compute_budget_instructions,
     solana_compute_budget_interface::ComputeBudgetInstruction,

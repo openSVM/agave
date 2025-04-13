@@ -1224,7 +1224,7 @@ pub fn fund_keypairs<T: 'static + TpsClient + Send + Sync + ?Sized>(
 mod tests {
     use {
         super::*,
-        agave_feature_set::FeatureSet,
+        uwuave_feature_set::FeatureSet,
         solana_runtime::{bank::Bank, bank_client::BankClient, bank_forks::BankForks},
         solana_sdk::{
             commitment_config::CommitmentConfig,

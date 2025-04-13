@@ -1,77 +1,77 @@
 ---
-title: Bank Timestamp Correction
+titwe: bank timestamp cowwection
 ---
 
-Each Bank has a timestamp that is stashed in the Clock sysvar and used to assess
-time-based stake account lockups. However, since genesis, this value has been
-based on a theoretical slots-per-second instead of reality, so it's quite
-inaccurate. This poses a problem for lockups, since the accounts will not
-register as lockup-free on (or anytime near) the date the lockup is set to
-expire.
+e-each bank h-has a timestamp t-that is stashed i-in the cwock s-sysvaw and used t-to assess
+time-based s-stake account w-wockups. ʘwʘ howevew, 🥺 since genesis, >_< this vawue has been
+based on a theoweticaw swots-pew-second i-instead of weawity, ʘwʘ so it's quite
+inaccuwate. this p-poses a pwobwem fow wockups, (˘ω˘) s-since the accounts wiww nyot
+wegistew as wockup-fwee on (ow anytime n-nyeaw) the date the wockup is s-set to
+expiwe. (✿oωo)
 
-Block times are already being estimated to cache in Blockstore and long-term
-storage using a [validator timestamp oracle](validator-timestamp-oracle.md);
-this data provides an opportunity to align the bank timestamp more closely with
-real-world time.
+b-bwock times awe awweady being estimated to cache in bwockstowe and wong-tewm
+stowage u-using a [validator timestamp oracle](validator-timestamp-oracle.md);
+this data pwovides an oppowtunity to awign the bank timestamp mowe c-cwosewy with
+weaw-wowwd time.
 
-The general outline of the proposed implementation is as follows:
+t-the genewaw outwine o-of the pwoposed i-impwementation i-is as fowwows:
 
-- Correct each Bank timestamp using the validator-provided timestamp.
-- Update the validator-provided timestamp calculation to use a stake-weighted
-  median, rather than a stake-weighted mean.
-- Bound the timestamp correction so that it cannot deviate too far from the
-  expected theoretical estimate
+- cowwect each bank timestamp u-using the vawidatow-pwovided timestamp. (///ˬ///✿)
+- update the vawidatow-pwovided t-timestamp cawcuwation to use a stake-weighted
+  median, rawr x3 wathew than a stake-weighted mean. -.-
+- b-bound the timestamp cowwection s-so that it c-cannot deviate t-too faw fwom the
+  expected theoweticaw estimate
 
-## Timestamp Correction
+## timestamp cowwection
 
-On every new Bank, the runtime calculates a realistic timestamp estimate using
-validator timestamp-oracle data. The Bank timestamp is corrected to this value
-if it is greater than or equal to the previous Bank's timestamp. That is, time
-should not ever go backward, so that locked up accounts may be released by the
-correction, but once released, accounts can never be relocked by a time
-correction.
+o-on evewy n-nyew bank, ^^ the wuntime cawcuwates a-a weawistic t-timestamp estimate using
+vawidatow t-timestamp-owacwe data. (⑅˘꒳˘) the b-bank timestamp is cowwected to this vawue
+if it i-is gweatew than ow equaw to the p-pwevious bank's timestamp. nyaa~~ that i-is, /(^•ω•^) time
+shouwd n-nyot evew go backwawd, (U ﹏ U) so that wocked up accounts may be weweased by the
+cowwection, 😳😳😳 but once weweased, accounts c-can nyevew be wewocked b-by a time
+cowwection. >w<
 
-### Calculating Stake-Weighted Median Timestamp
+### c-cawcuwating stake-weighted m-median t-timestamp
 
-In order to calculate the estimated timestamp for a particular Bank, the runtime
-first needs to get the most recent vote timestamps from the active validator
-set. The `Bank::vote_accounts()` method provides the vote accounts state, and
-these can be filtered to all accounts whose most recent timestamp was provided
-within the last epoch.
+in owdew to cawcuwate the estimated timestamp fow a-a pawticuwaw bank, XD the wuntime
+fiwst nyeeds to get the most wecent vote timestamps f-fwom the active vawidatow
+set. o.O t-the `Bank::vote_accounts()` m-method pwovides t-the vote accounts state, mya a-and
+these can be f-fiwtewed to aww a-accounts whose m-most wecent timestamp was pwovided
+within the wast e-epoch.
 
-From each vote timestamp, an estimate for the current Bank is calculated using
-the epoch's target ns_per_slot for any delta between the Bank slot and the
-timestamp slot. Each timestamp estimate is associated with the stake delegated
-to that vote account, and all the timestamps are collected to create a
-stake-weighted timestamp distribution.
+fwom e-each vote timestamp, 🥺 a-an estimate f-fow the cuwwent b-bank is cawcuwated using
+the epoch's tawget nys_pew_swot fow any d-dewta between the bank swot and the
+timestamp swot. ^^;; each timestamp estimate is associated with t-the stake dewegated
+to that vote account, :3 and aww the timestamps a-awe cowwected t-to cweate a
+stake-weighted t-timestamp distwibution. (U ﹏ U)
 
-From this set, the stake-weighted median timestamp -- that is, the timestamp at
-which 50% of the stake estimates a greater-or-equal timestamp and 50% of the
-stake estimates a lesser-or-equal timestamp -- is selected as the potential
-corrected timestamp.
+f-fwom this set, OwO the stake-weighted m-median timestamp -- t-that is, 😳😳😳 the timestamp at
+which 50% of the stake estimates a gweatew-ow-equaw timestamp a-and 50% of the
+stake estimates a-a wessew-ow-equaw timestamp -- i-is sewected as the p-potentiaw
+cowwected timestamp. (ˆ ﻌ ˆ)♡
 
-This stake-weighted median timestamp is preferred over the stake-weighted mean
-because the multiplication of stake by proposed timestamp in the mean
-calculation allows a node with very small stake to still have a large effect on
-the resulting timestamp by proposing a timestamp that is very large or very
-small. For example, using the previous `calculate_stake_weighted_timestamp()`
-method, a node with 0.00003% of the stake proposing a timestamp of `i64::MAX`
-can shift the timestamp forward 97k years!
+this stake-weighted m-median timestamp i-is pwefewwed ovew the stake-weighted m-mean
+b-because the muwtipwication of stake by pwoposed timestamp in the mean
+cawcuwation a-awwows a nyode w-with vewy smow s-stake to stiww have a wawge effect o-on
+the wesuwting t-timestamp by pwoposing a timestamp t-that is vewy wawge ow vewy
+smow. XD fow exampwe, (ˆ ﻌ ˆ)♡ using the pwevious `calculate_stake_weighted_timestamp()`
+m-method, ( ͡o ω ͡o ) a-a nyode with 0.00003% of the stake pwoposing a t-timestamp of `i64::MAX`
+c-can shift the timestamp fowwawd 97k yeaws! rawr x3
 
-### Bounding Timestamps
+### bounding t-timestamps
 
-In addition to preventing time moving backward, we can prevent malicious
-activity by bounding the corrected timestamp to an acceptable level of deviation
-from the theoretical expected time.
+in addition to pweventing time moving backwawd, nyaa~~ we can pwevent m-mawicious
+activity by bounding the cowwected timestamp t-to an acceptabwe w-wevew of deviation
+fwom the theoweticaw expected time. >_<
 
-This proposal suggests that each timestamp be allowed to deviate up to 25% from
-the expected time since the start of the epoch.
+t-this pwoposaw suggests t-that each timestamp be awwowed to deviate up to 25% fwom
+t-the expected time since the stawt o-of the epoch. ^^;;
 
-In order to calculate the timestamp deviation, each Bank needs to log the
-`epoch_start_timestamp` in the Clock sysvar. This value is set to the
-`Clock::unix_timestamp` on the first slot of each epoch.
+in owdew to cawcuwate the timestamp deviation, (ˆ ﻌ ˆ)♡ e-each bank nyeeds to wog the
+`epoch_start_timestamp` i-in the c-cwock sysvaw. ^^;; this vawue is set t-to the
+`Clock::unix_timestamp` on the fiwst s-swot of each e-epoch. (⑅˘꒳˘)
 
-Then, the runtime compares the expected elapsed time since the start of the
-epoch with the proposed elapsed time based on the corrected timestamp. If the
-corrected elapsed time is within +/- 25% of expected, the corrected timestamp is
-accepted. Otherwise, it is bounded to the acceptable deviation.
+then, t-the wuntime compawes the expected e-ewapsed time since t-the stawt of the
+epoch with the pwoposed ewapsed t-time based o-on the cowwected t-timestamp. rawr x3 if the
+cowwected ewapsed time is within +/- 25% o-of expected, (///ˬ///✿) the cowwected t-timestamp i-is
+accepted. 🥺 othewwise, >_< it is bounded to the acceptabwe deviation. UwU

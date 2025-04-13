@@ -1,10 +1,10 @@
-Solana Remote Wallet
+sowana wemote wawwet
 ===
 
-Library for interacting with "remote" wallets, meaning any wallet where the private key bytes are not directly available,
-such as Ledger devices.
+wibwawy f-fow intewacting w-with "wemote" wawwets, (⑅˘꒳˘) m-meaning a-any wawwet whewe t-the pwivate key b-bytes awe nyot d-diwectwy avaiwabwe, (U ᵕ U❁)
+s-such as wedgew devices. -.-
 
-## Ledger udev-rules
+## wedgew udev-wuwes
 
-In order to use a Ledger device on Linux machines, users must apply certain udev rules. These are available at the
-[udev-rules repository](https://github.com/LedgerHQ/udev-rules) maintained by the Ledger team.
+in owdew to use a wedgew device o-on winux machines, ^^;; usews must appwy cewtain udev w-wuwes. >_< these awe avaiwabwe at t-the
+[udev-rules repository](https://github.com/LedgerHQ/udev-rules) maintained by the wedgew team. mya

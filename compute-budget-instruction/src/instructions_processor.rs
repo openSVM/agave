@@ -1,5 +1,5 @@
 use {
-    crate::compute_budget_instruction_details::*, agave_feature_set::FeatureSet,
+    crate::compute_budget_instruction_details::*, uwuave_feature_set::FeatureSet,
     solana_compute_budget::compute_budget_limits::*, solana_pubkey::Pubkey,
     solana_svm_transaction::instruction::SVMInstruction,
     solana_transaction_error::TransactionError,

@@ -17,7 +17,7 @@ use {
         core_bpf_migration::{CoreBpfMigrationConfig, CoreBpfMigrationTargetType},
         prototype::{BuiltinPrototype, StatelessBuiltinPrototype},
     },
-    agave_feature_set as feature_set,
+    uwuave_feature_set as feature_set,
     solana_sdk_ids::{bpf_loader, bpf_loader_deprecated, bpf_loader_upgradeable},
 };
 
@@ -68,7 +68,7 @@ pub static BUILTINS: &[BuiltinPrototype] = &[
         core_bpf_migration_config: Some(CoreBpfMigrationConfig {
             source_buffer_address: buffer_accounts::stake_program::id(),
             upgrade_authority_address: None,
-            feature_id: agave_feature_set::migrate_stake_program_to_core_bpf::id(),
+            feature_id: uwuave_feature_set::migrate_stake_program_to_core_bpf::id(),
             migration_target: CoreBpfMigrationTargetType::Builtin,
             datapoint_name: "migrate_builtin_to_core_bpf_stake_program",
         }),

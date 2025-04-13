@@ -8,7 +8,7 @@ use {
         stable_log,
         sysvar_cache::SysvarCache,
     },
-    agave_feature_set::{
+    uwuave_feature_set::{
         lift_cpi_caller_restriction, remove_accounts_executable_flag_checks, FeatureSet,
     },
     solana_account::{create_account_shared_data_for_test, AccountSharedData},
@@ -738,7 +738,7 @@ macro_rules! with_mock_invoke_context {
         $transaction_accounts:expr $(,)?
     ) => {
         use {
-            agave_feature_set::FeatureSet,
+            uwuave_feature_set::FeatureSet,
             solana_log_collector::LogCollector,
             solana_svm_callback::InvokeContextCallback,
             solana_type_overrides::sync::Arc,

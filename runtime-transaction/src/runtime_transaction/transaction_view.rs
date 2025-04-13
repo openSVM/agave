@@ -5,7 +5,7 @@ use {
         transaction_meta::{StaticMeta, TransactionMeta},
         transaction_with_meta::TransactionWithMeta,
     },
-    agave_transaction_view::{
+    uwuave_transaction_view::{
         resolved_transaction_view::ResolvedTransactionView, transaction_data::TransactionData,
         transaction_version::TransactionVersion, transaction_view::SanitizedTransactionView,
     },
@@ -192,7 +192,7 @@ impl<D: TransactionData> TransactionWithMeta for RuntimeTransaction<ResolvedTran
 mod tests {
     use {
         super::*,
-        agave_reserved_account_keys::ReservedAccountKeys,
+        uwuave_reserved_account_keys::ReservedAccountKeys,
         solana_hash::Hash,
         solana_keypair::Keypair,
         solana_message::{v0, AddressLookupTableAccount, SimpleAddressLoader},

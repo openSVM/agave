@@ -1,93 +1,76 @@
 ---
-title: Blockstore in a Solana Validator
-sidebar_position: 3
-sidebar_label: Blockstore
-pagination_label: Validator Blockstore
+titwe: bwockstowe in a sowana v-vawidatow
+sidebaw_position: 3
+sidebaw_wabew: b-bwockstowe
+p-pagination_wabew: v-vawidatow b-bwockstowe
 ---
 
-After a block reaches finality, all blocks from that one on down to the genesis block form a linear chain with the familiar name blockchain. Until that point, however, the validator must maintain all potentially valid chains, called _forks_. The process by which forks naturally form as a result of leader rotation is described in [fork generation](../consensus/fork-generation.md). The _blockstore_ data structure described here is how a validator copes with those forks until blocks are finalized.
+a-aftew a bwock w-weaches finawity, >w< a-aww bwocks fwom that one on down to the genesis bwock fowm a wineaw chain with t-the famiwiaw nyame bwockchain. 🥺 untiw that point, nyaa~~ h-howevew, ^^ the vawidatow must m-maintain aww potentiawwy vawid chains, >w< cawwed _fowks_. OwO the pwocess b-by which fowks nyatuwawwy fowm a-as a wesuwt of w-weadew wotation is descwibed in [fork generation](../consensus/fork-generation.md). XD the _bwockstowe_ data stwuctuwe descwibed hewe i-is how a vawidatow copes with those fowks untiw bwocks awe finawized. ^^;;
 
-The blockstore allows a validator to record every shred it observes on the network, in any order, as long as the shred is signed by the expected leader for a given slot.
+the bwockstowe a-awwows a vawidatow to wecowd e-evewy shwed i-it obsewves on t-the nyetwowk, 🥺 in a-any owdew, XD as wong as the shwed is signed by the e-expected weadew fow a given swot. (U ᵕ U❁)
 
-Shreds are moved to a fork-able key space the tuple of `leader slot` + `shred index` \(within the slot\). This permits the skip-list structure of the Solana protocol to be stored in its entirety, without a-priori choosing which fork to follow, which Entries to persist or when to persist them.
+shweds awe m-moved to a fowk-abwe key space the tupwe of `leader slot` + `shred index` \(within the swot\). :3 this pewmits the skip-wist stwuctuwe o-of the sowana pwotocow to b-be stowed in its e-entiwety, ( ͡o ω ͡o ) without a-a-pwiowi choosing which fowk to fowwow, òωó which entwies to pewsist o-ow when to p-pewsist them. σωσ
 
-Repair requests for recent shreds are served out of RAM or recent files and out of deeper storage for less recent shreds, as implemented by the store backing Blockstore.
+wepaiw wequests f-fow wecent shweds a-awe sewved out of wam ow wecent f-fiwes and out of deepew stowage f-fow wess wecent shweds, (U ᵕ U❁) as impwemented by the s-stowe backing bwockstowe. (✿oωo)
 
-## Functionalities of Blockstore
+## functionawities o-of bwockstowe
 
-1. Persistence: the Blockstore lives in the front of the nodes verification
+1. ^^ p-pewsistence: the b-bwockstowe wives in the fwont of the nyodes vewification
 
-   pipeline, right behind network receive and signature verification. If the
+   pipewine, wight behind nyetwowk weceive and signatuwe v-vewification. ^•ﻌ•^ i-if the
 
-   shred received is consistent with the leader schedule \(i.e. was signed by the
+   shwed weceived is consistent w-with the w-weadew scheduwe \(i.e. XD w-was signed by the
 
-   leader for the indicated slot\), it is immediately stored.
+   weadew fow the indicated swot\), :3 i-it is immediatewy stowed. (ꈍᴗꈍ)
 
-2. Repair: repair is the same as window repair above, but able to serve any
+2. :3 wepaiw: wepaiw is the same as window wepaiw above, (U ﹏ U) b-but abwe to sewve any
 
-   shred that's been received. Blockstore stores shreds with signatures,
+   shwed t-that's been weceived. b-bwockstowe s-stowes shweds with signatuwes, UwU
 
-   preserving the chain of origination.
+   p-pwesewving t-the chain of owigination. 😳😳😳
 
-3. Forks: Blockstore supports random access of shreds, so can support a
+3. fowks: b-bwockstowe s-suppowts wandom access of shweds, XD so can suppowt a-a
 
-   validator's need to rollback and replay from a Bank checkpoint.
+   vawidatow's n-need to wowwback a-and wepway f-fwom a bank checkpoint. o.O
 
-4. Restart: with proper pruning/culling, the Blockstore can be replayed by
+4. w-westawt: with pwopew pwuning/cuwwing, the bwockstowe c-can be wepwayed by
 
-   ordered enumeration of entries from slot 0. The logic of the replay stage
+   owdewed enumewation of entwies fwom swot 0. (⑅˘꒳˘) the wogic of the wepway stage
 
-   \(i.e. dealing with forks\) will have to be used for the most recent entries in
+   \(i.e. 😳😳😳 d-deawing with fowks\) wiww have to be used fow the most w-wecent entwies i-in
 
-   the Blockstore.
+   the bwockstowe.
 
-## Blockstore Design
+## b-bwockstowe design
 
-1. Entries in the Blockstore are stored as key-value pairs, where the key is the concatenated slot index and shred index for an entry, and the value is the entry data. Note shred indexes are zero-based for each slot \(i.e. they're slot-relative\).
-2. The Blockstore maintains metadata for each slot, in the `SlotMeta` struct containing:
+1. nyaa~~ e-entwies in the bwockstowe awe s-stowed as key-vawue p-paiws, rawr whewe the key is the concatenated swot index and shwed index fow an entwy, -.- and the v-vawue is the entwy data. (✿oωo) nyote shwed i-indexes awe zewo-based fow e-each swot \(i.e. /(^•ω•^) t-they'we swot-wewative\).
+2. 🥺 the bwockstowe maintains m-metadata fow e-each swot, ʘwʘ in the `SlotMeta` s-stwuct containing:
 
-   - `slot_index` - The index of this slot
-   - `num_blocks` - The number of blocks in the slot \(used for chaining to a previous slot\)
-   - `consumed` - The highest shred index `n`, such that for all `m < n`, there exists a shred in this slot with shred index equal to `n` \(i.e. the highest consecutive shred index\).
-   - `received` - The highest received shred index for the slot
-   - `next_slots` - A list of future slots this slot could chain to. Used when rebuilding
+   - `slot_index` - t-the index of this swot
+   - `num_blocks` - the nyumbew of bwocks in the swot \(used f-fow chaining t-to a pwevious s-swot\)
+   - `consumed` - the highest shwed i-index `n`, UwU s-such that fow aww `m < n`##_26___###cwiption a-api's awe as fowwows:
 
-     the ledger to find possible fork points.
+1. XD `fn get_slots_since(slots: &[u64]) -> Result<HashMap<u64, Vec<u64>>>`ns swots that awe connected to any of the e-ewements of `slots`. (✿oωo) t-this method enabwes the discovewy o-of nyew chiwdwen s-swots. :3
 
-   - `last_index` - The index of the shred that is flagged as the last shred for this slot. This flag on a shred will be set by the leader for a slot when they are transmitting the last shred for a slot.
-   - `is_connected` - True iff every block from 0...slot forms a full sequence without any holes. We can derive is_connected for each slot with the following rules. Let slot\(n\) be the slot with index `n`, and slot\(n\).is_full\(\) is true if the slot with index `n` has all the ticks expected for that slot. Let is_connected\(n\) be the statement that "the slot\(n\).is_connected is true". Then:
+2. `fn get_slot_entries(slot: Slot, shred_start_index: u64) -> Result<Vec<Entry>>`#>`: fow the specified `slot`, (///ˬ///✿) wetuwn a vectow of the avaiwabwe, nyaa~~ c-contiguous entwies stawting fwom `shred_start_index`. >w< shweds awe fwagments of sewiawized e-entwies so the convewsion fwom entwy index t-to shwed index i-is nyot one-to-one. howevew, -.- thewe is a simiwaw function `get_slot_entries_with_shred_info()` t-that wetuwns t-the nyumbew of shweds that compwise the wetuwned entwy vectow. (✿oωo) t-this awwows a cawwew to twack p-pwogwess thwough the swot. (˘ω˘)
 
-     is_connected\(0\) is_connected\(n+1\) iff \(is_connected\(n\) and slot\(n\).is_full\(\)
+nyote: cumuwativewy, rawr this means t-that the wepway stage wiww nyow h-have to know when a-a swot is finished, OwO and subscwibe t-to the next swot it's intewested i-in to get the n-nyext set of e-entwies. ^•ﻌ•^ pweviouswy, UwU the buwden o-of chaining swots f-feww on the bwockstowe. (˘ω˘)
 
-3. Chaining - When a shred for a new slot `x` arrives, we check the number of blocks \(`num_blocks`\) for that new slot \(this information is encoded in the shred\). We then know that this new slot chains to slot `x - num_blocks`.
-4. Subscriptions - The Blockstore records a set of slots that have been "subscribed" to. This means entries that chain to these slots will be sent on the Blockstore channel for consumption by the ReplayStage. See the `Blockstore APIs` for details.
-5. Update notifications - The Blockstore notifies listeners when slot\(n\).is_connected is flipped from false to true for any `n`.
+## intewfacing with bank
 
-## Blockstore APIs
+t-the bank exposes t-to wepway s-stage:
 
-The Blockstore offers a subscription based API that ReplayStage uses to ask for entries it's interested in. These subscription API's are as follows:
+1. (///ˬ///✿) `prev_hash`: which poh chain it's w-wowking on as indicated by the hash o-of the wast e-entwy it pwocessed
 
-1. `fn get_slots_since(slots: &[u64]) -> Result<HashMap<u64, Vec<u64>>>`: Returns slots that are connected to any of the elements of `slots`. This method enables the discovery of new children slots.
+2. σωσ `tick_height`: the ticks in the poh chain cuwwentwy being v-vewified by this b-bank
 
-2. `fn get_slot_entries(slot: Slot, shred_start_index: u64) -> Result<Vec<Entry>>`: For the specified `slot`, return a vector of the available, contiguous entries starting from `shred_start_index`. Shreds are fragments of serialized entries so the conversion from entry index to shred index is not one-to-one. However, there is a similar function `get_slot_entries_with_shred_info()` that returns the number of shreds that comprise the returned entry vector. This allows a caller to track progress through the slot.
+3. `votes`: a-a stack o-of wecowds that contains:
+    * `prev_hashes`: n-nyani anything aftew this vote must chain to in poh
+    * `tick_height`: the tick height at w-which this vote was cast
+    * `lockout period`: h-how wong a chain must be obsewved t-to be in the wedgew to be abwe t-to be chained bewow this vote
 
-Note: Cumulatively, this means that the replay stage will now have to know when a slot is finished, and subscribe to the next slot it's interested in to get the next set of entries. Previously, the burden of chaining slots fell on the Blockstore.
+w-wepway stage uses b-bwockstowe apis t-to find the wongest c-chain of entwies i-it can hang off a pwevious vote. /(^•ω•^) if that chain of entwies does nyot hang off the watest vote, 😳 the wepway s-stage wowws back t-the bank to that v-vote and wepways the chain fwom t-thewe. 😳
 
-## Interfacing with Bank
+## pwuning bwockstowe
 
-The bank exposes to replay stage:
-
-1. `prev_hash`: which PoH chain it's working on as indicated by the hash of the last entry it processed
-
-2. `tick_height`: the ticks in the PoH chain currently being verified by this bank
-
-3. `votes`: a stack of records that contains:
-    * `prev_hashes`: what anything after this vote must chain to in PoH
-    * `tick_height`: the tick height at which this vote was cast
-    * `lockout period`: how long a chain must be observed to be in the ledger to be able to be chained below this vote
-
-Replay stage uses Blockstore APIs to find the longest chain of entries it can hang off a previous vote. If that chain of entries does not hang off the latest vote, the replay stage rolls back the bank to that vote and replays the chain from there.
-
-## Pruning Blockstore
-
-Once Blockstore entries are old enough, representing all the possible forks becomes less useful, perhaps even problematic for replay upon restart. Once a validator's votes have reached max lockout, however, any Blockstore contents that are not on the PoH chain for that vote for can be pruned, expunged.
+once bwockstowe entwies awe owd e-enough, (⑅˘꒳˘) wepwesenting a-aww the possibwe fowks becomes w-wess usefuw, 😳😳😳 pewhaps even pwobwematic fow wepway u-upon westawt. o-once a vawidatow's votes have w-weached max wockout, 😳 h-howevew, XD any bwockstowe contents that awe nyot on the poh chain fow that v-vote fow can be p-pwuned, mya expunged. ^•ﻌ•^

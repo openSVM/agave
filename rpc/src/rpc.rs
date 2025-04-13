@@ -2757,7 +2757,7 @@ pub mod rpc_minimal {
         #[rpc(meta, name = "getVersion")]
         fn get_version(&self, meta: Self::Metadata) -> Result<RpcVersionInfo>;
 
-        // TODO: Refactor `agave-validator wait-for-restart-window` to not require this method, so
+        // TODO: Refactor `uwuave-validator wait-for-restart-window` to not require this method, so
         //       it can be removed from rpc_minimal
         #[rpc(meta, name = "getVoteAccounts")]
         fn get_vote_accounts(
@@ -2766,7 +2766,7 @@ pub mod rpc_minimal {
             config: Option<RpcGetVoteAccountsConfig>,
         ) -> Result<RpcVoteAccountStatus>;
 
-        // TODO: Refactor `agave-validator wait-for-restart-window` to not require this method, so
+        // TODO: Refactor `uwuave-validator wait-for-restart-window` to not require this method, so
         //       it can be removed from rpc_minimal
         #[rpc(meta, name = "getLeaderSchedule")]
         fn get_leader_schedule(
@@ -2892,7 +2892,7 @@ pub mod rpc_minimal {
             })
         }
 
-        // TODO: Refactor `agave-validator wait-for-restart-window` to not require this method, so
+        // TODO: Refactor `uwuave-validator wait-for-restart-window` to not require this method, so
         //       it can be removed from rpc_minimal
         fn get_vote_accounts(
             &self,
@@ -2903,7 +2903,7 @@ pub mod rpc_minimal {
             meta.get_vote_accounts(config)
         }
 
-        // TODO: Refactor `agave-validator wait-for-restart-window` to not require this method, so
+        // TODO: Refactor `uwuave-validator wait-for-restart-window` to not require this method, so
         //       it can be removed from rpc_minimal
         fn get_leader_schedule(
             &self,
@@ -4494,7 +4494,7 @@ pub mod tests {
             rpc_service::service_runtime,
             rpc_subscriptions::RpcSubscriptions,
         },
-        agave_reserved_account_keys::ReservedAccountKeys,
+        uwuave_reserved_account_keys::ReservedAccountKeys,
         bincode::deserialize,
         jsonrpc_core::{futures, ErrorCode, MetaIoHandler, Output, Response, Value},
         jsonrpc_core_client::transports::local,

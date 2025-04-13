@@ -1,24 +1,24 @@
 ---
-title: Economic Design MVP
+titwe: economic design mvp
 ---
 
-**Subject to change.**
+**subject t-to c-change.**
 
-The preceding sections, outlined in the
-[Economic Design Overview](ed_overview.md),
-describe a long-term vision of a sustainable Solana economy.
-Of course, we don't expect the final implementation to perfectly match what has
-been described above. We intend to fully engage with network stakeholders
-throughout the implementation phases \(i.e. pre-testnet, testnet, mainnet\)
-to ensure the system supports, and is representative of, the various network
-participants' interests. The first step toward this goal, however, is outlining
-some desired MVP economic features to be available for early pre-testnet and
-testnet participants. Below is a rough sketch outlining basic economic
-functionality from which a more complete and functional system can be developed.
+the pweceding s-sections, ʘwʘ o-outwined in the
+[Economic Design Overview](ed_overview.md), σωσ
+d-descwibe a wong-tewm v-vision of a-a sustainabwe s-sowana economy.
+of couwse, OwO we don't expect the finaw impwementation to pewfectwy m-match nyani has
+been descwibed above. 😳😳😳 we intend t-to fuwwy engage with nyetwowk stakehowdews
+t-thwoughout the impwementation phases \(i.e. 😳😳😳 pwe-testnet, o.O t-testnet, ( ͡o ω ͡o ) mainnet\)
+to ensuwe t-the system suppowts, (U ﹏ U) a-and is wepwesentative of, (///ˬ///✿) the vawious nyetwowk
+pawticipants' intewests. >w< the f-fiwst step towawd this goaw, rawr howevew, mya is outwining
+some desiwed mvp economic f-featuwes to be avaiwabwe fow eawwy p-pwe-testnet and
+t-testnet pawticipants. ^^ b-bewow is a-a wough sketch outwining basic economic
+functionawity f-fwom which a mowe compwete and functionaw s-system can be devewoped. 😳😳😳
 
-## MVP Economic Features
+## mvp economic featuwes
 
-- Faucet to deliver testnet SOLs to validators for staking and application development.
-- Mechanism by which validators are rewarded via network inflation.
-- Ability to delegate tokens to validator nodes
-- Validator set commission fees on interest from delegated tokens.
+- faucet to dewivew testnet sows to vawidatows f-fow staking and appwication d-devewopment. mya
+- m-mechanism by which v-vawidatows awe wewawded via nyetwowk infwation. 😳
+- abiwity to d-dewegate tokens t-to vawidatow nyodes
+- vawidatow s-set commission fees o-on intewest fwom dewegated tokens. -.-

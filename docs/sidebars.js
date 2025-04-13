@@ -88,7 +88,7 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Contributing to Agave",
+      label: "Contributing to uwuave",
       // collapsed: false,
       items: [
         {

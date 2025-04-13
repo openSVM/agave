@@ -1,91 +1,91 @@
 ---
-title: Agave Validator Requirements
-sidebar_position: 3
-sidebar_label: Requirements
-pagination_label: Requirements to Operate a Validator
+titwe: uwuave vawidatow wequiwements
+s-sidebaw_position: 3
+s-sidebaw_wabew: w-wequiwements
+p-pagination_wabew: w-wequiwements t-to opewate a-a vawidatow
 ---
 
-## Minimum SOL requirements
+## m-minimum sow wequiwements
 
-There is no strict minimum amount of SOL required to run an Agave validator on Solana.
+thewe is nyo stwict minimum amount of sow wequiwed t-to wun an uwuave vawidatow on sowana. >w<
 
-However in order to participate in consensus, a vote account is required which
-has a rent-exempt reserve of 0.02685864 SOL. Voting also requires sending a vote
-transaction for each block the validator agrees with, which can cost up to
-1.1 SOL per day.
+howevew i-in owdew to pawticipate in consensus, OwO a-a vote account is wequiwed which
+has a went-exempt wesewve o-of 0.02685864 sow. XD voting awso w-wequiwes sending a-a vote
+twansaction fow each bwock the vawidatow agwees with, ^^;; which can cost up t-to
+1.1 sow pew day. 🥺
 
-## Hardware Recommendations
+## hawdwawe wecommendations
 
-The hardware recommendations below are provided as a guide.  Operators are encouraged to do their own performance testing.
+the hawdwawe wecommendations bewow awe pwovided a-as a guide. XD  opewatows awe encouwaged t-to do theiw o-own pewfowmance t-testing. (U ᵕ U❁)
 
-| Component | Validator Requirements | Additional RPC Node Requirements |
+| c-component | vawidatow wequiwements | additionaw w-wpc nyode wequiwements |
 |-----------|------------------------|----------------------------------|
-| **CPU**   | - 2.8GHz base clock speed, or faster<br />- SHA extensions instruction support<br />- AMD Gen 3 or newer<br />- Intel Ice Lake or newer<br />- Higher clock speed is preferable over more cores<br />- AVX2 instruction support (to use official release binaries, self-compile otherwise)<br />- Support for AVX512f is helpful<br />||
-| | 12 cores / 24 threads, or more  | 16 cores / 32 threads, or more |
-| **RAM**   | Error Correction Code (ECC) memory is suggested<br />Motherboard with 512GB capacity suggested ||
-| | 256GB or more| 512 GB or more for **all [account indexes](https://docs.solanalabs.com/operations/setup-an-rpc-node#account-indexing)** |
-| **Disk**  | PCIe Gen3 x4 NVME SSD, or better, on each of: <br />- **Accounts**: 1TB, or larger. High TBW (Total Bytes Written)<br />- **Ledger**: 1TB or larger. High TBW suggested<br />- **Snapshots**: 500GB or larger. High TBW suggested<br />- **OS**: (Optional) 500GB, or larger. SATA OK<br /><br />The OS may be installed on the ledger disk, though testing has shown better performance with the ledger on its own disk<br /><br />Accounts and ledger *can* be stored on the same disk, however due to high IOPS, this is not recommended<br /><br />The Samsung 970 and 980 Pro series SSDs are popular with the validator community | Consider a larger ledger disk if longer transaction history is required<br /><br />Accounts and ledger **should not** be stored on the same disk |
-| **GPUs**  | Not necessary at this time<br />Operators in the validator community do not use GPUs currently | |
+| **cpu**   | - 2.8ghz base cwock speed, :3 ow fastew<br />- s-sha extensions instwuction suppowt<br />- amd gen 3 ow nyewew<br />- intew i-ice wake ow nyewew<br />- highew cwock s-speed is pwefewabwe o-ovew mowe c-cowes<br />- avx2 instwuction suppowt (to use officiaw w-wewease binawies, ( ͡o ω ͡o ) s-sewf-compiwe othewwise)<br />- s-suppowt f-fow avx512f is hewpfuw<br />||
+| | 12 c-cowes / 24 thweads, òωó ow mowe  | 16 c-cowes / 32 thweads, σωσ ow mowe |
+| **wam**   | ewwow cowwection c-code (ecc) memowy is suggested<br />mothewboawd w-with 512gb capacity suggested ||
+| | 256gb o-ow mowe| 512 g-gb ow mowe fow **aww [account indexes](https://docs.solanalabs.com/operations/setup-an-rpc-node#account-indexing)** |
+| **disk**  | pcie gen3 x4 nyvme ssd, (U ᵕ U❁) ow bettew, (✿oωo) on each of: <br />- **accounts**: 1tb, ^^ ow wawgew. high tbw (totaw b-bytes wwitten)<br />- **wedgew**: 1tb o-ow wawgew. ^•ﻌ•^ high tbw suggested<br />- **snapshots**: 500gb o-ow wawgew. XD h-high tbw suggested<br />- **os**: (optionaw) 500gb, :3 o-ow wawgew. sata ok<br /><br />the os may be instawwed on the w-wedgew disk, (ꈍᴗꈍ) though testing has shown bettew pewfowmance with the wedgew on its o-own disk<br /><br />accounts and wedgew *can* b-be stowed on the s-same disk, :3 howevew d-due to high iops, (U ﹏ U) this is nyot w-wecommended<br /><br />the s-samsung 970 and 980 p-pwo sewies ssds a-awe popuwaw with the vawidatow community | considew a-a wawgew w-wedgew disk if w-wongew twansaction h-histowy is wequiwed<br /><br />accounts a-and wedgew **shouwd nyot** be stowed on the same disk |
+| **gpus**  | nyot nyecessawy a-at this time<br />opewatows in the vawidatow community do nyot use gpus cuwwentwy | |
 
-A community maintained list of currently optimal hardware can be found here: [solanahcl.org](https://solanahcl.org/). It is updated automatically from the [solanahcl/solanahcl Github repo](https://github.com/solanahcl/solanahcl).
+a community maintained w-wist of cuwwentwy optimaw hawdwawe can be found hewe: [solanahcl.org](https://solanahcl.org/). UwU i-it i-is updated automaticawwy f-fwom the [solanahcl/solanahcl Github repo](https://github.com/solanahcl/solanahcl). 😳😳😳
 
-## Virtual machines on Cloud Platforms
+## viwtuaw machines o-on cwoud pwatfowms
 
-Running an Agave node in the cloud requires significantly greater
-operational expertise to achieve stability and performance. Do not
-expect to find sympathetic voices should you chose this route and
-find yourself in need of support.
+wunning a-an uwuave nyode i-in the cwoud wequiwes significantwy gweatew
+opewationaw expewtise to achieve stabiwity and pewfowmance. XD d-do nyot
+expect to find s-sympathetic voices shouwd you chose t-this woute a-and
+find youwsewf in nyeed of suppowt. o.O
 
-## Docker
+## dockew
 
-Running an Agave validator for live clusters (including mainnet-beta) inside Docker is
-not recommended and generally not supported. This is due to concerns of general
-Docker's containerization overhead and resultant performance degradation unless
-specially configured.
+w-wunning an uwuave v-vawidatow fow wive cwustews (incwuding m-mainnet-beta) i-inside dockew is
+nyot wecommended and genewawwy nyot suppowted. (⑅˘꒳˘) this is d-due to concewns o-of genewaw
+dockew's c-containewization ovewhead and w-wesuwtant pewfowmance d-degwadation unwess
+speciawwy c-configuwed. 😳😳😳
 
-We use Docker only for development purposes. Docker Hub contains images for all
-releases at [solanalabs/solana](https://hub.docker.com/r/solanalabs/solana).
+we use dockew onwy fow devewopment puwposes. nyaa~~ dockew hub contains i-images fow aww
+w-weweases at [solanalabs/solana](https://hub.docker.com/r/solanalabs/solana). rawr
 
-## Software
+## softwawe
 
-- We build and run on Ubuntu 20.04.
-- See [Installing Solana CLI](../cli/install.md) for the current Solana CLI software release.
+- we buiwd and wun o-on ubuntu 20.04. -.-
+- s-see [Installing Solana CLI](../cli/install.md) fow the cuwwent sowana cwi softwawe wewease. (✿oωo)
 
-Prebuilt binaries are available for Linux x86_64 on CPUs supporting AVX2 \(Ubuntu 20.04 recommended\).
-MacOS or WSL users may build from source.
+p-pwebuiwt binawies awe avaiwabwe fow winux x86_64 on cpus suppowting avx2 \(ubuntu 20.04 w-wecommended\). /(^•ω•^)
+macos ow wsw usews may b-buiwd fwom souwce. 🥺
 
-## Networking
-Internet service should be at least 1GBbit/s symmetric, commercial. 10GBit/s preferred (especially for mainnet-beta).
-A dedicated public IP address is preferred.
+## n-nyetwowking
+intewnet sewvice shouwd be at weast 1gbbit/s s-symmetwic, ʘwʘ commewciaw. UwU 10gbit/s p-pwefewwed (especiawwy fow mainnet-beta). XD
+a dedicated pubwic ip a-addwess is pwefewwed. (✿oωo)
 
-### Firewall
-It is not recommended to run a validator behind a NAT. Operators who choose to
-do so should be comfortable configuring their networking equipment and debugging
-any traversal issues on their own.
+### fiwewaww
+i-it is nyot wecommended to wun a vawidatow behind a nyat. opewatows w-who choose to
+do so shouwd b-be comfowtabwe c-configuwing theiw nyetwowking e-equipment and debugging
+any twavewsaw i-issues on t-theiw own. :3
 
-The following traffic needs to be allowed. Furthermore, there should not be any traffic filtering from your validator to internet.
+the f-fowwowing twaffic needs to be awwowed. (///ˬ///✿) f-fuwthewmowe, nyaa~~ t-thewe shouwd nyot be any twaffic fiwtewing fwom y-youw vawidatow t-to intewnet. >w<
 
-#### Required
+#### w-wequiwed
 
-| Source | Destination         | Protocol    | Port(s)    | Comment                                                                                                                  |
+| souwce | destination         | pwotocow    | powt(s)    | c-comment                                                                                                                  |
 |--------|---------------------|-------------|------------|--------------------------------------------------------------------------------------------------------------------------|
-| any    | your validator's IP | TCP and UDP | 8000-10000 | P2P protocols (gossip, turbine, repair, etc). This can be limited to any free 13 port range with  `--dynamic-port-range` |
+| any    | youw vawidatow's i-ip | tcp a-and udp | 8000-10000 | p2p pwotocows (gossip, -.- tuwbine, wepaiw, (✿oωo) etc). this can b-be wimited to any f-fwee 13 powt w-wange with  `--dynamic-port-range` |
 
-#### Recommended
-When you manage your validator via SSH it is recommended to limit the allowed SSH traffic to your validator management IP.
+#### w-wecommended
+when you manage youw v-vawidatow via ssh it is wecommended to wimit the awwowed ssh twaffic to youw vawidatow management i-ip. (˘ω˘)
 
-| Source          | Destination                    | Protocol | Port(s) | Comment                                                                     |
+| souwce          | destination                    | pwotocow | powt(s) | c-comment                                                                     |
 |-----------------|--------------------------------|----------|---------|-----------------------------------------------------------------------------|
-| your IP address | your validator's management IP | TCP      | 22      | SSH management traffic. Port can be different depending on your SSH config. |
+| youw i-ip addwess | youw vawidatow's m-management ip | tcp      | 22      | s-ssh management t-twaffic. rawr powt c-can be diffewent d-depending on y-youw ssh config. OwO |
 
-***Please note that your source IP address should be a static public IP address. Please check with your service provider if you're not sure if your public IP address is static.***
+***pwease nyote that youw souwce ip addwess shouwd be a static pubwic ip addwess. ^•ﻌ•^ pwease check w-with youw sewvice p-pwovidew if y-you'we nyot suwe if youw pubwic i-ip addwess is static.***
 
-#### Optional
-For security purposes, it is not suggested that the following ports be open to
-the internet on staked, mainnet-beta validators.
+#### optionaw
+fow secuwity puwposes, UwU it is nyot suggested t-that the fowwowing p-powts be open to
+the intewnet o-on staked, (˘ω˘) mainnet-beta vawidatows. (///ˬ///✿)
 
-| Source   | Destination         | Protocol | Port(s) | Comment                                                |
+| souwce   | d-destination         | p-pwotocow | powt(s) | c-comment                                                |
 |----------|---------------------|----------|---------|--------------------------------------------------------|
-| RPC user | your validator's IP | TCP      | 8899    | JSONRPC over HTTP. Change with `--rpc-port RPC_PORT`   |
-| RPC user | your validator's IP | TCP      | 8900    | JSONRPC over Websockets. Derived. Uses  `RPC_PORT + 1` |
+| wpc u-usew | youw vawidatow's ip | tcp      | 8899    | jsonwpc ovew http. σωσ change with `--rpc-port RPC_PORT`   |
+| w-wpc usew | y-youw vawidatow's i-ip | tcp      | 8900    | jsonwpc o-ovew websockets. /(^•ω•^) d-dewived. uses  `RPC_PORT + 1` |
 

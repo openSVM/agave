@@ -1,7 +1,7 @@
 //! A helper to initialize Solana SVM API's `TransactionBatchProcessor`.
 
 use {
-    agave_feature_set::FeatureSet,
+    uwuave_feature_set::FeatureSet,
     solana_bpf_loader_program::syscalls::create_program_runtime_environment_v1,
     solana_compute_budget::compute_budget_limits::ComputeBudgetLimits,
     solana_fee_structure::FeeDetails,
@@ -89,7 +89,7 @@ pub(crate) fn create_transaction_batch_processor<CB: TransactionProcessingCallba
     processor
 }
 
-/// This function is also a mock. In the Agave validator, the bank pre-checks
+/// This function is also a mock. In the uwuave validator, the bank pre-checks
 /// transactions before providing them to the SVM API. We mock this step in
 /// PayTube, since we don't need to perform such pre-checks.
 pub(crate) fn get_transaction_check_results(

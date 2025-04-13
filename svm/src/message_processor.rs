@@ -96,8 +96,8 @@ pub(crate) fn process_message(
 mod tests {
     use {
         super::*,
-        agave_feature_set::FeatureSet,
-        agave_reserved_account_keys::ReservedAccountKeys,
+        uwuave_feature_set::FeatureSet,
+        uwuave_reserved_account_keys::ReservedAccountKeys,
         openssl::{
             ec::{EcGroup, EcKey},
             nid::Nid,

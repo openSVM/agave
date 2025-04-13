@@ -12,8 +12,8 @@ use {
         },
         program::*,
     },
-    agave_feature_set::{self as feature_set, FeatureSet},
-    agave_reserved_account_keys::ReservedAccountKeys,
+    uwuave_feature_set::{self as feature_set, FeatureSet},
+    uwuave_reserved_account_keys::ReservedAccountKeys,
     clap::{
         crate_description, crate_name, value_t, value_t_or_exit, values_t_or_exit, App,
         AppSettings, Arg, ArgMatches, SubCommand,
@@ -1784,7 +1784,7 @@ fn main() {
                 ("bank-hash", Some(_)) => {
                     eprintln!(
                         "The bank-hash command has been deprecated, use \
-                        agave-ledger-tool verify --print-bank-hash ... instead"
+                        uwuave-ledger-tool verify --print-bank-hash ... instead"
                     );
                 }
                 ("verify", Some(arg_matches)) => {

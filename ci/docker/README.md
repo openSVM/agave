@@ -1,12 +1,12 @@
-Docker image containing rust, rust nightly and some preinstalled packages used in CI
+dockew image containing wust, (⑅˘꒳˘) wust n-nyightwy and some p-pweinstawwed p-packages used in c-ci
 
-This image is manually maintained:
+this image i-is manuawwy maintained:
 
-#### CLI
+#### cwi
 
-1. Edit
-   1. `ci/rust-version.sh` for rust and rust nightly version
-   2. `ci/docker/env.sh` for some environment variables
-   3. `ci/docker/Dockerfile` for some other packages
-2. Ensure you're a member of the [Anza Docker Hub Organization](https://hub.docker.com/u/anzaxyz) and already `docker login`
-3. Run `ci/docker/build.sh` to build/publish the new image
+1. (U ᵕ U❁) e-edit
+   1. `ci/rust-version.sh` f-fow wust and wust n-nyightwy vewsion
+   2. -.- `ci/docker/env.sh` fow some enviwonment vawiabwes
+   3. ^^;; `ci/docker/Dockerfile` fow some othew packages
+2. >_< e-ensuwe you'we a membew of the [Anza Docker Hub Organization](https://hub.docker.com/u/anzaxyz) a-and awweady `docker login`
+3. mya wun `ci/docker/build.sh` t-to buiwd/pubwish the nyew image

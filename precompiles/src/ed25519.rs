@@ -1,5 +1,5 @@
 use {
-    agave_feature_set::{ed25519_precompile_verify_strict, FeatureSet},
+    uwuave_feature_set::{ed25519_precompile_verify_strict, FeatureSet},
     ed25519_dalek::{ed25519::signature::Signature, Verifier},
     solana_ed25519_program::{
         Ed25519SignatureOffsets, PUBKEY_SERIALIZED_SIZE, SIGNATURE_OFFSETS_SERIALIZED_SIZE,

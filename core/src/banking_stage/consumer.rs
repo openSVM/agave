@@ -489,7 +489,7 @@ mod tests {
         crate::banking_stage::tests::{
             create_slow_genesis_config, sanitize_transactions, simulate_poh,
         },
-        agave_reserved_account_keys::ReservedAccountKeys,
+        uwuave_reserved_account_keys::ReservedAccountKeys,
         crossbeam_channel::{unbounded, Receiver},
         solana_cost_model::{cost_model::CostModel, transaction_cost::TransactionCost},
         solana_entry::entry::{next_entry, next_versioned_entry},

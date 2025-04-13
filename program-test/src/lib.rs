@@ -4,7 +4,7 @@
 // Export tokio for test clients
 pub use tokio;
 use {
-    agave_feature_set::FEATURE_NAMES,
+    uwuave_feature_set::FEATURE_NAMES,
     async_trait::async_trait,
     base64::{prelude::BASE64_STANDARD, Engine},
     chrono_humanize::{Accuracy, HumanTime, Tense},
@@ -131,7 +131,7 @@ pub fn invoke_builtin_function(
     // Serialize entrypoint parameters with SBF ABI
     let mask_out_rent_epoch_in_vm_serialization = invoke_context
         .get_feature_set()
-        .is_active(&agave_feature_set::mask_out_rent_epoch_in_vm_serialization::id());
+        .is_active(&uwuave_feature_set::mask_out_rent_epoch_in_vm_serialization::id());
     let (mut parameter_bytes, _regions, _account_lengths) = serialize_parameters(
         transaction_context,
         instruction_context,
@@ -633,7 +633,7 @@ impl ProgramTest {
     /// the builtin version of the program, allowing the provided BPF program
     /// to be used at the designated program ID instead.
     ///
-    /// See https://github.com/anza-xyz/agave/blob/c038908600b8a1b0080229dea015d7fc9939c418/runtime/src/bank.rs#L5109-L5126.
+    /// See https://github.com/anza-xyz/uwuave/blob/c038908600b8a1b0080229dea015d7fc9939c418/runtime/src/bank.rs#L5109-L5126.
     pub fn add_upgradeable_program_to_genesis(
         &mut self,
         program_name: &'static str,

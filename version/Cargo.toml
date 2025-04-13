@@ -10,7 +10,7 @@ license = { workspace = true }
 edition = { workspace = true }
 
 [dependencies]
-agave-feature-set = { workspace = true }
+uwuave-feature-set = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_derive = { workspace = true }

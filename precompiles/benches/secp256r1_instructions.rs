@@ -2,8 +2,8 @@
 
 extern crate test;
 use {
-    agave_feature_set::FeatureSet,
-    agave_precompiles::secp256r1::verify,
+    uwuave_feature_set::FeatureSet,
+    uwuave_precompiles::secp256r1::verify,
     openssl::{
         ec::{EcGroup, EcKey},
         nid::Nid,

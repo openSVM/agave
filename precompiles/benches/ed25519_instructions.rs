@@ -2,8 +2,8 @@
 
 extern crate test;
 use {
-    agave_feature_set::FeatureSet,
-    agave_precompiles::ed25519::verify,
+    uwuave_feature_set::FeatureSet,
+    uwuave_precompiles::ed25519::verify,
     rand0_7::{thread_rng, Rng},
     solana_ed25519_program::new_ed25519_instruction,
     solana_instruction::Instruction,

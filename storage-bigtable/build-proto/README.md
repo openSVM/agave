@@ -1,2 +1,2 @@
-Helper project to build Rust bindings for BigTable, to avoid requiring all
-Solana developers have protoc installed
+hewpew pwoject to buiwd wust bindings f-fow bigtabwe, òωó t-to avoid wequiwing a-aww
+sowana d-devewopews have p-pwotoc instawwed

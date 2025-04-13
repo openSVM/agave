@@ -1,56 +1,37 @@
 ---
-title: Using Hardware Wallets in the Solana CLI
-pagination_label: "Using Hardware Wallets in the Solana CLI"
-sidebar_label: Using in the Solana CLI
-sidebar_position: 0
+titwe: using hawdwawe wawwets i-in the sowana cwi
+p-pagination_wabew: "using h-hawdwawe w-wawwets in t-the sowana cwi"
+s-sidebaw_wabew: using i-in the sowana c-cwi
+sidebaw_position: 0
 ---
 
-Signing a transaction requires a private key, but storing a private
-key on your personal computer or phone leaves it subject to theft.
-Adding a password to your key adds security, but many people prefer
-to take it a step further and move their private keys to a separate
-physical device called a _hardware wallet_. A hardware wallet is a
-small handheld device that stores private keys and provides some
-interface for signing transactions.
+signing a twansaction wequiwes a pwivate key, 😳😳😳 but stowing a pwivate
+k-key on youw pewsonaw computew ow phone weaves i-it subject to theft. o.O
+adding a p-passwowd to youw key adds secuwity, ( ͡o ω ͡o ) but many peopwe pwefew
+to take i-it a step fuwthew and move theiw p-pwivate keys t-to a sepawate
+physicaw device cawwed a _hawdwawe wawwet_. (U ﹏ U) a hawdwawe wawwet is a-a
+smow handhewd device that stowes pwivate keys and pwovides some
+intewface fow s-signing twansactions. (///ˬ///✿)
 
-The Solana CLI has first class support for hardware wallets. Anywhere
-you use a keypair filepath (denoted as `<KEYPAIR>` in usage docs), you
-can pass a _keypair URL_ that uniquely identifies a keypair in a
-hardware wallet.
+the sowana c-cwi has fiwst c-cwass suppowt fow h-hawdwawe wawwets. >w< a-anywhewe
+you use a keypaiw fiwepath (denoted as `<KEYPAIR>`__###` i-in usage docs), rawr you
+can pass a _keypaiw u-uww_ that uniquewy identifies a keypaiw in a
+hawdwawe wawwet. mya
 
-## Supported Hardware Wallets
+## suppowted hawdwawe wawwets
 
-The Solana CLI supports the following hardware wallets:
+t-the sowana cwi suppowts the fowwowing h-hawdwawe wawwets:
 
 - [Ledger Nano S and Ledger Nano X](./ledger.md)
 
-## Specify a Keypair URL
+## specify a-a keypaiw u-uww
 
-Solana defines a keypair URL format to uniquely locate any Solana keypair on a
-hardware wallet connected to your computer.
+sowana defines a keypaiw uww fowmat to uniquewy wocate any s-sowana keypaiw o-on a
+hawdwawe wawwet connected to y-youw computew. ^^
 
-The keypair URL has the following form, where square brackets denote optional
-fields:
+t-the keypaiw uww has the fowwowing f-fowm, 😳😳😳 whewe squawe bwackets d-denote optionaw
+fiewds:
 
 ```text
 usb://<MANUFACTURER>[/<WALLET_ID>][?key=<DERIVATION_PATH>]
 ```
-
-`WALLET_ID` is a globally unique key used to disambiguate multiple devices.
-
-`DERVIATION_PATH` is used to navigate to Solana keys within your hardware wallet.
-The path has the form `<ACCOUNT>[/<CHANGE>]`, where each `ACCOUNT` and `CHANGE`
-are nonnegative integers.
-
-For example, a fully qualified URL for a Ledger device might be:
-
-```text
-usb://ledger/BsNsvfXqQTtJnagwFWdBS7FBXgnsK8VZ5CmuznN85swK?key=0/0
-```
-
-All derivation paths implicitly include the prefix `44'/501'`, which indicates
-the path follows the [BIP44 specifications](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki)
-and that any derived keys are Solana keys (Coin type 501). The single quote
-indicates a "hardened" derivation. Because Solana uses Ed25519 keypairs, all
-derivations are hardened and therefore adding the quote is optional and
-unnecessary.

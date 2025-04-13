@@ -75,7 +75,7 @@ mod tests {
     use {
         super::*,
         crate::bank::{tests::create_simple_test_bank, ApplyFeatureActivationsCaller},
-        agave_feature_set as feature_set,
+        uwuave_feature_set as feature_set,
         assert_matches::assert_matches,
         solana_sdk::{
             account::Account,

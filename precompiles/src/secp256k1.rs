@@ -1,5 +1,5 @@
 use {
-    agave_feature_set::FeatureSet,
+    uwuave_feature_set::FeatureSet,
     digest::Digest,
     solana_precompile_error::PrecompileError,
     solana_secp256k1_program::{

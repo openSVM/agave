@@ -1,153 +1,153 @@
 ---
-title: Backward Compatibility Policy
+titwe: backwawd compatibiwity p-powicy
 ---
 
-As the Solana developer ecosystem grows, so does the need for clear expectations around
-breaking API and behavior changes affecting applications and tooling built for Solana by Anza.
-In a perfect world, Solana development could continue at a very fast pace without ever
-causing issues for existing developers. However, some compromises will need to be made
-and so this document attempts to clarify and codify the process for new releases. Furthermore,
-there will be a growing number of validator clients maintained separately by distinct teams.
-Coordinating across these teams to ensure the reliability of the network will require ongoing
-communication.
+as t-the sowana devewopew e-ecosystem gwows, UwU s-so does the n-nyeed fow cweaw e-expectations awound
+b-bweaking api a-and behaviow changes affecting appwications and toowing buiwt fow sowana by anza. XD
+i-in a pewfect wowwd, (✿oωo) sowana devewopment couwd c-continue at a vewy fast pace without e-evew
+causing issues fow existing devewopews. :3 howevew, (///ˬ///✿) some c-compwomises wiww nyeed to be made
+a-and so this d-document attempts to cwawify and codify the pwocess fow nyew weweases. nyaa~~ fuwthewmowe,
+t-thewe wiww be a gwowing nyumbew of vawidatow cwients maintained sepawatewy by d-distinct teams. >w<
+coowdinating acwoss t-these teams t-to ensuwe the w-wewiabiwity of the n-netwowk wiww wequiwe ongoing
+communication. -.-
 
-### Expectations
+### e-expectations
 
-- Agave software releases include APIs, SDKs, and CLI tooling (with a few [exceptions](#exceptions)).
-- Agave software releases follow semantic versioning, more details below.
-- Software for a `MINOR` version release will be compatible across all software on the
-  same `MAJOR` version.
+- uwuave softwawe weweases incwude a-apis, (✿oωo) sdks, and cwi toowing (with a few [exceptions](#exceptions)). (˘ω˘)
+- uwuave softwawe weweases fowwow semantic vewsioning, m-mowe detaiws bewow. rawr
+- softwawe f-fow a `MINOR` v-vewsion w-wewease wiww be compatibwe acwoss aww softwawe on the
+  same `MAJOR` v-vewsion. OwO
 
-### Deprecation Process
+### d-depwecation pwocess
 
-1. In any `PATCH` or `MINOR` release, a feature, API, endpoint, etc. could be marked as deprecated.
-2. According to code upgrade difficulty, some features will remain deprecated for a few release
-   cycles.
-3. In a future `MAJOR` release, deprecated features will be removed in an incompatible way.
+1. ^•ﻌ•^ i-in any `PATCH` o-ow `MINOR` wewease, UwU a-a featuwe, api, (˘ω˘) endpoint, e-etc. (///ˬ///✿) couwd be mawked as depwecated. σωσ
+2. accowding t-to code upgwade difficuwty, some f-featuwes wiww wemain depwecated f-fow a few wewease
+   c-cycwes. /(^•ω•^)
+3. in a futuwe `MAJOR` wewease, depwecated featuwes wiww be wemoved in an incompatibwe way. 😳
 
-### Release Cadence
+### wewease c-cadence
 
-The Solana RPC API, Rust SDK, CLI tooling, and SBF Program SDK are all updated and shipped
-along with each Solana software release and should always be compatible between `PATCH`
-updates of a particular `MINOR` version release.
+the sowana w-wpc api, 😳 wust sdk, (⑅˘꒳˘) cwi toowing, 😳😳😳 a-and sbf pwogwam s-sdk awe aww u-updated and shipped
+awong with each sowana softwawe wewease and s-shouwd awways be compatibwe between `PATCH`
+updates of a pawticuwaw `MINOR` vewsion w-wewease. 😳
 
-#### Release Channels
+#### wewease channews
 
-- `edge` software that contains cutting-edge features with no backward compatibility policy
-- `beta` software that runs on the Solana Testnet cluster
-- `stable` software that run on the Solana Mainnet Beta and Devnet clusters
+- `edge` s-softwawe t-that contains cutting-edge f-featuwes with nyo backwawd c-compatibiwity p-powicy
+- `beta` s-softwawe t-that wuns on the sowana testnet cwustew
+- `stable` s-softwawe that wun o-on the sowana m-mainnet beta and d-devnet cwustews
 
-#### Major Releases (x.0.0)
+#### m-majow weweases (x.0.0)
 
-`MAJOR` version releases (e.g. 2.0.0) may contain breaking changes and removal of previously
-deprecated features. Client SDKs and tooling will begin using new features and endpoints
-that were enabled in the previous `MAJOR` version.
+`MAJOR` vewsion weweases (e.g. XD 2.0.0) may contain bweaking c-changes and wemovaw of pweviouswy
+depwecated featuwes. mya cwient sdks and toowing wiww begin using n-nyew featuwes and endpoints
+that wewe enabwed in the pwevious `MAJOR` v-vewsion. ^•ﻌ•^
 
-#### Minor Releases (1.x.0)
+#### m-minow weweases (1.x.0)
 
-New features and proposal implementations are added to _new_ `MINOR` version
-releases (e.g. 1.4.0) and are first run on Solana's Testnet cluster. While running
-on the testnet, `MINOR` versions are considered to be in the `beta` release channel. After
-those changes have been patched as needed and proven to be reliable, the `MINOR` version will
-be upgraded to the `stable` release channel and deployed to the Mainnet Beta cluster.
+n-nyew featuwes and pwoposaw i-impwementations awe added to _new_ `MINOR` v-vewsion
+weweases (e.g. ʘwʘ 1.4.0) a-and awe fiwst wun on sowana's testnet cwustew. ( ͡o ω ͡o ) whiwe wunning
+on the testnet, mya `MINOR` vewsions awe considewed t-to be in the `beta` w-wewease channew. o.O aftew
+those c-changes have b-been patched as nyeeded and pwoven to be wewiabwe, (✿oωo) t-the `MINOR` v-vewsion wiww
+be upgwaded t-to the `stable` w-wewease channew and depwoyed to the mainnet beta cwustew. :3
 
-#### Patch Releases (1.0.x)
+#### patch weweases (1.0.x)
 
-Low risk features, non-breaking changes, and security and bug fixes are shipped as part
-of `PATCH` version releases (e.g. 1.0.11). Patches may be applied to both `beta` and `stable`
-release channels.
+wow w-wisk featuwes, 😳 n-nyon-bweaking c-changes, (U ﹏ U) and secuwity and bug fixes a-awe shipped a-as pawt
+of `PATCH` vewsion w-weweases (e.g. mya 1.0.11). (U ᵕ U❁) patches may be appwied to both `beta` and `stable`
+w-wewease c-channews. :3
 
-### RPC API
+### wpc api
 
-Patch releases:
+patch weweases:
 
-- Bug fixes
-- Security fixes
-- Endpoint / feature deprecation
+- b-bug fixes
+- secuwity f-fixes
+- endpoint / featuwe depwecation
 
-Minor releases:
+minow weweases:
 
-- New RPC endpoints and features
+- n-nyew wpc endpoints and featuwes
 
-Major releases:
+majow weweases:
 
-- Removal of deprecated features
+- wemovaw of depwecated featuwes
 
-### Rust Crates
+### w-wust cwates
 
-- [`solana-sdk`](https://docs.rs/solana-sdk/) - Rust SDK for creating transactions and parsing account state
-- [`solana-program`](https://docs.rs/solana-program/) - Rust SDK for writing programs
-- [`solana-client`](https://docs.rs/solana-client/) - Rust client for connecting to RPC API
-- [`solana-cli-config`](https://docs.rs/solana-cli-config/) - Rust client for managing Solana CLI config files
-- [`agave-geyser-plugin-interface`](https://docs.rs/agave-geyser-plugin-interface/) - Rust interface for developing Solana Geyser plugins.
+- [`solana-sdk`](https://docs.rs/solana-sdk/)k/) - wust sdk fow cweating t-twansactions a-and pawsing account state
+- [`solana-program`](https://docs.rs/solana-program/)- wust sdk fow wwiting p-pwogwams
+- [`solana-client`](https://docs.rs/solana-client/)- w-wust cwient fow connecting to wpc api
+- [`solana-cli-config`](https://docs.rs/solana-cli-config/)st cwient fow m-managing sowana cwi config fiwes
+- [`uwuave-geyser-plugin-interface`](https://docs.rs/uwuave-geyser-plugin-interface/) f-fow devewoping sowana geysew pwugins. mya
 
-Patch releases:
+patch weweases:
 
-- Bug fixes
-- Security fixes
-- Performance improvements
+- bug f-fixes
+- secuwity fixes
+- pewfowmance i-impwovements
 
-Minor releases:
+m-minow weweases:
 
-- New APIs
+- nyew apis
 
-Major releases
+m-majow weweases
 
-- Removal of deprecated APIs
-- Backwards incompatible behavior changes
+- wemovaw of depwecated a-apis
+- b-backwawds incompatibwe b-behaviow changes
 
-### CLI Tools
+### cwi t-toows
 
-Patch releases:
+patch weweases:
 
-- Bug and security fixes
-- Performance improvements
-- Subcommand / argument deprecation
+- b-bug and secuwity fixes
+- pewfowmance i-impwovements
+- s-subcommand / awgument d-depwecation
 
-Minor releases:
+minow weweases:
 
-- New subcommands
+- nyew subcommands
 
-Major releases:
+m-majow weweases:
 
-- Switch to new RPC API endpoints / configuration introduced in the previous major version.
-- Removal of deprecated features
+- switch t-to nyew wpc api e-endpoints / configuwation intwoduced in the pwevious majow vewsion. OwO
+- w-wemovaw o-of depwecated featuwes
 
-### Runtime Features
+### w-wuntime f-featuwes
 
-New Agave runtime features are feature-switched and manually activated. Runtime features
-include: the introduction of new native programs, sysvars, and syscalls; and changes to
-their behavior. Feature activation is cluster agnostic, allowing confidence to be built on
-Testnet before activation on Mainnet-beta.
+nyew uwuave wuntime f-featuwes awe featuwe-switched and manuawwy activated. (ˆ ﻌ ˆ)♡ wuntime featuwes
+incwude: the intwoduction of nyew nyative p-pwogwams, ʘwʘ sysvaws, o.O and syscawws; a-and changes to
+theiw behaviow. f-featuwe activation is cwustew a-agnostic, UwU awwowing confidence to b-be buiwt on
+testnet b-befowe activation o-on mainnet-beta.
 
-The release process is as follows:
+t-the wewease p-pwocess is as fowwows:
 
-1. New runtime feature is included in a new release, deactivated by default
-2. Once sufficient staked validators upgrade to the new release, the runtime feature switch
-   is activated manually with an instruction
-3. The feature takes effect at the beginning of the next epoch
+1. rawr x3 nyew wuntime featuwe is incwuded in a nyew wewease, deactivated by defauwt
+2. 🥺 once s-sufficient staked v-vawidatows u-upgwade to the nyew wewease, :3 the w-wuntime featuwe switch
+   is activated manuawwy with an instwuction
+3. (ꈍᴗꈍ) t-the featuwe t-takes effect at the beginning o-of the nyext epoch
 
-### Infrastructure Changes
+### infwastwuctuwe changes
 
-#### Local cluster scripts and Docker images
+#### w-wocaw cwustew s-scwipts and dockew images
 
-Breaking changes will be limited to `MAJOR` version updates. `MINOR` and `PATCH` updates should always
-be backwards compatible.
+b-bweaking changes w-wiww be wimited to `MAJOR` vewsion updates. 🥺 `MINOR` and `PATCH` updates shouwd a-awways
+be backwawds c-compatibwe. (✿oωo)
 
-### Exceptions
+### e-exceptions
 
-#### Web3 JavaScript SDK
+#### w-web3 j-javascwipt sdk
 
-The Web3.JS SDK also follows semantic versioning specifications but is shipped separately from Solana
-software releases.
+the web3.js sdk a-awso fowwows semantic v-vewsioning specifications b-but is shipped sepawatewy f-fwom sowana
+softwawe weweases. (U ﹏ U)
 
-#### Attack Vectors
+#### attack v-vectows
 
-If a new attack vector is discovered in existing code, the above processes may be
-circumvented in order to rapidly deploy a fix, depending on the severity of the issue.
+if a nyew attack vectow is discovewed i-in existing code, :3 the above p-pwocesses may be
+c-ciwcumvented in owdew to wapidwy d-depwoy a fix, ^^;; depending on the sevewity of the i-issue. rawr
 
-#### CLI Tooling Output
+#### cwi t-toowing output
 
-CLI tooling json output (`output --json`) compatibility will be preserved; however, output directed
-for a human reader is subject to change. This includes output as well as potential help, warning, or
-error messages.
+c-cwi toowing json output (`output --json`) compatibiwity wiww be p-pwesewved; howevew, 😳😳😳 output diwected
+fow a human w-weadew is subject t-to change. (✿oωo) this incwudes output a-as weww as potentiaw hewp, OwO wawning, ʘwʘ o-ow
+ewwow m-messages. (ˆ ﻌ ˆ)♡

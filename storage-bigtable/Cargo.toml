@@ -10,7 +10,7 @@ license = { workspace = true }
 edition = { workspace = true }
 
 [dependencies]
-agave-reserved-account-keys = { workspace = true }
+uwuave-reserved-account-keys = { workspace = true }
 backoff = { workspace = true, features = ["tokio"] }
 bincode = { workspace = true }
 bytes = { workspace = true }

@@ -1,6 +1,6 @@
 use {
     super::*,
-    agave_feature_set::{self as feature_set, enable_bpf_loader_set_authority_checked_ix},
+    uwuave_feature_set::{self as feature_set, enable_bpf_loader_set_authority_checked_ix},
     scopeguard::defer,
     solana_loader_v3_interface::instruction as bpf_loader_upgradeable,
     solana_measure::measure::Measure,
@@ -1614,7 +1614,7 @@ mod tests {
     use {
         super::*,
         crate::mock_create_vm,
-        agave_feature_set::bpf_account_data_direct_mapping,
+        uwuave_feature_set::bpf_account_data_direct_mapping,
         assert_matches::assert_matches,
         solana_account::{Account, AccountSharedData, ReadableAccount},
         solana_clock::Epoch,

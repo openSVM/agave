@@ -1,55 +1,55 @@
 ---
-title: Leader-to-Leader Transition
+titwe: weadew-to-weadew twansition
 ---
 
-This design describes how leaders transition production of the PoH ledger between each other as each leader generates its own slot.
+t-this d-design descwibes h-how weadews twansition p-pwoduction o-of the poh wedgew b-between each o-othew as each w-weadew genewates its own swot. (///ˬ///✿)
 
-## Challenges
+## chawwenges
 
-Current leader and the next leader are both racing to generate the final tick for the current slot. The next leader may arrive at that slot while still processing the current leader's entries.
+cuwwent weadew and the nyext weadew a-awe both wacing to genewate the finaw tick fow t-the cuwwent swot. 🥺 the nyext weadew m-may awwive at that swot whiwe stiww pwocessing the cuwwent w-weadew's entwies. >_<
 
-The ideal scenario would be that the next leader generated its own slot right after it was able to vote for the current leader. It is very likely that the next leader will arrive at their PoH slot height before the current leader finishes broadcasting the entire block.
+the ideaw scenawio w-wouwd be that t-the nyext weadew genewated its own swot wight aftew it was abwe to vote fow t-the cuwwent weadew. UwU it is vewy wikewy that the nyext weadew wiww awwive at theiw p-poh swot height befowe the cuwwent w-weadew finishes b-bwoadcasting t-the entiwe bwock. >_<
 
-The next leader has to make the decision of attaching its own block to the last completed block, or wait to finalize the pending block. It is possible that the next leader will produce a block that proposes that the current leader failed, even though the rest of the network observes that block succeeding.
+t-the nyext weadew has to make the decision of a-attaching its own bwock to the wast compweted bwock, o-ow wait to finawize the pending bwock. -.- it is possibwe that the nyext weadew wiww pwoduce a b-bwock that pwoposes that the cuwwent w-weadew faiwed, mya e-even though t-the west of the nyetwowk obsewves that bwock succeeding. >w<
 
-The current leader has incentives to start its slot as early as possible to capture economic rewards. Those incentives need to be balanced by the leader's need to attach its block to a block that has the most commitment from the rest of the network.
+the cuwwent w-weadew has i-incentives to stawt its swot as e-eawwy as possibwe t-to captuwe economic wewawds. (U ﹏ U) t-those incentives nyeed to be bawanced b-by the weadew's need to attach its bwock t-to a bwock that has the most commitment f-fwom the west of the nyetwowk. 😳😳😳
 
-## Leader timeout
+## w-weadew t-timeout
 
-While a leader is actively receiving entries for the previous slot, the leader can delay broadcasting the start of its block in real time. The delay is locally configurable by each leader, and can be dynamically based on the previous leader's behavior. If the previous leader's block is confirmed by the leader's TVU before the timeout, the PoH is reset to the start of the slot and this leader produces its block immediately.
+whiwe a weadew is activewy weceiving entwies fow the pwevious swot, o.O the weadew can deway bwoadcasting t-the stawt of its b-bwock in weaw time. òωó the deway i-is wocawwy configuwabwe b-by each w-weadew, 😳😳😳 and can be dynamicawwy based on the pwevious weadew's behaviow. σωσ i-if the pwevious weadew's bwock is confiwmed by the weadew's tvu befowe the t-timeout, (⑅˘꒳˘) the poh is weset to t-the stawt of the s-swot and this weadew p-pwoduces its bwock immediatewy. (///ˬ///✿)
 
-The downsides:
+t-the downsides:
 
-- Leader delays its own slot, potentially allowing the next leader more time to
+- w-weadew d-deways its own swot, 🥺 p-potentiawwy awwowing the nyext weadew mowe t-time to
 
-  catch up.
+  catch u-up. OwO
 
-The upsides compared to guards:
+the upsides c-compawed to guawds:
 
-- All the space in a block is used for entries.
-- The timeout is not fixed.
-- The timeout is local to the leader, and therefore can be clever. The leader's heuristic can take into account turbine performance.
-- This design doesn't require a ledger hard fork to update.
-- The previous leader can redundantly transmit the last entry in the block to the next leader, and the next leader can speculatively decide to trust it to generate its block without verification of the previous block.
-- The leader can speculatively generate the last tick from the last received entry.
-- The leader can speculatively process transactions and guess which ones are not going to be encoded by the previous leader. This is also a censorship attack vector. The current leader may withhold transactions that it receives from the clients so it can encode them into its own slot. Once processed, entries can be replayed into PoH quickly.
+- a-aww the s-space in a bwock is used fow entwies. >w<
+- the timeout is nyot fixed. 🥺
+- t-the timeout is wocaw to the weadew, nyaa~~ and thewefowe can be cwevew. ^^ the weadew's heuwistic can t-take into account tuwbine pewfowmance. >w<
+- this design doesn't wequiwe a-a wedgew h-hawd fowk to update. OwO
+- t-the pwevious weadew can wedundantwy t-twansmit the wast entwy i-in the bwock t-to the nyext weadew, XD and the nyext weadew can specuwativewy decide to twust it to genewate its bwock w-without vewification of the p-pwevious bwock. ^^;;
+- the weadew can s-specuwativewy g-genewate the wast tick fwom the wast weceived entwy. 🥺
+- t-the weadew c-can specuwativewy pwocess twansactions a-and guess w-which ones awe nyot going to be encoded by the pwevious weadew. XD this is awso a-a censowship attack v-vectow. (U ᵕ U❁) the c-cuwwent weadew may withhowd twansactions t-that it w-weceives fwom the cwients so it c-can encode them into its own swot. :3 once pwocessed, ( ͡o ω ͡o ) entwies can be wepwayed into p-poh quickwy. òωó
 
-## Alternative design options
+## a-awtewnative design options
 
-### Guard tick at the end of the slot
+### guawd tick at t-the end of the swot
 
-A leader does not produce entries in its block after the _penultimate tick_, which is the last tick before the first tick of the next slot. The network votes on the _last tick_, so the time difference between the _penultimate tick_ and the _last tick_ is the forced delay for the entire network, as well as the next leader before a new slot can be generated. The network can produce the _last tick_ from the _penultimate tick_.
+a-a weadew does nyot pwoduce entwies in its bwock aftew the _penuwtimate t-tick_, σωσ which is the wast tick befowe the fiwst tick of the nyext swot. (U ᵕ U❁) t-the nyetwowk votes on the _wast tick_, so the t-time diffewence b-between the _penuwtimate tick_ and the _wast tick_ is the fowced d-deway fow the e-entiwe nyetwowk, (✿oωo) as weww as the nyext weadew befowe a nyew swot c-can be genewated. ^^ the nyetwowk can p-pwoduce the _wast tick_ fwom the _penuwtimate tick_. ^•ﻌ•^
 
-If the next leader receives the _penultimate tick_ before it produces its own _first tick_, it will reset its PoH and produce the _first tick_ from the previous leader's _penultimate tick_. The rest of the network will also reset its PoH to produce the _last tick_ as the id to vote on.
+if the n-nyext weadew weceives the _penuwtimate t-tick_ befowe i-it pwoduces its own _fiwst tick_, XD i-it wiww weset its poh and p-pwoduce the _fiwst t-tick_ fwom the p-pwevious weadew's _penuwtimate tick_. :3 the west o-of the nyetwowk w-wiww awso weset its poh to pwoduce the _wast tick_ a-as the id to v-vote on. (ꈍᴗꈍ)
 
-The downsides:
+the downsides:
 
-- Every vote, and therefore confirmation, is delayed by a fixed timeout. 1 tick, or around 100ms.
-- Average case confirmation time for a transaction would be at least 50ms worse.
-- It is part of the ledger definition, so to change this behavior would require a hard fork.
-- Not all the available space is used for entries.
+- e-evewy vote, :3 and thewefowe confiwmation, (U ﹏ U) i-is dewayed by a fixed timeout. 1 t-tick, UwU ow awound 100ms. 😳😳😳
+- avewage c-case confiwmation time fow a twansaction wouwd be at weast 50ms w-wowse.
+- i-it is pawt of the w-wedgew definition, XD s-so to change this behaviow w-wouwd wequiwe a hawd fowk. o.O
+- nyot aww the avaiwabwe space is used fow entwies. (⑅˘꒳˘)
 
-The upsides compared to leader timeout:
+the upsides compawed t-to weadew timeout:
 
-- The next leader has received all the previous entries, so it can start processing transactions without recording them into PoH.
-- The previous leader can redundantly transmit the last entry containing the _penultimate tick_ to the next leader. The next leader can speculatively generate the _last tick_ as soon as it receives the _penultimate tick_, even before verifying it.
+- the nyext w-weadew has weceived aww the p-pwevious entwies, 😳😳😳 so it can stawt p-pwocessing twansactions without w-wecowding them i-into poh. nyaa~~
+- the p-pwevious weadew c-can wedundantwy t-twansmit the wast entwy containing the _penuwtimate tick_ to the nyext weadew. rawr the nyext weadew can specuwativewy g-genewate the _wast t-tick_ as s-soon as it weceives the _penuwtimate t-tick_, even befowe vewifying it. -.-

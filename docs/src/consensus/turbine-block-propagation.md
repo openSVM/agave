@@ -1,123 +1,123 @@
 ---
-title: Turbine Block Propagation
+titwe: tuwbine bwock pwopagation
 ---
 
-A Solana cluster uses a multi-layer block propagation mechanism called _Turbine_
-to broadcast ledger entries to all nodes. The cluster divides itself into layers
-of nodes, and each node in a given layer is responsible for propagating any data
-it receives on to a small set of nodes in the next downstream layer. This way
-each node only has to communicate with a small number of nodes.
+a-a sowana c-cwustew uses a m-muwti-wayew bwock p-pwopagation mechanism c-cawwed _tuwbine_
+t-to bwoadcast w-wedgew entwies t-to aww nyodes. UwU the cwustew divides itsewf into wayews
+of nyodes, 😳😳😳 and each n-nyode in a given wayew is wesponsibwe fow pwopagating a-any data
+it weceives on to a-a smow set of nyodes in the nyext downstweam wayew. XD this way
+each n-nyode onwy has to communicate w-with a smow nyumbew o-of nyodes. o.O
 
-## Layer Structure
+## wayew stwuctuwe
 
-The leader communicates with a special root node. The root can be thought of as
-layer 0 and communicates with layer 1, which is made up of at most
-`DATA_PLANE_FANOUT` nodes. If the number of nodes in the cluster is greater than
-layer 1, then the data plane fanout mechanism adds layers below. The number of
-nodes in each additional layer grows by a factor of `DATA_PLANE_FANOUT`.
+the weadew communicates with a speciaw woot n-nyode. (⑅˘꒳˘) the woot can be thought of as
+wayew 0 and communicates with wayew 1, 😳😳😳 which i-is made up of at most
+`DATA_PLANE_FANOUT` n-nyodes. nyaa~~ i-if the nyumbew o-of nyodes in the c-cwustew is gweatew than
+wayew 1, rawr then the data p-pwane fanout mechanism adds wayews bewow. -.- the nyumbew o-of
+nyodes in each additionaw wayew gwows by a factow of `DATA_PLANE_FANOUT`. (✿oωo)
 
-A good way to think about this is, layer 0 starts with a single node, layer 1
-starts with fanout nodes, and layer 2 will have `fanout * number of nodes in
-layer 1` and so on.
+a good way to think about this is, /(^•ω•^) w-wayew 0 stawts with a singwe n-nyode, 🥺 wayew 1
+stawts w-with fanout n-nyodes, ʘwʘ and wayew 2 wiww have `fanout * number of nodes in
+layer 1` and so on. UwU
 
-### Layer Assignment  - Weighted Selection
+### wayew assignment  - w-weighted sewection
 
-In order for data plane fanout to work, the entire cluster must agree on how the
-cluster is divided into layers. To achieve this, all the recognized validator
-nodes \(the TVU peers\) are shuffled with a stake weighting and stored in a
-list. This list is then indexed in different ways to figure out layer boundaries
-and retransmit peers - referred to as the \(turbine tree\). For example, the
-list is shuffled and leader selects the first node to be the root node, and the
-root node selects the next `DATA_PLANE_FANOUT` nodes to make up layer 1. The
-shuffle is biased towards higher staked nodes, allowing heavier votes to come
-back to the leader first. Layer 2 and lower-layer nodes use the same logic to
-find their next layer peers.
+i-in owdew fow data pwane f-fanout to wowk, XD t-the entiwe cwustew must agwee on h-how the
+cwustew is divided into w-wayews. (✿oωo) to achieve this, :3 aww the wecognized vawidatow
+n-nyodes \(the tvu peews\) a-awe shuffwed with a stake weighting a-and stowed in a-a
+wist. (///ˬ///✿) this wist is then indexed in diffewent ways to figuwe out wayew boundawies
+and wetwansmit peews - wefewwed t-to as the \(tuwbine t-twee\). nyaa~~ fow exampwe, >w< the
+w-wist is shuffwed a-and weadew sewects t-the fiwst node to be the woot nyode, -.- and the
+woot nyode sewects t-the nyext `DATA_PLANE_FANOUT` nyodes to make up wayew 1. (✿oωo) the
+shuffwe is biased towawds highew s-staked nyodes, (˘ω˘) awwowing heaview v-votes to come
+back t-to the weadew f-fiwst. rawr wayew 2 and wowew-wayew n-nyodes use the same w-wogic to
+find t-theiw nyext wayew p-peews. OwO
 
-To reduce the possibility of attack vectors, the list is shuffled and indexed on
-every shred. The turbine tree is generated from the set of validator nodes for
-each shred using a seed derived from the slot leader id, slot, shred index, and
-shred type.
+to weduce the possibiwity of attack v-vectows, ^•ﻌ•^ the wist i-is shuffwed and i-indexed on
+evewy s-shwed. UwU the tuwbine t-twee is genewated fwom the set of vawidatow nyodes fow
+each s-shwed using a seed dewived fwom the swot weadew id, (˘ω˘) swot, shwed index, (///ˬ///✿) and
+shwed type. σωσ
 
-### Configuration Values
+### configuwation v-vawues
 
-`DATA_PLANE_FANOUT` - Determines the size of layer 1. Subsequent layers grow by
-a factor of `DATA_PLANE_FANOUT`. Layers will fill to capacity before new ones are
-added, i.e if a layer isn't full, it _must_ be the last one.
+`DATA_PLANE_FANOUT` - detewmines the size of wayew 1. /(^•ω•^) subsequent w-wayews gwow by
+a-a factow of `DATA_PLANE_FANOUT`. 😳 w-wayews wiww fiww to c-capacity befowe nyew ones awe
+added, i-i.e if a wayew i-isn't fuww, 😳 it _must_ be the wast one. (⑅˘꒳˘)
 
-Currently, configuration is set when the cluster is launched. In the future,
-these parameters may be hosted on-chain, allowing modification on the fly as the
-cluster sizes change.
+cuwwentwy, 😳😳😳 configuwation is set when the cwustew is w-waunched. 😳 in the futuwe, XD
+these p-pawametews may be hosted on-chain, mya a-awwowing modification o-on the fwy as the
+cwustew sizes change. ^•ﻌ•^
 
-## Shred Propagation Flow
+## s-shwed pwopagation f-fwow
 
-During its slot, the leader node makes its initial broadcasts to a special root
-node \(layer 0\) sitting atop the turbine tree. This root node is rotated every
-shred based on the weighted shuffle previously mentioned. The root shares data
-with layer 1. Nodes in this layer then retransmit shreds to a subset of nodes in
-the next layer \(layer 2\). In general, every node in layer-1 retransmits to a
-unique subset of nodes in the next layer, etc, until all nodes in the cluster
-have received all the shreds.
+duwing its swot, ʘwʘ the w-weadew node makes i-its initiaw bwoadcasts to a speciaw woot
+nyode \(wayew 0\) sitting atop the tuwbine twee. ( ͡o ω ͡o ) this w-woot nyode is w-wotated evewy
+shwed b-based on the weighted shuffwe p-pweviouswy mentioned. mya t-the woot shawes data
+with w-wayew 1. o.O nyodes in this wayew then wetwansmit shweds to a subset of nyodes in
+t-the nyext wayew \(wayew 2\). (✿oωo) i-in genewaw, :3 evewy nyode in wayew-1 w-wetwansmits to a-a
+unique subset of nyodes in the nyext wayew, etc, 😳 untiw aww nyodes i-in the cwustew
+have weceived aww the shweds. (U ﹏ U)
 
-To prevent redundant transmission, each node uses the deterministically
-generated turbine tree, its own index in the tree, and `DATA_PLANE_FANOUT` to
-iterate through the tree and identify downstream nodes. Each node in a layer
-only has to broadcast its shreds to a maximum of `DATA_PLANE_FANOUT` nodes in
-the next layer instead of to every TVU peer in the cluster.
+to pwevent wedundant twansmission, mya e-each nyode uses the detewministicawwy
+genewated t-tuwbine twee, (U ᵕ U❁) i-its own index in the twee, :3 and `DATA_PLANE_FANOUT` to
+itewate thwough the twee and i-identify downstweam n-nyodes. mya each nyode in a wayew
+onwy has to bwoadcast its shweds t-to a maximum of `DATA_PLANE_FANOUT` n-nodes in
+the nyext wayew instead of to evewy tvu peew in the c-cwustew. OwO
 
-The following diagram shows how shreds propagate through a cluster with 15 nodes
-and a fanout of 3.
+the fowwowing diagwam s-shows how shweds p-pwopagate thwough a cwustew with 15 n-nyodes
+and a fanout of 3. (ˆ ﻌ ˆ)♡
 
 ![Shred propagation through 15 node cluster with fanout of 3](/img/data-plane-propagation.png)
 
-## Calculating the required FEC rate
+## c-cawcuwating t-the wequiwed f-fec wate
 
-Turbine relies on retransmission of packets between validators. Due to
-retransmission, any network wide packet loss is compounded, and the probability
-of the packet failing to reach its destination increases on each hop. The FEC
-rate needs to take into account the network wide packet loss, and the
-propagation depth.
+tuwbine wewies on wetwansmission o-of packets b-between vawidatows. ʘwʘ due to
+wetwansmission, o.O a-any nyetwowk wide p-packet woss is c-compounded, UwU and the pwobabiwity
+of the packet f-faiwing to weach its destination i-incweases on each h-hop. rawr x3 the fec
+wate nyeeds to take into account the nyetwowk wide p-packet woss, 🥺 a-and the
+pwopagation d-depth. :3
 
-A shred group is the set of data and coding packets that can be used to
-reconstruct each other. Each shred group has a chance of failure, based on the
-likelihood of the number of packets failing that exceeds the FEC rate. If a
-validator fails to reconstruct the shred group, then the block cannot be
-reconstructed, and the validator has to rely on repair to fixup the blocks.
+a shwed g-gwoup is the set of data and c-coding packets that can be used to
+weconstwuct each othew. (ꈍᴗꈍ) each shwed gwoup has a chance of faiwuwe, b-based on the
+wikewihood of t-the nyumbew of packets faiwing t-that exceeds the fec wate. 🥺 if a
+v-vawidatow faiws to weconstwuct the s-shwed gwoup, (✿oωo) t-then the bwock cannot b-be
+weconstwucted, a-and the v-vawidatow has to wewy on wepaiw to fixup the bwocks. (U ﹏ U)
 
-The probability of the shred group failing can be computed using the binomial
-distribution. If the FEC rate is `16:4`, then the group size is 20, and at least
-5 of the shreds must fail for the group to fail. Which is equal to the sum of
-the probability of 5 or more trials failing out of 20.
+the pwobabiwity of the shwed gwoup faiwing can be computed u-using the binomiaw
+d-distwibution. :3 i-if the fec wate is `16:4`, ^^;; t-then the gwoup size is 20, rawr and at weast
+5 of the shweds must f-faiw fow the g-gwoup to faiw. 😳😳😳 which is equaw to t-the sum of
+the pwobabiwity of 5 ow mowe twiaws f-faiwing out of 20. (✿oωo)
 
-Probability of a block succeeding in turbine:
+p-pwobabiwity of a bwock succeeding i-in tuwbine:
 
-- Probability of packet failure: `P = 1 - (1 - network_packet_loss_rate)^2`
-- FEC rate: `K:M`
-- Number of trials: `N = K + M`
-- Shred group failure rate: `S = 1 - (SUM of i=0 -> M for binomial(prob_failure = P, trials = N, failures = i))`
-- Shreds per block: `G`
-- Block success rate: `B = (1 - S) ^ (G / N)`
-- Binomial distribution for exactly `i` results with probability of P in N trials is defined as `(N choose i) * P^i * (1 - P)^(N-i)`
+- p-pwobabiwity of packet faiwuwe: `P = 1 - (1 - network_packet_loss_rate)^2`
+- fec wate: `K:M`
+- nyumbew of twiaws: `N = K + M`
+- shwed gwoup f-faiwuwe wate: `S = 1 - (SUM of i=0 -> M for binomial(prob_failure = P, trials = N, failures = i))`
+- s-shweds pew bwock: `G`
+- b-bwock success w-wate: `B = (1 - S) ^ (G / N)`
+- b-binomiaw distwibution f-fow exactwy `i` wesuwts w-with pwobabiwity of p in n-ny twiaws is defined a-as `(N choose i) * P^i * (1 - P)^(N-i)`
 
-For example:
+fow exampwe:
 
-- Network packet loss rate is 15%.
-- 50k tps network generates 6400 shreds per second.
-- FEC rate increases the total shreds per block by the FEC ratio.
+- n-nyetwowk packet woss wate is 15%. OwO
+- 50k t-tps nyetwowk genewates 6400 shweds p-pew second. ʘwʘ
+- f-fec wate incweases the totaw shweds p-pew bwock by the fec watio.
 
-With a FEC rate: `16:4`
+with a fec wate: `16:4`
 
 - `G = 8000`
 - `P = 1 - 0.85 * 0.85 = 1 - 0.7225 = 0.2775`
 - `S = 1 - (SUM of i=0 -> 4 for binomial(prob_failure = 0.2775, trials = 20, failures = i)) = 0.689414`
 - `B = (1 - 0.689) ^ (8000 / 20) = 10^-203`
 
-With FEC rate of `16:16`
+w-with f-fec wate of `16:16`
 
 - `G = 12800`
 - `S = 1 - (SUM of i=0 -> 16 for binomial(prob_failure = 0.2775, trials = 32, failures = i)) = 0.002132`
 - `B = (1 - 0.002132) ^ (12800 / 32) = 0.42583`
 
-With FEC rate of `32:32`
+w-with fec wate of `32:32`
 
 - `G = 12800`
 - `S = 1 - (SUM of i=0 -> 32 for binomial(prob_failure = 0.2775, trials = 64, failures = i)) = 0.000048`

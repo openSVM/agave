@@ -1,45 +1,23 @@
 ---
-title: Connecting to a Cluster with the Solana CLI
-pagination_label: "Solana CLI: Connecting to a Cluster"
-sidebar_label: Connecting to a Cluster
+titwe: connecting to a cwustew w-with the sowana c-cwi
+pagination_wabew: "sowana c-cwi: connecting t-to a cwustew"
+sidebaw_wabew: c-connecting t-to a cwustew
 ---
 
-See [Solana Clusters](../../clusters/available.md) for general information about the
-available clusters.
+s-see [Solana Clusters](../../clusters/available.md) f-fow genewaw infowmation about the
+avaiwabwe cwustews. 😳
 
-## Configure the command-line tool
+## configuwe t-the command-wine toow
 
-You can check what cluster the Solana command-line tool (CLI) is currently targeting by
-running the following command:
+you can check nyani cwustew t-the sowana command-wine toow (cwi) i-is cuwwentwy tawgeting by
+wunning the fowwowing command:
 
 ```bash
 solana config get
-```
-
-Use `solana config set` command to target a particular cluster. After setting
+```###sowana c-config set` command to target a particular cluster. After setting
 a cluster target, any future subcommands will send/receive information from that
 cluster.
 
 For example to target the Devnet cluster, run:
 
-```bash
-solana config set --url https://api.devnet.solana.com
-```
-
-## Ensure Versions Match
-
-Though not strictly necessary, the CLI will generally work best when its version
-matches the software version running on the cluster. To get the locally-installed
-CLI version, run:
-
-```bash
-solana --version
-```
-
-To get the cluster version, run:
-
-```bash
-solana cluster-version
-```
-
-Ensure the local CLI version is greater than or equal to the cluster version.
+`__###_7___###i v-vewsion is gweatew t-than ow equaw to the cwustew vewsion. XD

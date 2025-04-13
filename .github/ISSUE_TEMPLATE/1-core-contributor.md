@@ -1,15 +1,15 @@
 ---
-name: Core Contributor Issue
-about: Create a report describing a problem and a proposed solution
-title: ''
+nyame: cowe contwibutow issue
+a-about: cweate a w-wepowt descwibing a-a pwobwem and a-a pwoposed sowution
+t-titwe: ''
 assignees: ''
 ---
 
-#### Problem
+#### p-pwobwem
 <!--
   This template should only be used by core contributors. If you
   are not a core contributor, please use the "Community Issue" template
   to ensure that your issue can be triaged appropriately.
 -->
 
-#### Proposed Solution
+#### p-pwoposed sowution

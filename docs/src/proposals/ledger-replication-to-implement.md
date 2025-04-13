@@ -1,359 +1,359 @@
 ---
-title: Ledger Replication
+titwe: wedgew wepwication
 ---
 
-Note: this ledger replication solution was partially implemented, but not
-completed. The partial implementation was removed by
-https://github.com/solana-labs/solana/pull/9992 in order to prevent the security
-risk of unused code. The first part of this design document reflects the
-once-implemented parts of ledger replication. The
-[second part of this document](#ledger-replication-not-implemented) describes the
-parts of the solution never implemented.
+n-nyote: this wedgew w-wepwication s-sowution was pawtiawwy i-impwemented, (˘ω˘) b-but nyot
+compweted. òωó t-the pawtiaw i-impwementation w-was wemoved by
+https://github.com/sowana-wabs/sowana/puww/9992 in owdew to pwevent the secuwity
+wisk of unused c-code. UwU the fiwst pawt of this design document w-wefwects the
+once-impwemented pawts o-of wedgew wepwication. ^•ﻌ•^ the
+[second part of this document](#ledger-replication-not-implemented) descwibes the
+pawts of the sowution n-nyevew impwemented. mya
 
-## Proof of Replication
+## pwoof o-of wepwication
 
-At full capacity on a 1gbps network solana will generate 4 petabytes of data per year. To prevent the network from centralizing around validators that have to store the full data set this protocol proposes a way for mining nodes to provide storage capacity for pieces of the data.
+a-at fuww capacity on a 1gbps nyetwowk sowana wiww genewate 4 petabytes of data pew y-yeaw. (✿oωo) to pwevent the nyetwowk fwom centwawizing awound vawidatows that have to s-stowe the fuww data set this pwotocow p-pwoposes a-a way fow mining n-nyodes to pwovide s-stowage capacity fow pieces of the data. XD
 
-The basic idea to Proof of Replication is encrypting a dataset with a public symmetric key using CBC encryption, then hash the encrypted dataset. The main problem with the naive approach is that a dishonest storage node can stream the encryption and delete the data as it's hashed. The simple solution is to periodically regenerate the hash based on a signed PoH value. This ensures that all the data is present during the generation of the proof and it also requires validators to have the entirety of the encrypted data present for verification of every proof of every identity. So the space required to validate is `number_of_proofs * data_size`
+the b-basic idea to pwoof of wepwication is encwypting a-a dataset with a pubwic symmetwic key using cbc encwyption, :3 then hash the encwypted dataset. (U ﹏ U) t-the main pwobwem with the nyaive a-appwoach is that a-a dishonest stowage n-node can stweam the encwyption and dewete the data as it's h-hashed. UwU the simpwe s-sowution is to pewiodicawwy w-wegenewate the hash b-based on a signed poh vawue. ʘwʘ t-this ensuwes that aww the data i-is pwesent duwing the genewation of the pwoof and i-it awso wequiwes vawidatows to h-have the entiwety of the encwypted d-data pwesent f-fow vewification of evewy pwoof of evewy identity. >w< so the space wequiwed to vawidate is `number_of_proofs * data_size`
 
-## Optimization with PoH
+## optimization w-with poh
 
-Our improvement on this approach is to randomly sample the encrypted segments faster than it takes to encrypt, and record the hash of those samples into the PoH ledger. Thus the segments stay in the exact same order for every PoRep and verification can stream the data and verify all the proofs in a single batch. This way we can verify multiple proofs concurrently, each one on its own CUDA core. The total space required for verification is `1_ledger_segment + 2_cbc_blocks * number_of_identities` with core count equal to `number_of_identities`. We use a 64-byte chacha CBC block size.
+o-ouw impwovement on this appwoach i-is to wandomwy s-sampwe the encwypted s-segments fastew than it takes to encwypt, 😳😳😳 and wecowd the h-hash of those sampwes into the poh wedgew. rawr thus the segments stay in the exact s-same owdew fow evewy powep and v-vewification can s-stweam the data a-and vewify aww the pwoofs in a s-singwe batch. ^•ﻌ•^ this w-way we can vewify m-muwtipwe pwoofs c-concuwwentwy, σωσ each one on its own cuda cowe. :3 t-the totaw space w-wequiwed fow vewification i-is `1_ledger_segment + 2_cbc_blocks * number_of_identities` with c-cowe count equaw t-to `number_of_identities`. rawr x3 we use a 64-byte chacha cbc bwock size. nyaa~~
 
-## Network
+## n-nyetwowk
 
-Validators for PoRep are the same validators that are verifying transactions. If an archiver can prove that a validator verified a fake PoRep, then the validator will not receive a reward for that storage epoch.
+vawidatows fow powep awe the same vawidatows that awe vewifying twansactions. :3 if a-an awchivew can pwove that a vawidatow vewified a fake powep, then t-the vawidatow w-wiww nyot weceive a-a wewawd fow that stowage epoch. >w<
 
-Archivers are specialized _light clients_. They download a part of the ledger \(a.k.a Segment\) and store it, and provide PoReps of storing the ledger. For each verified PoRep archivers earn a reward of sol from the mining pool.
+a-awchivews awe speciawized _wight c-cwients_. rawr t-they downwoad a pawt of the wedgew \(a.k.a segment\) and stowe it, 😳 and pwovide poweps of stowing t-the wedgew. 😳 fow each vewified powep a-awchivews eawn a wewawd of s-sow fwom the mining p-poow.
 
-## Constraints
+## constwaints
 
-We have the following constraints:
+we have the fowwowing c-constwaints:
 
-- Verification requires generating the CBC blocks. That requires space of 2
+- v-vewification wequiwes genewating t-the cbc bwocks. 🥺 t-that wequiwes space of 2
 
-  blocks per identity, and 1 CUDA core per identity for the same dataset. So as
+  bwocks pew identity, rawr x3 and 1 cuda cowe pew identity f-fow the same dataset. ^^ s-so as
 
-  many identities at once should be batched with as many proofs for those
+  many i-identities at once shouwd be b-batched with as m-many pwoofs fow those
 
-  identities verified concurrently for the same dataset.
+  identities v-vewified concuwwentwy fow the same dataset. ( ͡o ω ͡o )
 
-- Validators will randomly sample the set of storage proofs to the set that
+- vawidatows wiww wandomwy sampwe t-the set of stowage p-pwoofs to the set that
 
-  they can handle, and only the creators of those chosen proofs will be
+  they can handwe, a-and onwy the cweatows o-of those chosen pwoofs wiww be
 
-  rewarded. The validator can run a benchmark whenever its hardware configuration
+  wewawded. XD the vawidatow c-can wun a benchmawk whenevew its hawdwawe configuwation
 
-  changes to determine what rate it can validate storage proofs.
+  changes to detewmine n-nyani wate it can vawidate stowage pwoofs. ^^
 
-## Validation and Replication Protocol
+## v-vawidation and w-wepwication pwotocow
 
-### Constants
+### constants
 
-1. SLOTS_PER_SEGMENT: Number of slots in a segment of ledger data. The
+1. (⑅˘꒳˘) swots_pew_segment: nyumbew o-of swots in a s-segment of wedgew data. (⑅˘꒳˘) the
 
-   unit of storage for an archiver.
+   unit of stowage fow an awchivew.
 
-2. NUM_KEY_ROTATION_SEGMENTS: Number of segments after which archivers
+2. ^•ﻌ•^ n-nyum_key_wotation_segments: nyumbew of segments a-aftew which awchivews
 
-   regenerate their encryption keys and select a new dataset to store.
+   wegenewate theiw encwyption keys a-and sewect a nyew dataset to stowe. ( ͡o ω ͡o )
 
-3. NUM_STORAGE_PROOFS: Number of storage proofs required for a storage proof
+3. n-nyum_stowage_pwoofs: n-numbew of stowage p-pwoofs wequiwed fow a stowage pwoof
 
-   claim to be successfully rewarded.
+   c-cwaim to b-be successfuwwy w-wewawded. ( ͡o ω ͡o )
 
-4. RATIO_OF_FAKE_PROOFS: Ratio of fake proofs to real proofs that a storage
+4. watio_of_fake_pwoofs: watio of fake p-pwoofs to weaw p-pwoofs that a stowage
 
-   mining proof claim has to contain to be valid for a reward.
+   mining pwoof cwaim has t-to contain to b-be vawid fow a w-wewawd. (✿oωo)
 
-5. NUM_STORAGE_SAMPLES: Number of samples required for a storage mining
+5. nyum_stowage_sampwes: nyumbew of sampwes wequiwed fow a-a stowage mining
 
-   proof.
+   pwoof. 😳😳😳
 
-6. NUM_CHACHA_ROUNDS: Number of encryption rounds performed to generate
+6. n-nyum_chacha_wounds: n-nyumbew of encwyption wounds pewfowmed to genewate
 
-   encrypted state.
+   encwypted s-state.
 
-7. NUM_SLOTS_PER_TURN: Number of slots that define a single storage epoch or
+7. OwO n-num_swots_pew_tuwn: n-nyumbew of s-swots that define a singwe stowage e-epoch ow
 
-   a "turn" of the PoRep game.
+   a "tuwn" of the powep game. ^^
 
-### Validator behavior
+### vawidatow behaviow
 
-1. Validators join the network and begin looking for archiver accounts at each
+1. rawr x3 vawidatows join the nyetwowk a-and begin wooking fow awchivew a-accounts at each
 
-   storage epoch/turn boundary.
+   stowage e-epoch/tuwn boundawy. 🥺
 
-2. Every turn, Validators sign the PoH value at the boundary and use that signature
+2. evewy t-tuwn, (ˆ ﻌ ˆ)♡ vawidatows sign the poh vawue a-at the boundawy a-and use that s-signatuwe
 
-   to randomly pick proofs to verify from each storage account found in the turn boundary.
+   t-to wandomwy pick p-pwoofs to vewify fwom each stowage account found in the tuwn boundawy. ( ͡o ω ͡o )
 
-   This signed value is also submitted to the validator's storage account and will be used by
+   this signed vawue is awso submitted t-to the vawidatow's s-stowage account a-and wiww be used by
 
-   archivers at a later stage to cross-verify.
+   awchivews a-at a watew stage to cwoss-vewify. >w<
 
-3. Every `NUM_SLOTS_PER_TURN` slots the validator advertises the PoH value. This is value
+3. evewy `NUM_SLOTS_PER_TURN` swots the vawidatow a-advewtises t-the poh vawue. /(^•ω•^) this is vawue
 
-   is also served to Archivers via RPC interfaces.
+   i-is awso sewved to awchivews via wpc intewfaces. 😳😳😳
 
-4. For a given turn N, all validations get locked out until turn N+3 \(a gap of 2 turn/epoch\).
+4. f-fow a given t-tuwn ny, (U ᵕ U❁) aww vawidations get wocked o-out untiw tuwn n-ny+3 \(a gap of 2 tuwn/epoch\). (˘ω˘)
 
-   At which point all validations during that turn are available for reward collection.
+   at which point aww vawidations duwing that t-tuwn awe avaiwabwe f-fow wewawd c-cowwection. 😳
 
-5. Any incorrect validations will be marked during the turn in between.
+5. a-any incowwect vawidations w-wiww be mawked duwing t-the tuwn in between. (ꈍᴗꈍ)
 
-### Archiver behavior
+### a-awchivew behaviow
 
-1. Since an archiver is somewhat of a light client and not downloading all the
+1. :3 s-since an awchivew i-is somenani of a wight cwient a-and nyot downwoading aww the
 
-   ledger data, they have to rely on other validators and archivers for information.
+   wedgew data, /(^•ω•^) they h-have to wewy on othew vawidatows a-and awchivews f-fow infowmation.
 
-   Any given validator may or may not be malicious and give incorrect information, although
+   any given v-vawidatow may ow may not be mawicious and give i-incowwect infowmation, ^^;; a-awthough
 
-   there are not any obvious attack vectors that this could accomplish besides having the
+   t-thewe awe nyot any obvious attack vectows that this couwd accompwish b-besides having the
 
-   archiver do extra wasted work. For many of the operations there are a number of options
+   awchivew do extwa w-wasted wowk. o.O f-fow many of the opewations thewe a-awe a nyumbew of options
 
-   depending on how paranoid an archiver is:
+   depending o-on how pawanoid a-an awchivew is:
 
-   - \(a\) archiver can ask a validator
-   - \(b\) archiver can ask multiple validators
-   - \(c\) archiver can ask other archivers
-   - \(d\) archiver can subscribe to the full transaction stream and generate
+   - \(a\) awchivew can a-ask a vawidatow
+   - \(b\) awchivew can ask muwtipwe v-vawidatows
+   - \(c\) a-awchivew can ask othew a-awchivews
+   - \(d\) awchivew c-can subscwibe to t-the fuww twansaction s-stweam and genewate
 
-     the information itself \(assuming the slot is recent enough\)
+     the infowmation itsewf \(assuming the swot is wecent enough\)
 
-   - \(e\) archiver can subscribe to an abbreviated transaction stream to
+   - \(e\) awchivew can subscwibe to an abbweviated twansaction stweam to
 
-     generate the information itself \(assuming the slot is recent enough\)
+     genewate the infowmation itsewf \(assuming t-the swot i-is wecent enough\)
 
-2. An archiver obtains the PoH hash corresponding to the last turn with its slot.
-3. The archiver signs the PoH hash with its keypair. That signature is the
+2. 😳 an awchivew obtains the p-poh hash cowwesponding t-to the w-wast tuwn with its swot. UwU
+3. the a-awchivew signs the poh hash with i-its keypaiw. >w< that s-signatuwe is the
 
-   seed used to pick the segment to replicate and also the encryption key. The
+   seed used t-to pick the segment to wepwicate a-and awso the e-encwyption key. o.O the
 
-   archiver mods the signature with the slot to get which segment to
+   awchivew mods the signatuwe w-with the swot t-to get which s-segment to
 
-   replicate.
+   wepwicate. (˘ω˘)
 
-4. The archiver retrieves the ledger by asking peer validators and
+4. t-the a-awchivew wetwieves t-the wedgew b-by asking peew vawidatows a-and
 
-   archivers. See 6.5.
+   a-awchivews. òωó see 6.5.
 
-5. The archiver then encrypts that segment with the key with chacha algorithm
+5. the awchivew t-then encwypts t-that segment w-with the key with chacha awgowithm
 
-   in CBC mode with `NUM_CHACHA_ROUNDS` of encryption.
+   i-in cbc mode with `NUM_CHACHA_ROUNDS` of encwyption. nyaa~~
 
-6. The archiver initializes a chacha rng with the signed recent PoH value as
+6. t-the awchivew initiawizes a-a chacha wng w-with the signed w-wecent poh vawue as
 
-   the seed.
+   the seed. ( ͡o ω ͡o )
 
-7. The archiver generates `NUM_STORAGE_SAMPLES` samples in the range of the
+7. t-the awchivew genewates `NUM_STORAGE_SAMPLES` s-sampwes in the wange of the
 
-   entry size and samples the encrypted segment with sha256 for 32-bytes at each
+   e-entwy size and sampwes the encwypted s-segment with sha256 fow 32-bytes at each
 
-   offset value. Sampling the state should be faster than generating the encrypted
+   offset vawue. 😳😳😳 sampwing the state s-shouwd be fastew than genewating t-the encwypted
 
-   segment.
+   s-segment. ^•ﻌ•^
 
-8. The archiver sends a PoRep proof transaction which contains its sha state
+8. the awchivew sends a powep pwoof twansaction w-which contains its sha state
 
-   at the end of the sampling operation, its seed and the samples it used to the
+   a-at the end of the s-sampwing opewation, (˘ω˘) i-its seed and the sampwes it used to the
 
-   current leader and it is put onto the ledger.
+   c-cuwwent weadew a-and it is put onto the wedgew. (˘ω˘)
 
-9. During a given turn the archiver should submit many proofs for the same segment
+9. d-duwing a given tuwn the awchivew shouwd submit m-many pwoofs fow the same segment
 
-   and based on the `RATIO_OF_FAKE_PROOFS` some of those proofs must be fake.
+   a-and based o-on the `RATIO_OF_FAKE_PROOFS` s-some of those pwoofs must b-be fake. -.-
 
-10. As the PoRep game enters the next turn, the archiver must submit a
+10. a-as the powep game e-entews the nyext t-tuwn, ^•ﻌ•^ the awchivew must submit a-a
 
-    transaction with the mask of which proofs were fake during the last turn. This
+    twansaction w-with the m-mask of which pwoofs w-wewe fake duwing t-the wast tuwn. /(^•ω•^) t-this
 
-    transaction will define the rewards for both archivers and validators.
+    twansaction w-wiww d-define the wewawds fow both awchivews a-and vawidatows. (///ˬ///✿)
 
-11. Finally for a turn N, as the PoRep game enters turn N + 3, archiver's proofs for
+11. finawwy f-fow a tuwn ny, mya as the powep game e-entews tuwn n-ny + 3, o.O awchivew's p-pwoofs fow
 
-    turn N will be counted towards their rewards.
+    tuwn ny wiww be counted towawds theiw wewawds. ^•ﻌ•^
 
-### The PoRep Game
+### t-the powep g-game
 
-The Proof of Replication game has 4 primary stages. For each "turn" multiple PoRep games can be in progress but each in a different stage.
+the pwoof o-of wepwication game has 4 pwimawy stages. (U ᵕ U❁) fow each "tuwn" muwtipwe p-powep games c-can be in pwogwess but each in a d-diffewent stage. :3
 
-The 4 stages of the PoRep Game are as follows:
+t-the 4 stages of the powep game awe as fowwows:
 
-1. Proof submission stage
-   - Archivers: submit as many proofs as possible during this stage
-   - Validators: No-op
-2. Proof verification stage
-   - Archivers: No-op
-   - Validators: Select archivers and verify their proofs from the previous turn
-3. Proof challenge stage
-   - Archivers: Submit the proof mask with justifications \(for fake proofs submitted 2 turns ago\)
-   - Validators: No-op
-4. Reward collection stage
-   - Archivers: Collect rewards for 3 turns ago
-   - Validators: Collect rewards for 3 turns ago
+1. pwoof submission s-stage
+   - a-awchivews: submit a-as many pwoofs a-as possibwe duwing this stage
+   - vawidatows: n-nyo-op
+2. pwoof v-vewification stage
+   - awchivews: nyo-op
+   - v-vawidatows: sewect awchivews and vewify theiw pwoofs f-fwom the pwevious tuwn
+3. (///ˬ///✿) p-pwoof chawwenge s-stage
+   - awchivews: submit the p-pwoof mask with j-justifications \(fow fake pwoofs s-submitted 2 tuwns ago\)
+   - vawidatows: n-nyo-op
+4. (///ˬ///✿) w-wewawd cowwection s-stage
+   - a-awchivews: cowwect wewawds fow 3 t-tuwns ago
+   - v-vawidatows: cowwect w-wewawds fow 3 tuwns ago
 
-For each turn of the PoRep game, both Validators and Archivers evaluate each stage. The stages are run as separate transactions on the storage program.
+fow e-each tuwn of the powep game, 🥺 both vawidatows a-and awchivews evawuate e-each stage. -.- t-the stages awe wun as sepawate twansactions on the stowage pwogwam. nyaa~~
 
-### Finding who has a given block of ledger
+### finding w-who has a given bwock of wedgew
 
-1. Validators monitor the turns in the PoRep game and look at the rooted bank
+1. (///ˬ///✿) v-vawidatows m-monitow the tuwns in the powep game and wook a-at the wooted bank
 
-   at turn boundaries for any proofs.
+   at tuwn boundawies f-fow any p-pwoofs.
 
-2. Validators maintain a map of ledger segments and corresponding archiver public keys.
+2. 🥺 vawidatows m-maintain a-a map of wedgew s-segments and cowwesponding awchivew pubwic keys. >w<
 
-   The map is updated when a Validator processes an archiver's proofs for a segment.
+   the map is updated when a v-vawidatow pwocesses an awchivew's p-pwoofs fow a segment. rawr x3
 
-   The validator provides an RPC interface to access this map. Using this API, clients
+   the vawidatow pwovides an wpc intewface t-to access this map. (⑅˘꒳˘) using this api, σωσ cwients
 
-   can map a segment to an archiver's network address \(correlating it via cluster_info table\).
+   can map a segment to an awchivew's n-nyetwowk a-addwess \(cowwewating it via cwustew_info t-tabwe\). XD
 
-   The clients can then send repair requests to the archiver to retrieve segments.
+   the cwients can then send w-wepaiw wequests t-to the awchivew to wetwieve segments. -.-
 
-3. Validators would need to invalidate this list every N turns.
+3. v-vawidatows wouwd nyeed t-to invawidate this wist evewy ny tuwns. >_<
 
-## Sybil attacks
+## sybiw attacks
 
-For any random seed, we force everyone to use a signature that is derived from a PoH hash at the turn boundary. Everyone uses the same count, so the same PoH hash is signed by every participant. The signatures are then each cryptographically tied to the keypair, which prevents a leader from grinding on the resulting value for more than 1 identity.
+fow a-any wandom seed, rawr we fowce evewyone to use a signatuwe t-that is d-dewived fwom a poh h-hash at the tuwn boundawy. 😳😳😳 evewyone uses the s-same count, UwU so the same poh hash is signed by evewy pawticipant. (U ﹏ U) the signatuwes a-awe then each cwyptogwaphicawwy t-tied to the keypaiw, (˘ω˘) w-which pwevents a-a weadew fwom gwinding on the wesuwting vawue f-fow mowe than 1 i-identity. /(^•ω•^)
 
-Since there are many more client identities than encryption identities, we need to split the reward for multiple clients, and prevent Sybil attacks from generating many clients to acquire the same block of data. To remain BFT we want to avoid a single human entity from storing all the replications of a single chunk of the ledger.
+since thewe awe many mowe cwient identities t-than encwyption identities, (U ﹏ U) we nyeed to s-spwit the wewawd fow muwtipwe cwients, ^•ﻌ•^ and pwevent s-sybiw attacks f-fwom genewating many cwients to a-acquiwe the same b-bwock of data. >w< t-to wemain bft we want to avoid a singwe human e-entity fwom stowing aww the wepwications of a singwe c-chunk of the wedgew. ʘwʘ
 
-Our solution to this is to force the clients to continue using the same identity. If the first round is used to acquire the same block for many client identities, the second round for the same client identities will force a redistribution of the signatures, and therefore PoRep identities and blocks. Thus to get a reward for archivers need to store the first block for free and the network can reward long lived client identities more than new ones.
+ouw sowution to this is to fowce the c-cwients to continue u-using the same i-identity. òωó if t-the fiwst wound i-is used to acquiwe the same bwock f-fow many cwient identities, o.O the second wound fow t-the same cwient identities wiww f-fowce a wedistwibution of the signatuwes, ( ͡o ω ͡o ) and t-thewefowe powep i-identities and bwocks. mya thus to g-get a wewawd fow awchivews nyeed t-to stowe the fiwst b-bwock fow fwee and the nyetwowk c-can wewawd wong w-wived cwient identities mowe t-than new ones. >_<
 
-## Validator attacks
+## vawidatow attacks
 
-- If a validator approves fake proofs, archiver can easily out them by
+- if a vawidatow appwoves f-fake pwoofs, rawr awchivew can easiwy o-out them by
 
-  showing the initial state for the hash.
+  showing the initiaw state fow the h-hash. >_<
 
-- If a validator marks real proofs as fake, no on-chain computation can be done
+- if a v-vawidatow mawks w-weaw pwoofs as fake, (U ﹏ U) no on-chain c-computation can b-be done
 
-  to distinguish who is correct. Rewards would have to rely on the results from
+  to distinguish who i-is cowwect. rawr wewawds wouwd have to w-wewy on the wesuwts fwom
 
-  multiple validators to catch bad actors and archivers from being denied rewards.
+  muwtipwe v-vawidatows t-to catch bad actows and awchivews fwom being denied wewawds. (U ᵕ U❁)
 
-- Validator stealing mining proof results for itself. The proofs are derived
+- vawidatow steawing m-mining pwoof w-wesuwts fow itsewf. (ˆ ﻌ ˆ)♡ the pwoofs awe dewived
 
-  from a signature from an archiver, since the validator does not know the
+  fwom a signatuwe f-fwom an awchivew, >_< since the vawidatow d-does nyot k-know the
 
-  private key used to generate the encryption key, it cannot be the generator of
+  pwivate key used to genewate the encwyption key, ^^;; it cannot be the genewatow o-of
 
-  the proof.
+  the pwoof. ʘwʘ
 
-## Reward incentives
+## wewawd incentives
 
-Fake proofs are easy to generate but difficult to verify. For this reason, PoRep proof transactions generated by archivers may require a higher fee than a normal transaction to represent the computational cost required by validators.
+f-fake pwoofs awe easy to genewate b-but difficuwt t-to vewify. 😳😳😳 fow this weason, UwU powep p-pwoof twansactions g-genewated by a-awchivews may w-wequiwe a highew f-fee than a nyowmaw t-twansaction to wepwesent the computationaw cost wequiwed by vawidatows. OwO
 
-Some percentage of fake proofs are also necessary to receive a reward from storage mining.
+some pewcentage of f-fake pwoofs awe a-awso nyecessawy t-to weceive a wewawd f-fwom stowage m-mining. :3
 
-## Notes
+## nyotes
 
-- We can reduce the costs of verification of PoRep by using PoH, and actually
+- w-we can weduce the costs of vewification of powep by using poh, -.- and actuawwy
 
-  make it feasible to verify a large number of proofs for a global dataset.
+  m-make it feasibwe t-to vewify a wawge nyumbew of pwoofs fow a gwobaw dataset. 🥺
 
-- We can eliminate grinding by forcing everyone to sign the same PoH hash and
+- w-we can ewiminate g-gwinding by f-fowcing evewyone to sign the same poh hash and
 
-  use the signatures as the seed
+  u-use the signatuwes as the seed
 
-- The game between validators and archivers is over random blocks and random
+- the game between v-vawidatows a-and awchivews is ovew wandom bwocks and wandom
 
-  encryption identities and random data samples. The goal of randomization is
+  e-encwyption identities and wandom d-data sampwes. -.- t-the goaw of wandomization is
 
-  to prevent colluding groups from having overlap on data or validation.
+  t-to pwevent cowwuding g-gwoups fwom h-having ovewwap o-on data ow vawidation. -.-
 
-- Archiver clients fish for lazy validators by submitting fake proofs that
+- a-awchivew c-cwients fish fow wazy vawidatows b-by submitting f-fake pwoofs that
 
-  they can prove are fake.
+  they can p-pwove awe fake. (U ﹏ U)
 
-- To defend against Sybil client identities that try to store the same block we
+- to defend against sybiw cwient i-identities that twy to stowe t-the same bwock we
 
-  force the clients to store for multiple rounds before receiving a reward.
+  fowce the cwients t-to stowe f-fow muwtipwe wounds befowe weceiving a wewawd. rawr
 
-- Validators should also get rewarded for validating submitted storage proofs
+- v-vawidatows shouwd awso get wewawded fow vawidating s-submitted stowage p-pwoofs
 
-  as incentive for storing the ledger. They can only validate proofs if they
+  as incentive fow stowing the wedgew. mya t-they can onwy v-vawidate pwoofs if they
 
-  are storing that slice of the ledger.
+  awe s-stowing that swice of the wedgew. ( ͡o ω ͡o )
 
-# Ledger Replication Not Implemented
+# wedgew wepwication n-not impwemented
 
-Replication behavior yet to be implemented.
+w-wepwication behaviow y-yet to be impwemented. /(^•ω•^)
 
-## Storage epoch
+## s-stowage epoch
 
-The storage epoch should be the number of slots which results in around 100GB-1TB of ledger to be generated for archivers to store. Archivers will start storing ledger when a given fork has a high probability of not being rolled back.
+the stowage epoch shouwd b-be the numbew o-of swots which w-wesuwts in awound 100gb-1tb o-of wedgew to be genewated fow awchivews to stowe. >_< awchivews wiww stawt stowing wedgew when a given f-fowk has a high p-pwobabiwity of nyot b-being wowwed b-back. (✿oωo)
 
-## Validator behavior
+## vawidatow b-behaviow
 
-1. Every NUM_KEY_ROTATION_TICKS it also validates samples received from
+1. e-evewy nyum_key_wotation_ticks it awso vawidates s-sampwes weceived f-fwom
 
-   archivers. It signs the PoH hash at that point and uses the following
+   awchivews. 😳😳😳 it signs t-the poh hash at t-that point and uses the fowwowing
 
-   algorithm with the signature as the input:
+   awgowithm w-with the signatuwe as the input:
 
-   - The low 5 bits of the first byte of the signature creates an index into
+   - the wow 5 b-bits of the fiwst byte of the signatuwe c-cweates a-an index into
 
-     another starting byte of the signature.
+     anothew stawting b-byte of the s-signatuwe. (ꈍᴗꈍ)
 
-   - The validator then looks at the set of storage proofs where the byte of
+   - t-the vawidatow then wooks at the s-set of stowage p-pwoofs whewe the byte of
 
-     the proof's sha state vector starting from the low byte matches exactly
+     t-the pwoof's sha state vectow stawting f-fwom the w-wow byte matches e-exactwy
 
-     with the chosen byte\(s\) of the signature.
+     with the chosen byte\(s\) o-of the signatuwe. 🥺
 
-   - If the set of proofs is larger than the validator can handle, then it
+   - if the set of pwoofs i-is wawgew than the vawidatow can handwe, mya then it
 
-     increases to matching 2 bytes in the signature.
+     incweases to matching 2 bytes in the signatuwe. (ˆ ﻌ ˆ)♡
 
-   - Validator continues to increase the number of matching bytes until a
+   - v-vawidatow continues to incwease the nyumbew of matching bytes untiw a
 
-     workable set is found.
+     wowkabwe set is found. (⑅˘꒳˘)
 
-   - It then creates a mask of valid proofs and fake proofs and sends it to
+   - it then c-cweates a mask of vawid pwoofs and fake pwoofs a-and sends it to
 
-     the leader. This is a storage proof confirmation transaction.
+     the weadew. òωó t-this is a stowage pwoof confiwmation twansaction. o.O
 
-2. After a lockout period of NUM_SECONDS_STORAGE_LOCKOUT seconds, the
+2. a-aftew a wockout pewiod o-of nyum_seconds_stowage_wockout seconds, XD the
 
-   validator then submits a storage proof claim transaction which then causes the
+   v-vawidatow then s-submits a stowage pwoof cwaim twansaction which t-then causes the
 
-   distribution of the storage reward if no challenges were seen for the proof to
+   distwibution of the stowage wewawd if nyo c-chawwenges wewe seen fow the pwoof t-to
 
-   the validators and archivers party to the proofs.
+   the vawidatows and awchivews p-pawty to the pwoofs. (˘ω˘)
 
-## Archiver behavior
+## a-awchivew behaviow
 
-1. The archiver then generates another set of offsets which it submits a fake
+1. (ꈍᴗꈍ) t-the awchivew then genewates anothew set of o-offsets which it submits a fake
 
-   proof with an incorrect sha state. It can be proven to be fake by providing the
+   pwoof with a-an incowwect sha state. >w< it can be pwoven to be fake by pwoviding the
 
-   seed for the hash result.
+   seed fow t-the hash wesuwt. XD
 
-   - A fake proof should consist of an archiver hash of a signature of a PoH
+   - a-a fake pwoof shouwd consist o-of an awchivew h-hash of a signatuwe of a poh
 
-     value. That way when the archiver reveals the fake proof, it can be
+     v-vawue. -.- that way when the awchivew weveaws the fake pwoof, ^^;; it can be
 
-     verified on chain.
+     v-vewified on chain. XD
 
-2. The archiver monitors the ledger, if it sees a fake proof integrated, it
+2. t-the awchivew monitows the w-wedgew, if it s-sees a fake pwoof integwated, :3 it
 
-   creates a challenge transaction and submits it to the current leader. The
+   c-cweates a chawwenge twansaction and submits i-it to the cuwwent weadew. σωσ the
 
-   transaction proves the validator incorrectly validated a fake storage proof.
+   twansaction pwoves t-the vawidatow i-incowwectwy vawidated a fake stowage pwoof.
 
-   The archiver is rewarded and the validator's staking balance is slashed or
+   t-the awchivew is wewawded and the vawidatow's staking bawance is swashed ow
 
-   frozen.
+   fwozen. XD
 
-## Storage proof contract logic
+## stowage pwoof contwact wogic
 
-Each archiver and validator will have their own storage account. The validator's account would be separate from their gossip id similar to their vote account. These should be implemented as two programs one which handles the validator as the keysigner and one for the archiver. In that way when the programs reference other accounts, they can check the program id to ensure it is a validator or archiver account they are referencing.
+each a-awchivew and vawidatow w-wiww have theiw own stowage a-account. :3 the v-vawidatow's account wouwd be sepawate f-fwom theiw gossip id simiwaw to theiw vote account. rawr these shouwd be impwemented as two pwogwams o-one which handwes the vawidatow as the keysignew and one fow the awchivew. 😳 i-in that way when t-the pwogwams w-wefewence othew accounts, 😳😳😳 they can check the pwogwam id to ensuwe i-it is a vawidatow o-ow awchivew a-account they awe wefewencing. (ꈍᴗꈍ)
 
-### SubmitMiningProof
+### s-submitminingpwoof
 
 ```text
 SubmitMiningProof {
@@ -363,55 +363,3 @@ SubmitMiningProof {
 };
 keys = [archiver_keypair]
 ```
-
-Archivers create these after mining their stored ledger data for a certain hash value. The slot is the end slot of the segment of ledger they are storing, the sha_state the result of the archiver using the hash function to sample their encrypted ledger segment. The signature is the signature that was created when they signed a PoH value for the current storage epoch. The list of proofs from the current storage epoch should be saved in the account state, and then transferred to a list of proofs for the previous epoch when the epoch passes. In a given storage epoch a given archiver should only submit proofs for one segment.
-
-The program should have a list of slots which are valid storage mining slots. This list should be maintained by keeping track of slots which are rooted slots in which a significant portion of the network has voted on with a high lockout value, maybe 32-votes old. Every SLOTS_PER_SEGMENT number of slots would be added to this set. The program should check that the slot is in this set. The set can be maintained by receiving a AdvertiseStorageRecentBlockHash and checking with its bank/Tower BFT state.
-
-The program should do a signature verify check on the signature, public key from the transaction submitter and the message of the previous storage epoch PoH value.
-
-### ProofValidation
-
-```text
-ProofValidation {
-   proof_mask: Vec<ProofStatus>,
-}
-keys = [validator_keypair, archiver_keypair(s) (unsigned)]
-```
-
-A validator will submit this transaction to indicate that a set of proofs for a given segment are valid/not-valid or skipped where the validator did not look at it. The keypairs for the archivers that it looked at should be referenced in the keys so the program logic can go to those accounts and see that the proofs are generated in the previous epoch. The sampling of the storage proofs should be verified ensuring that the correct proofs are skipped by the validator according to the logic outlined in the validator behavior of sampling.
-
-The included archiver keys will indicate the storage samples which are being referenced; the length of the proof_mask should be verified against the set of storage proofs in the referenced archiver account\(s\), and should match with the number of proofs submitted in the previous storage epoch in the state of said archiver account.
-
-### ClaimStorageReward
-
-```text
-ClaimStorageReward {
-}
-keys = [validator_keypair or archiver_keypair, validator/archiver_keypairs (unsigned)]
-```
-
-Archivers and validators will use this transaction to get paid tokens from a program state where SubmitStorageProof, ProofValidation and ChallengeProofValidations are in a state where proofs have been submitted and validated and there are no ChallengeProofValidations referencing those proofs. For a validator, it should reference the archiver keypairs to which it has validated proofs in the relevant epoch. And for an archiver it should reference validator keypairs for which it has validated and wants to be rewarded.
-
-### ChallengeProofValidation
-
-```text
-ChallengeProofValidation {
-    proof_index: u64,
-    hash_seed_value: Vec<u8>,
-}
-keys = [archiver_keypair, validator_keypair]
-```
-
-This transaction is for catching lazy validators who are not doing the work to validate proofs. An archiver will submit this transaction when it sees a validator has approved a fake SubmitMiningProof transaction. Since the archiver is a light client not looking at the full chain, it will have to ask a validator or some set of validators for this information maybe via RPC call to obtain all ProofValidations for a certain segment in the previous storage epoch. The program will look in the validator account state see that a ProofValidation is submitted in the previous storage epoch and hash the hash_seed_value and see that the hash matches the SubmitMiningProof transaction and that the validator marked it as valid. If so, then it will save the challenge to the list of challenges that it has in its state.
-
-### AdvertiseStorageRecentBlockhash
-
-```text
-AdvertiseStorageRecentBlockhash {
-    hash: Hash,
-    slot: u64,
-}
-```
-
-Validators and archivers will submit this to indicate that a new storage epoch has passed and that the storage proofs which are current proofs should now be for the previous epoch. Other transactions should check to see that the epoch that they are referencing is accurate according to current chain state.

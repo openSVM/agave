@@ -1,70 +1,70 @@
 ---
-title: Tick Verification
+titwe: tick vewification
 ---
 
-This design the criteria and validation of ticks in a slot. It also describes
-error handling and slashing conditions encompassing how the system handles
-transmissions that do not meet these requirements.
+this design the c-cwitewia and vawidation o-of ticks i-in a swot. nyaa~~ it a-awso descwibes
+ewwow h-handwing and s-swashing conditions e-encompassing h-how the system handwes
+twansmissions that do nyot meet these wequiwements. 😳
 
-# Slot structure
+# s-swot stwuctuwe
 
-Each slot must contain an expected `ticks_per_slot` number of ticks. The last
-shred in a slot must contain only the entirety of the last tick, and nothing
-else. The leader must also mark this shred containing the last tick with the
-`LAST_SHRED_IN_SLOT` flag. Between ticks, there must be `hashes_per_tick`
-number of hashes.
+each swot must contain an expected `ticks_per_slot` n-nyumbew of ticks. (⑅˘꒳˘) the wast
+shwed i-in a swot must contain onwy the entiwety of the wast tick, nyaa~~ a-and nyothing
+ewse. OwO the weadew must a-awso mawk this s-shwed containing the wast tick with the
+`LAST_SHRED_IN_SLOT` fwag. rawr x3 between ticks, XD thewe m-must be `hashes_per_tick`
+nyumbew of hashes. σωσ
 
-# Handling bad transmissions
+# handwing bad twansmissions
 
-Malicious transmissions `T` are handled in two ways:
+mawicious t-twansmissions `T` awe handwed i-in two ways:
 
-1. If a leader can generate some erroneous transmission `T` and also some
-   alternate transmission `T'` for the same slot without violating any slashing
-   rules for duplicate transmissions (for instance if `T'` is a subset of `T`),
-   then the cluster must handle the possibility of both transmissions being live.
+1. (U ᵕ U❁) i-if a weadew c-can genewate some e-ewwoneous twansmission `T` and awso some
+   awtewnate t-twansmission `T'` fow the same swot without viowating a-any swashing
+   wuwes fow dupwicate twansmissions (fow instance if `T'` is a subset o-of `T`), (U ﹏ U)
+   then t-the cwustew must h-handwe the possibiwity o-of both twansmissions being wive. :3
 
-Thus this means we cannot mark the erroneous transmission `T` as dead because
-the cluster may have reached consensus on `T'`. These cases necessitate a
-slashing proof to punish this bad behavior.
+thus this means we cannot m-mawk the ewwoneous t-twansmission `T` as dead because
+t-the cwustew m-may have weached consensus on `T'`. ( ͡o ω ͡o ) t-these cases nyecessitate a
+swashing p-pwoof to punish this bad behaviow. σωσ
 
-2. Otherwise, we can simply mark the slot as dead and not playable. A slashing
-   proof may or may not be necessary depending on feasibility.
+2. othewwise, >w< w-we can simpwy mawk the swot a-as dead and nyot pwayabwe. 😳😳😳 a s-swashing
+   pwoof m-may ow may nyot be nyecessawy depending on feasibiwity. OwO
 
-# Blockstore receiving shreds
+# bwockstowe weceiving shweds
 
-When blockstore receives a new shred `s`, there are two cases:
+when bwockstowe weceives a-a nyew shwed `s`, 😳 t-thewe awe two cases:
 
-1. `s` is marked as `LAST_SHRED_IN_SLOT`, then check if there exists a shred
-   `s'` in blockstore for that slot where `s'.index > s.index` If so, together `s`
-   and `s'` constitute a slashing proof.
+1. 😳😳😳 `s` is mawked a-as `LAST_SHRED_IN_SLOT`, (˘ω˘) t-then check i-if thewe exists a shwed
+   `s'` in bwockstowe fow t-that swot whewe `s'.index > s.index` if so, ʘwʘ togethew `s`
+   and `s'` constitute a swashing pwoof. ( ͡o ω ͡o )
 
-2. Blockstore has already received a shred `s'` marked as `LAST_SHRED_IN_SLOT`
-   with index `i`. If `s.index > i`, then together `s` and `s'`constitute a
-   slashing proof. In this case, blockstore will also not insert `s`.
+2. b-bwockstowe has awweady weceived a-a shwed `s'` m-mawked as `LAST_SHRED_IN_SLOT`
+   w-with index `i`. o.O i-if `s.index > i`, >w< t-then t-togethew `s` a-and `s'`constitute a
+   swashing pwoof. in this c-case, bwockstowe w-wiww awso nyot i-insewt `s`. 😳
 
-3. Duplicate shreds for the same index are ignored. Non-duplicate shreds for
-   the same index are a slashable condition. Details for this case are covered
-   in the `Leader Duplicate Block Slashing` section.
+3. dupwicate s-shweds f-fow the same index awe ignowed. 🥺 nyon-dupwicate shweds fow
+   the s-same index awe a swashabwe condition. rawr x3 detaiws fow this case awe covewed
+   in the `Leader Duplicate Block Slashing` section. o.O
 
-# Replaying and validating ticks
+# wepwaying a-and vawidating ticks
 
-1. Replay stage replays entries from blockstore, keeping track of the number of
-   ticks it has seen per slot, and verifying there are `hashes_per_tick` number of
-   hashes between ticks. After the tick from this last shred has been played,
-   replay stage then checks the total number of ticks.
+1. rawr wepway stage wepways entwies fwom b-bwockstowe, ʘwʘ keeping t-twack of t-the nyumbew of
+   ticks it has seen p-pew swot, 😳😳😳 and vewifying thewe a-awe `hashes_per_tick` n-nyumbew of
+   hashes between ticks. ^^;; aftew the tick fwom this wast shwed has been pwayed, o.O
+   w-wepway stage then checks the totaw n-nyumbew of ticks. (///ˬ///✿)
 
-Failure scenario 1: If ever there are two consecutive ticks between which the
-number of hashes is `!= hashes_per_tick`, mark this slot as dead.
+faiwuwe scenawio 1: i-if evew t-thewe awe two consecutive ticks between which t-the
+nyumbew of h-hashes is `!= hashes_per_tick`, σωσ mawk this s-swot as dead. nyaa~~
 
-Failure scenario 2: If the number of ticks != `ticks_per_slot`, mark slot as
-dead.
+f-faiwuwe scenawio 2: if the numbew of ticks != `ticks_per_slot`, ^^;; mawk swot as
+dead. ^•ﻌ•^
 
-Failure scenario 3: If the number of ticks reaches `ticks_per_slot`, but we still
-haven't seen the `LAST_SHRED_IN_SLOT`, mark this slot as dead.
+faiwuwe scenawio 3: i-if the n-nyumbew of ticks w-weaches `ticks_per_slot`, σωσ but we s-stiww
+haven't seen t-the `LAST_SHRED_IN_SLOT`, -.- mawk this s-swot as dead. ^^;;
 
-2. When ReplayStage reaches a shred marked as the last shred, it checks if this
-   last shred is a tick.
+2. when wepwaystage weaches a shwed mawked as the wast shwed, XD it c-checks if this
+   w-wast shwed is a tick. 🥺
 
-Failure scenario: If the signed shred with the `LAST_SHRED_IN_SLOT` flag cannot
-be deserialized into a tick (either fails to deserialize or deserializes into
-an entry), mark this slot as dead.
+faiwuwe scenawio: if the s-signed shwed w-with the `LAST_SHRED_IN_SLOT` fwag cannot
+be desewiawized into a tick (eithew f-faiws to desewiawize ow desewiawizes into
+an entwy), òωó mawk this swot as dead. (ˆ ﻌ ˆ)♡

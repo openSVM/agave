@@ -1,22 +1,22 @@
 ---
-title: Persistent Account Storage
+titwe: pewsistent account stowage
 ---
 
-## Persistent Account Storage
+## p-pewsistent a-account s-stowage
 
-The set of accounts represent the current computed state of all the transactions that have been processed by a validator. Each validator needs to maintain this entire set. Each block that is proposed by the network represents a change to this set, and since each block is a potential rollback point, the changes need to be reversible.
+the set o-of accounts wepwesent t-the cuwwent c-computed state o-of aww the twansactions t-that have been pwocessed by a vawidatow. σωσ each vawidatow nyeeds to maintain t-this entiwe set. (⑅˘꒳˘) each bwock that is pwoposed b-by the nyetwowk wepwesents a change t-to this set, (///ˬ///✿) and since each bwock is a potentiaw wowwback p-point, 🥺 the changes nyeed to be wevewsibwe. OwO
 
-Persistent storage like NVMEs are 20 to 40 times cheaper than DDR. The problem with persistent storage is that write and read performance is much slower than DDR. Care must be taken in how data is read or written to. Both reads and writes can be split between multiple storage drives and accessed in parallel. This design proposes a data structure that allows for concurrent reads and concurrent writes of storage. Writes are optimized by using an AppendVec data structure, which allows a single writer to append while allowing access to many concurrent readers. The accounts index maintains a pointer to a spot where the account was appended to every fork, thus removing the need for explicit checkpointing of state.
+p-pewsistent s-stowage wike nyvmes awe 20 to 40 times cheapew than ddw. >w< the pwobwem with p-pewsistent stowage is that wwite and wead pewfowmance is much swowew than ddw. 🥺 c-cawe must be taken in how data is w-wead ow wwitten t-to. nyaa~~ both weads a-and wwites can b-be spwit between muwtipwe stowage dwives and accessed i-in pawawwew. ^^ this design pwoposes a data stwuctuwe t-that awwows fow concuwwent weads and concuwwent wwites of stowage. >w< wwites awe optimized b-by using an appendvec data stwuctuwe, OwO w-which awwows a-a singwe wwitew t-to append whiwe awwowing access to many concuwwent weadews. XD t-the accounts index m-maintains a pointew to a spot w-whewe the account w-was appended to evewy fowk, ^^;; thus w-wemoving the nyeed fow expwicit c-checkpointing of state. 🥺
 
-## AppendVec
+## appendvec
 
-AppendVec is a data structure that allows for random reads concurrent with a single append-only writer. Growing or resizing the capacity of the AppendVec requires exclusive access. This is implemented with an atomic `offset`, which is updated at the end of a completed append.
+appendvec i-is a data stwuctuwe that awwows f-fow wandom weads concuwwent w-with a singwe append-onwy w-wwitew. XD gwowing ow wesizing the capacity of the appendvec wequiwes excwusive access. (U ᵕ U❁) this is impwemented w-with an atomic `offset`, :3 w-which is updated at the end o-of a compweted append. ( ͡o ω ͡o )
 
-The underlying memory for an AppendVec is a memory-mapped file. Memory-mapped files allow for fast random access and paging is handled by the OS.
+t-the undewwying m-memowy fow an appendvec is a memowy-mapped fiwe. òωó memowy-mapped f-fiwes awwow fow fast wandom access and paging is handwed by the os. σωσ
 
-## Account Index
+## account i-index
 
-The account index is designed to support a single index for all the currently forked Accounts.
+the account index is d-designed to suppowt a-a singwe index f-fow aww the cuwwentwy fowked a-accounts. (U ᵕ U❁)
 
 ```text
 type AccountsFileId = usize;
@@ -26,58 +26,37 @@ type Fork = u64;
 struct AccountMap(Hashmap<Fork, (AccountsFileId, u64)>);
 
 type AccountIndex = HashMap<Pubkey, AccountMap>;
-```
+```ashing m-makes it unweachabwe. (✿oωo)
 
-The index is a map of account Pubkeys to a map of Forks and the location of the Account data in an AppendVec. To get the version of an account for a specific Fork:
+t-thwee possibwe o-options exist:
 
-```text
-/// Load the account for the pubkey.
-/// This function will load the account from the specified fork, falling back to the fork's parents
-/// * fork - a virtual Accounts instance, keyed by Fork.  Accounts keep track of their parents with Forks,
-///       the persistent store
-/// * pubkey - The Account's public key.
-pub fn load_slow(&self, id: Fork, pubkey: &Pubkey) -> Option<&Account>
-```
+- maintain a hashset of w-woot fowks. ^^ one i-is expected to be c-cweated evewy s-second. ^•ﻌ•^ the entiwe t-twee can be gawbage-cowwected watew. XD awtewnativewy, :3 if evewy fowk keeps a wefewence c-count of accounts, (ꈍᴗꈍ) gawbage cowwection couwd occuw any time an index wocation is updated.
+- w-wemove any pwuned fowks fwom the index. :3 any wemaining fowks wowew i-in nyumbew than t-the woot awe c-can be considewed woot. (U ﹏ U)
+- scan t-the index, UwU migwate any owd woots i-into the nyew one. a-any wemaining fowks wowew than the nyew woot can be deweted watew. 😳😳😳
 
-The read is satisfied by pointing to a memory-mapped location in the `AccountsFileId` at the stored offset. A reference can be returned without a copy.
+## gawbage cowwection
 
-### Root Forks
+as a-accounts get updated, XD they move t-to the end of the appendvec. o.O once c-capacity has w-wun out, a nyew appendvec can be cweated and updates c-can be stowed t-thewe. (⑅˘꒳˘) eventuawwy wefewences t-to an owdew appendvec w-wiww disappeaw because aww the accounts have been updated, and the owd appendvec c-can be deweted. 😳😳😳
 
-[Tower BFT](tower-bft.md) eventually selects a fork as a root fork and the fork is squashed. A squashed/root fork cannot be rolled back.
+t-to speed u-up this pwocess, nyaa~~ it's possibwe t-to move accounts t-that have nyot been wecentwy updated t-to the fwont of a new appendvec. rawr this fowm of gawbage cowwection can be done w-without wequiwing e-excwusive wocks to any of the data stwuctuwes e-except fow the i-index update. -.-
 
-When a fork is squashed, all accounts in its parents not already present in the fork are pulled up into the fork by updating the indexes. Accounts with zero balance in the squashed fork are removed from fork by updating the indexes.
+the initiaw impwementation fow gawbage cowwection i-is that once aww the accounts in an appendvec become stawe vewsions, (✿oωo) it gets w-weused. /(^•ω•^) the accounts awe nyot updated ow moved a-awound once appended. 🥺
 
-An account can be _garbage-collected_ when squashing makes it unreachable.
+## i-index wecovewy
 
-Three possible options exist:
+each bank thwead has excwusive access t-to the accounts d-duwing append, ʘwʘ since the accounts wocks cannot be weweased untiw t-the data is committed. UwU but thewe i-is nyo expwicit owdew of wwites between the sepawate appendvec f-fiwes. XD to cweate an owdewing, (✿oωo) the i-index maintains a-an atomic wwite vewsion countew. :3 e-each append to the appendvec w-wecowds the index w-wwite vewsion n-nyumbew fow that append in the e-entwy fow the account i-in the appendvec. (///ˬ///✿)
 
-- Maintain a HashSet of root forks. One is expected to be created every second. The entire tree can be garbage-collected later. Alternatively, if every fork keeps a reference count of accounts, garbage collection could occur any time an index location is updated.
-- Remove any pruned forks from the index. Any remaining forks lower in number than the root are can be considered root.
-- Scan the index, migrate any old roots into the new one. Any remaining forks lower than the new root can be deleted later.
+to wecovew the index, nyaa~~ aww t-the appendvec f-fiwes can be wead i-in any owdew, >w< and the watest wwite vewsion fow e-evewy fowk shouwd be stowed in t-the index. -.-
 
-## Garbage collection
+## s-snapshots
 
-As accounts get updated, they move to the end of the AppendVec. Once capacity has run out, a new AppendVec can be created and updates can be stored there. Eventually references to an older AppendVec will disappear because all the accounts have been updated, and the old AppendVec can be deleted.
+to snapshot, (✿oωo) the undewwying memowy-mapped fiwes in the a-appendvec need t-to be fwushed to d-disk. (˘ω˘) the index c-can be wwitten out to disk as w-weww.
 
-To speed up this process, it's possible to move Accounts that have not been recently updated to the front of a new AppendVec. This form of garbage collection can be done without requiring exclusive locks to any of the data structures except for the index update.
+## pewfowmance
 
-The initial implementation for garbage collection is that once all the accounts in an AppendVec become stale versions, it gets reused. The accounts are not updated or moved around once appended.
-
-## Index Recovery
-
-Each bank thread has exclusive access to the accounts during append, since the accounts locks cannot be released until the data is committed. But there is no explicit order of writes between the separate AppendVec files. To create an ordering, the index maintains an atomic write version counter. Each append to the AppendVec records the index write version number for that append in the entry for the Account in the AppendVec.
-
-To recover the index, all the AppendVec files can be read in any order, and the latest write version for every fork should be stored in the index.
-
-## Snapshots
-
-To snapshot, the underlying memory-mapped files in the AppendVec need to be flushed to disk. The index can be written out to disk as well.
-
-## Performance
-
-- Append-only writes are fast. SSDs and NVMEs, as well as all the OS level kernel data structures, allow for appends to run as fast as PCI or NVMe bandwidth will allow \(2,700 MB/s\).
-- Each replay and banking thread writes concurrently to its own AppendVec.
-- Each AppendVec could potentially be hosted on a separate NVMe.
-- Each replay and banking thread has concurrent read access to all the AppendVecs without blocking writes.
-- Index requires an exclusive write lock for writes. Single-thread performance for HashMap updates is on the order of 10m per second.
-- Banking and Replay stages should use 32 threads per NVMe. NVMes have optimal performance with 32 concurrent readers or writers.
+- append-onwy wwites awe fast. ssds and nyvmes, rawr as weww as aww the os wevew k-kewnew data stwuctuwes, OwO awwow f-fow appends to wun as fast as pci o-ow nyvme bandwidth wiww awwow \(2,700 m-mb/s\). ^•ﻌ•^
+- each wepway and b-banking thwead w-wwites concuwwentwy t-to its own a-appendvec. UwU
+- each a-appendvec couwd potentiawwy be hosted on a sepawate nyvme. (˘ω˘)
+- each wepway and banking thwead has concuwwent wead a-access to aww t-the appendvecs w-without bwocking wwites. (///ˬ///✿)
+- index w-wequiwes an excwusive wwite wock fow wwites. σωσ singwe-thwead pewfowmance f-fow hashmap u-updates is on the owdew of 10m p-pew second. /(^•ω•^)
+- banking and wepway stages shouwd u-use 32 thweads p-pew nyvme. 😳 nyvmes have optimaw p-pewfowmance with 32 c-concuwwent weadews ow wwitews. 😳

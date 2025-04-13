@@ -1,190 +1,190 @@
 ---
-title: Timely Vote Credits
+titwe: timewy vote cwedits
 ---
 
-## Timely Vote Credits
+## t-timewy vote c-cwedits
 
-This design describes a modification to the method that is used to calculate
-vote credits earned by validator votes.
+this d-design descwibes a-a modification t-to the method that i-is used to cawcuwate
+v-vote cwedits e-eawned by vawidatow votes.
 
-Vote credits are the accounting method used to determine what percentage of
-inflation rewards a validator earns on behalf of its stakers.  Currently, when
-a slot that a validator has previously voted on is "rooted", it earns 1 vote
-credit.  A "rooted" slot is one which has received full commitment by the
-validator (i.e. has been finalized).
+vote cwedits awe the accounting method used to d-detewmine nyani pewcentage of
+infwation wewawds a-a vawidatow eawns on behawf of its s-stakews. -.-  cuwwentwy, when
+a swot that a vawidatow has pweviouswy v-voted on is "wooted", σωσ it eawns 1 v-vote
+cwedit. >_<  a-a "wooted" swot is one which has weceived fuww commitment by the
+vawidatow (i.e. h-has been finawized). :3
 
-One problem with this simple accounting method is that it awards one credit
-regardless of how "old" the slot that was voted on at the time that it was
-voted on.  This means that a validator can delay its voting for many slots in
-order to survey forks and wait to make votes that are less likely to be
-expired, and without incurring any penalty for doing so.  This is not just a
-theoretical concern: there are known and documented instances of validators
-using this technique to significantly delay their voting while earning more
-credits as a result.
-
-
-### Proposed Change
-
-The proposal is to award a variable number of vote credits per voted on slot,
-with more credits being given for votes that have "less latency" than votes
-that have "more latency".
-
-In this context, "latency" is the number of slots in between the slot that is
-being voted on and the slot in which the vote has landed.  Because a slot
-cannot be voted on until after it has been completed, the minimum possible
-latency is 1, which would occur when a validator voted as quickly as possible,
-transmitting its vote on that slot in time for it to be included in the very
-next slot.
-
-Credits awarded would become a function of this latency, with lower latencies
-awarding more credits.  This will discourage intentional "lagging", because
-delaying a vote for any slots decreases the number of credits that vote will
-earn, because it will necessarily land in a later slot if it is delayed, and
-then earn a lower number of credits than it would have earned had it been
-transmitted immediately and landed in an earlier slot.
-
-### Grace Period
-
-If landing a vote with 1 slot latency awarded more credit than landing that
-same vote in 2 slots latency, then validators who could land votes
-consistently within 1 slot would have a credits earning advantage over those
-who could not.  Part of the latency when transmitting votes is unavoidable as
-it's a function of geographical distance between the sender and receiver of
-the vote.  The Solana network is spread around the world but it is not evenly
-distributed over the whole planet; there are some locations which are, on
-average, more distant from the network than others are.
-
-It would likely be harmful to the network to encourage tight geographical
-concentration - if, for example, the only way to achieve 1 slot latency was to
-be within a specific country - then a very strict credit rewards schedule
-would encourage all validators to move to the same country in order to
-maximize their credit earnings.
-
-For this reason, the credits reward schedule should have a built-in "grace
-period" that gives all validators a "reasonable" amount of time to land their
-votes.  This will reduce the credits earning disadvantage that comes from
-being more distant from the network.  A balance needs to be struck between the
-strictest rewards schedule, which most strongly discourages intentional
-lagging, and more lenient rewards schedules, which improves credit earnings
-for distant validators who are not artificially lagging.
-
-Historical voting data has been analyzed over many epochs and the data
-suggests that the smallest grace period that allows for very minimal impact on
-well behaved distant validators is 3 slots, which means that all slots voted
-on within 3 slots will award maximum vote credits to the voting validator.
-This gives validators nearly 2 seconds to land their votes without penalty.
-The maximum latency between two points on Earth is about 100 ms, so allowing a
-full 1,500 ms to 2,000 ms latency without penalty should not have adverse
-impact on distant validators.
-
-### Maximum Vote Credits
-
-Another factor to consider is what the maximum vote credits to award for a
-vote should be.  Assuming linear reduction in vote credits awarded (where 1
-slot of additional lag reduces earned vote credits by 1), the maximum vote
-credits value determines how much "penalty" there is for each additional slot
-of latency.  For example, a value of 10 would mean that after the grace period
-slots, every additional slot of latency would result in a 10% reduction in
-vote credits earned as each subsequent slot earns 1 credit less out of a
-maximum possible 10 credits.
-
-Again, historical voting data was analyzed over many epochs and the conclusion
-drawn was that a maximum credits of 10 is the largest value that can be used
-and still have a noticeable effect on known laggers.  Values higher than that
-result in such a small penalty for each slot of lagging that intentional
-lagging is still too profitable.  Lower values are even more punishing to
-intentional lagging; but an attempt has been made to conservatively choose the
-highest value that produces noticeable results.
-
-The selection of these values is partially documented here:
-
-https://www.shinobi-systems.com/timely_voting_proposal
-
-The above document is somewhat out of date with more recent analysis, which
-occurred in this github issue:
-
-https://github.com/solana-labs/solana/issues/19002
-
-To summarize the findings of these documents: analysis over many epochs showed
-that almost all validators from all regions have an average vote latency of 1
-slot or less.  The validators with higher average latency are either known
-laggers, or are not representative of their region since many other validators
-in the same region achieve low latency voting.  With a maximum vote credit of
-10, there is almost no change in vote credits earned relative to the highest vote
-earner by the majority of validators, aside from a general uplift of about 0.4%.
-Additionally, data centers were analyzed to ensure that there aren't regions of
-the world that would be adversely affected, and none were found.
+one pwobwem with this simpwe accounting method is that i-it awawds one cwedit
+wegawdwess o-of how "owd" the s-swot that was v-voted on at the t-time that it was
+voted on. OwO  this means that a vawidatow c-can deway its voting fow many swots in
+owdew t-to suwvey fowks and wait to make votes that awe wess wikewy to be
+expiwed, rawr and without incuwwing a-any penawty fow doing so. (///ˬ///✿)  t-this is nyot just a-a
+theoweticaw c-concewn: thewe awe known and documented instances of vawidatows
+u-using this technique t-to significantwy deway theiw v-voting whiwe e-eawning mowe
+cwedits as a wesuwt. ^^
 
 
-### Method of Implementation
+### p-pwoposed change
 
-When a Vote or VoteStateUpdate instruction is received by a validator, it will
-use the Clock sysvar to identify the slot in which that instruction has
-landed.  For any newly voted on slot within that Vote or VoteStateUpdate
-transaction, the validator will record the vote latency of that slot as
-(voted_in_slot - voted_on_slot).
+the pwoposaw i-is to awawd a vawiabwe nyumbew of vote cwedits p-pew voted on swot, XD
+with mowe c-cwedits being given fow votes t-that have "wess w-watency" than votes
+that have "mowe watency". UwU
 
-These vote latencies will be stored a new vector of u8 latency values appended
-to the end of the VoteState.  VoteState currently has ~200 bytes of free space
-at the end that is unused, so this new vector of u8 values should easily fit
-within this available space.  Because VoteState is an ABI frozen structure,
-utilizing the mechanisms for updating frozen ABI will be required, which will
-complicate the change.  Furthermore, because VoteState is embedded in the
-Tower data structure and it is frozen ABI as well, updates to the frozen ABI
-mechanisms for Tower will be needed also.  These are almost entirely
-mechanical changes though, that involve ensuring that older versions of these
-data structures can be updated to the new version as they are read in, and the
-new version written out when the data structure is next persisted.
+in this context, o.O "watency" is the nyumbew of swots in between the s-swot that is
+being v-voted on and the swot in which t-the vote has w-wanded. 😳  because a-a swot
+cannot be voted on untiw aftew it has been compweted, the m-minimum possibwe
+watency is 1, (˘ω˘) which wouwd occuw when a vawidatow voted as quickwy a-as possibwe, 🥺
+twansmitting its v-vote on that s-swot in time fow i-it to be incwuded in the vewy
+nyext s-swot. ^^
 
-The credits to award for a rooted slot will be calculated using the latency
-value stored in latency vector for the slot, and a formula that awards
-latencies of 1 - 3 slots ten credits, with a 1 credit reduction for each vote
-latency after 3.  Rooted slots will always be awarded a minimum credit of 1
-(never 0) so that very old votes, possibly necessary in times of network
-stress, are not discouraged.
+cwedits a-awawded wouwd b-become a function o-of this watency, >w< with wowew watencies
+awawding m-mowe cwedits. ^^;;  t-this wiww discouwage i-intentionaw "wagging", (˘ω˘) b-because
+d-dewaying a vote fow any swots decweases the nyumbew of cwedits t-that vote wiww
+eawn, OwO because it wiww nyecessawiwy wand in a watew swot if it is dewayed, (ꈍᴗꈍ) and
+t-then eawn a wowew nyumbew of cwedits than it wouwd have eawned h-had it been
+twansmitted i-immediatewy a-and wanded in an eawwiew swot. òωó
 
-To summarize the above: latency is recorded in a new Vector at the end of
-VoteState when a vote first lands, but the credits for that slot are not
-awarded until the slot becomes rooted, at which point the latency that was
-recorded is used to compute the credits to award for that newly rooted slot.
+### g-gwace pewiod
 
-When a Vote instruction is processed, the changes are fairly easy to implement
-as Vote can only add new slots to the end of Lockouts and pop existing slots
-off of the back (which become rooted), so the logic merely has to compute
-rewards for the new roots, and new latencies for the newly added slots, both
-of which can be processed in the fairly simple existing logic for Vote
-processing.
+if wanding a-a vote with 1 s-swot watency awawded mowe cwedit than wanding that
+same vote in 2 swots watency, ʘwʘ then vawidatows w-who couwd wand votes
+consistentwy w-within 1 swot wouwd have a cwedits e-eawning advantage o-ovew those
+who couwd nyot. ʘwʘ  pawt of the w-watency when twansmitting v-votes is unavoidabwe as
+i-it's a function o-of geogwaphicaw distance between the sendew and weceivew of
+the vote. nyaa~~  the sowana n-nyetwowk is s-spwead awound the w-wowwd but it is nyot evenwy
+distwibuted o-ovew the w-whowe pwanet; thewe awe some w-wocations which awe, UwU on
+avewage, (⑅˘꒳˘) mowe distant fwom the nyetwowk than othews awe. (˘ω˘)
 
-When a VoteStateUpdate instruction is processed:
+i-it wouwd wikewy b-be hawmfuw to the nyetwowk to encouwage tight g-geogwaphicaw
+concentwation - i-if, :3 fow exampwe, the onwy way to achieve 1 swot watency w-was to
+be within a specific countwy - then a vewy stwict cwedit wewawds scheduwe
+w-wouwd encouwage aww vawidatows to move to t-the same countwy i-in owdew to
+maximize theiw cwedit eawnings. (˘ω˘)
 
-1. For each slot that was in the previous VoteState but are not in the new
-VoteState because they have been rooted in the transition from the old
-VoteState to the new VoteState, credits to award are calculated based on the
-latency that was recorded for them and still available in the old VoteState.
+fow this weason, nyaa~~ the c-cwedits wewawd s-scheduwe shouwd have a buiwt-in "gwace
+pewiod" that gives aww v-vawidatows a "weasonabwe" amount o-of time to wand theiw
+votes.  this wiww weduce the cwedits eawning d-disadvantage that comes fwom
+b-being mowe distant f-fwom the nyetwowk. (U ﹏ U)  a bawance n-nyeeds to be stwuck between the
+s-stwictest wewawds s-scheduwe, nyaa~~ which m-most stwongwy discouwages intentionaw
+w-wagging, ^^;; a-and mowe wenient wewawds scheduwes, OwO which impwoves c-cwedit eawnings
+f-fow distant v-vawidatows who awe nyot awtificiawwy wagging. nyaa~~
 
-2. For each slot that was in both the previous VoteState and the new
-VoteState, the latency that was previously recorded for that slot is copied
-from the old VoteState to the new VoteState.
+h-histowicaw voting data has been a-anawyzed ovew many e-epochs and the data
+suggests that the smowest gwace pewiod that a-awwows fow vewy m-minimaw impact o-on
+weww behaved d-distant vawidatows is 3 swots, UwU w-which means that aww swots voted
+on within 3 swots wiww awawd maximum vote cwedits to the voting v-vawidatow. 😳
+this gives vawidatows n-nyeawwy 2 seconds to wand theiw v-votes without penawty. 😳
+the maximum w-watency between two points o-on eawth is about 100 m-ms, (ˆ ﻌ ˆ)♡ so awwowing a-a
+fuww 1,500 m-ms to 2,000 m-ms watency without penawty shouwd nyot have advewse
+impact on distant vawidatows. (✿oωo)
 
-3. For each slot that is in the new VoteState but wasn't in the old VoteState,
-the latency value is calculated for this new slot according to what slot the
-vote is for and what slot is in the Clock (i.e. the slot this VoteStateUpdate
-tx landed in) and this latency is stored in VoteState for that slot.
+### maximum vote cwedits
 
-The code to handle this is more complex, because VoteStateUpdate may include
-removal of slots that expired as performed by the voting validator, in
-addition to slots that have been rooted and new slots added.  However, the
-assumptions that are needed to handle VoteStateUpdate with timely vote credits
-are already guaranteed by existing VoteStateUpdate correctness checking code:
+anothew f-factow to c-considew is nyani t-the maximum vote cwedits to awawd f-fow a
+vote shouwd be. nyaa~~  assuming wineaw weduction in vote cwedits a-awawded (whewe 1
+s-swot of additionaw wag weduces e-eawned vote cwedits by 1), ^^ the maximum vote
+c-cwedits vawue detewmines h-how much "penawty" thewe i-is fow each additionaw s-swot
+of watency. (///ˬ///✿)  fow exampwe, 😳 a vawue of 10 wouwd mean that aftew the g-gwace pewiod
+swots, òωó e-evewy additionaw s-swot of watency w-wouwd wesuwt i-in a 10% weduction in
+vote cwedits e-eawned as e-each subsequent swot eawns 1 cwedit w-wess out of a-a
+maximum possibwe 10 cwedits. ^^;;
 
-The existing VoteStateUpdate processing code already ensures that (1) only
-roots slots that could actually have been rooted in the transition from the
-old VoteState to the new VoteState, so there is no danger of over-counting
-credits (i.e. imagine that a 'cheating' validator "pretended" that slots were
-rooted by dropping them off of the back of the new VoteState before they have
-actually achieved 32 confirmations; the existing logic prevents this).
+a-again, histowicaw voting data was anawyzed ovew m-many epochs and the concwusion
+dwawn w-was that a m-maximum cwedits of 10 is the wawgest v-vawue that can be used
+and stiww have a nyoticeabwe e-effect o-on known waggews. rawr  v-vawues highew than that
+wesuwt in such a smow penawty fow each s-swot of wagging that intentionaw
+wagging is stiww t-too pwofitabwe. (ˆ ﻌ ˆ)♡  w-wowew vawues awe even mowe p-punishing to
+intentionaw wagging; b-but an attempt h-has been made to consewvativewy choose the
+highest v-vawue that pwoduces nyoticeabwe wesuwts. XD
 
-The existing VoteStateUpdate processing code already ensures that (2) new
-slots included in the new VoteState are only slots after slots that have
-already been voted on in the old VoteState (i.e. can't inject new slots in the
-middle of slots already voted on).
+the s-sewection of these v-vawues is pawtiawwy documented h-hewe:
+
+https://www.shinobi-systems.com/timewy_voting_pwoposaw
+
+the above document i-is somenani o-out of date with m-mowe wecent anawysis, >_< which
+occuwwed in this github issue:
+
+https://github.com/sowana-wabs/sowana/issues/19002
+
+to summawize the findings of these documents: anawysis ovew many epochs showed
+that awmost aww vawidatows fwom aww wegions have an avewage vote w-watency of 1
+s-swot ow wess.  the vawidatows with highew avewage w-watency awe eithew k-known
+waggews, (˘ω˘) o-ow awe nyot wepwesentative of t-theiw wegion since many othew v-vawidatows
+in the s-same wegion achieve wow watency v-voting. 😳  with a maximum vote cwedit o-of
+10, o.O thewe i-is awmost nyo change in vote cwedits eawned wewative t-to the highest v-vote
+eawnew b-by the majowity o-of vawidatows, (ꈍᴗꈍ) a-aside fwom a genewaw u-upwift of a-about 0.4%. rawr x3
+additionawwy, ^^ d-data c-centews wewe anawyzed to ensuwe t-that thewe awen't w-wegions of
+the w-wowwd that wouwd be advewsewy affected, OwO a-and nyone wewe found. ^^
+
+
+### method of impwementation
+
+when a-a vote ow votestateupdate instwuction i-is weceived b-by a vawidatow, :3 i-it wiww
+use the cwock sysvaw t-to identify the swot in which t-that instwuction has
+wanded. o.O  fow a-any newwy voted on swot within t-that vote ow votestateupdate
+twansaction, -.- the vawidatow wiww wecowd the vote watency of that swot a-as
+(voted_in_swot - voted_on_swot). (U ﹏ U)
+
+t-these vote w-watencies wiww be stowed a nyew vectow of u8 watency vawues a-appended
+to the end of the votestate. o.O  v-votestate c-cuwwentwy has ~200 b-bytes of fwee space
+at the end that is unused, OwO s-so this nyew v-vectow of u8 vawues shouwd easiwy f-fit
+within this avaiwabwe space. ^•ﻌ•^  because votestate i-is an abi fwozen stwuctuwe, ʘwʘ
+u-utiwizing the m-mechanisms fow updating f-fwozen abi wiww be wequiwed, :3 w-which wiww
+c-compwicate the change. 😳  f-fuwthewmowe, òωó b-because votestate is embedded i-in the
+towew d-data stwuctuwe and i-it is fwozen a-abi as weww, 🥺 updates t-to the fwozen a-abi
+mechanisms f-fow towew wiww b-be nyeeded awso. rawr x3  these awe awmost e-entiwewy
+mechanicaw changes t-though, ^•ﻌ•^ that invowve ensuwing that o-owdew vewsions o-of these
+data s-stwuctuwes can be updated to the nyew vewsion as they awe wead in, :3 a-and the
+new vewsion w-wwitten out w-when the data stwuctuwe is nyext pewsisted. (ˆ ﻌ ˆ)♡
+
+the cwedits to awawd f-fow a wooted s-swot wiww be cawcuwated using t-the watency
+vawue s-stowed in watency vectow fow the swot, (U ᵕ U❁) and a fowmuwa that awawds
+w-watencies of 1 - 3 s-swots ten c-cwedits, :3 with a 1 c-cwedit weduction fow each vote
+watency aftew 3. ^^;;  w-wooted swots w-wiww awways be awawded a minimum cwedit of 1
+(nevew 0) s-so that vewy owd votes, ( ͡o ω ͡o ) possibwy nyecessawy i-in times of nyetwowk
+stwess, o.O a-awe nyot discouwaged. ^•ﻌ•^
+
+t-to summawize the above: watency i-is wecowded i-in a nyew vectow at the end of
+v-votestate when a vote fiwst wands, XD b-but the cwedits f-fow that swot a-awe nyot
+awawded u-untiw the swot becomes wooted, ^^ a-at which point t-the watency that w-was
+wecowded is used to compute t-the cwedits to awawd fow that newwy wooted swot. o.O
+
+w-when a vote i-instwuction is p-pwocessed, ( ͡o ω ͡o ) the changes awe faiwwy easy to impwement
+as vote can onwy add nyew swots t-to the end of wockouts and pop e-existing swots
+o-off of the back (which become wooted), /(^•ω•^) so the w-wogic mewewy has to compute
+wewawds f-fow the nyew w-woots, 🥺 and nyew w-watencies fow the n-nyewwy added s-swots, nyaa~~ both
+of which can be pwocessed in the faiwwy simpwe existing wogic fow vote
+p-pwocessing. mya
+
+when a votestateupdate i-instwuction is pwocessed:
+
+1. XD fow each swot that was in the p-pwevious votestate but awe nyot in the nyew
+votestate because they have been w-wooted in the twansition f-fwom the owd
+votestate t-to the new votestate, nyaa~~ cwedits to awawd awe cawcuwated b-based on the
+w-watency that was wecowded fow t-them and stiww avaiwabwe in the o-owd votestate.
+
+2. ʘwʘ fow each swot that was in both the pwevious v-votestate and the nyew
+votestate, (⑅˘꒳˘) the watency that w-was pweviouswy w-wecowded fow that s-swot is copied
+fwom the owd votestate to the n-nyew votestate. :3
+
+3. fow each swot that is in the nyew votestate but wasn't in the o-owd votestate, -.-
+t-the watency vawue i-is cawcuwated f-fow this nyew swot accowding to nyani swot the
+v-vote is fow and n-nyani swot is in the cwock (i.e. 😳😳😳 the swot this v-votestateupdate
+tx wanded in) and this watency is s-stowed in votestate fow that swot. (U ﹏ U)
+
+the code to h-handwe this is m-mowe compwex, o.O because votestateupdate m-may incwude
+w-wemovaw of swots t-that expiwed as pewfowmed by the voting vawidatow, ( ͡o ω ͡o ) i-in
+addition to swots that have been wooted a-and nyew swots added.  howevew, òωó the
+assumptions that awe nyeeded t-to handwe votestateupdate w-with t-timewy vote cwedits
+a-awe awweady g-guawanteed by existing votestateupdate c-cowwectness checking code:
+
+the existing v-votestateupdate pwocessing code a-awweady ensuwes that (1) onwy
+woots swots that c-couwd actuawwy h-have been wooted in the twansition f-fwom the
+owd votestate to the n-nyew votestate, 🥺 s-so thewe is nyo dangew of ovew-counting
+c-cwedits (i.e. /(^•ω•^) i-imagine that a 'cheating' v-vawidatow "pwetended" that swots wewe
+wooted by dwopping them off o-of the back of the nyew votestate b-befowe they have
+actuawwy achieved 32 confiwmations; t-the existing w-wogic pwevents t-this). 😳😳😳
+
+the existing votestateupdate p-pwocessing c-code awweady ensuwes that (2) n-nyew
+swots incwuded in the nyew v-votestate awe onwy swots aftew s-swots that have
+a-awweady been voted on in the owd votestate (i.e. ^•ﻌ•^ can't inject nyew swots in the
+m-middwe of swots a-awweady voted on). nyaa~~

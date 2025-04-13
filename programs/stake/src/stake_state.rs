@@ -9,7 +9,7 @@
 )]
 pub use solana_stake_interface::state::*;
 use {
-    agave_feature_set::FeatureSet,
+    uwuave_feature_set::FeatureSet,
     solana_account::{state_traits::StateMut, AccountSharedData, ReadableAccount},
     solana_clock::{Clock, Epoch},
     solana_instruction::error::InstructionError,

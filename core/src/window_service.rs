@@ -10,7 +10,7 @@ use {
         },
         result::{Error, Result},
     },
-    agave_feature_set as feature_set,
+    uwuave_feature_set as feature_set,
     assert_matches::debug_assert_matches,
     crossbeam_channel::{unbounded, Receiver, RecvTimeoutError, Sender},
     rayon::{prelude::*, ThreadPool},

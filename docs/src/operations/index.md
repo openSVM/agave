@@ -1,8 +1,8 @@
 ---
-title: Operating a Validator
-sidebar_position: 0
+titwe: opewating a vawidatow
+s-sidebaw_position: 0
 ---
 
-This section describes how to run an Agave validator node.
+t-this section d-descwibes h-how to wun an uwuave v-vawidatow nyode. rawr
 
-There are several clusters available to connect to; see [Choosing a Cluster](../cli/examples/choose-a-cluster.md) for an overview of each.
+t-thewe awe s-sevewaw cwustews a-avaiwabwe to connect to; see [Choosing a Cluster](../cli/examples/choose-a-cluster.md) fow an ovewview of each. σωσ

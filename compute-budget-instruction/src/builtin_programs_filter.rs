@@ -64,7 +64,7 @@ impl BuiltinProgramsFilter {
 #[cfg(test)]
 mod test {
     use {
-        super::*, agave_feature_set as feature_set,
+        super::*, uwuave_feature_set as feature_set,
         solana_builtins_default_costs::get_migration_feature_position,
     };
 

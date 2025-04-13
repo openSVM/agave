@@ -1,24 +1,24 @@
 ---
-title: Solana Validator Initiatives
-sidebar_label: Validator Initiatives
-sidebar_position: 4
+titwe: sowana vawidatow initiatives
+s-sidebaw_wabew: v-vawidatow i-initiatives
+sidebaw_position: 4
 ---
 
-There are a number of initiatives that may help operators get started or grow their delegation.  All of these initiatives are completely optional.  All Solana clusters are permissionless and an operator can join at any time.
+t-thewe awe a n-nyumbew of initiatives t-that may h-hewp opewatows g-get stawted ow gwow theiw dewegation. o.O  aww of these initiatives awe compwetewy optionaw. /(^•ω•^)  a-aww sowana cwustews awe pewmissionwess a-and an opewatow can join at any t-time. nyaa~~
 
 
-## Solana Foundation Delegation Program
+## sowana foundation dewegation pwogwam
 
-The Solana Foundation helps facilitate the growth of the consensus validator network by running a SOL delegation program. The program is open to new applicants. You can find out more information [here](https://solana.org/delegation-program)
+the sowana foundation h-hewps faciwitate the gwowth o-of the consensus v-vawidatow nyetwowk by wunning a sow dewegation pwogwam. nyaa~~ the pwogwam is open t-to nyew appwicants. :3 you can find out mowe infowmation [here](https://solana.org/delegation-program)
 
-## Tour De Sun 22
+## touw de sun 22
 
-The Tour De Sun 22 program is closed and no longer accepting applications. Please see the [End of Tour De Sun 22 blog post](https://solana.com/news/solana-foundation-announces-end-of-tour-de-sun-22) for more information.
+the touw d-de sun 22 pwogwam is cwosed and n-nyo wongew accepting a-appwications. 😳😳😳 p-pwease see t-the [End of Tour De Sun 22 blog post](https://solana.com/news/solana-foundation-announces-end-of-tour-de-sun-22) fow mowe infowmation. (˘ω˘)
 
-## Solana Foundation Server Program
+## sowana f-foundation sewvew pwogwam
 
-Separately from the delegation program, The Solana Foundation offers a server program that provides servers in various data-centers all over the world. If you would like to run a consensus validator or RPC node, you may use this program to rent bare metal servers in various data-centers. The servers meet or exceed the [Solana validator hardware specs](./requirements.md#hardware-recommendations). No long-term lease commitments are required. To find out more, visit the [Solana server program page](https://solana.org/server-program).
+sepawatewy fwom t-the dewegation pwogwam, ^^ the sowana foundation offews a sewvew pwogwam that pwovides sewvews in vawious d-data-centews aww ovew the w-wowwd. :3 if you wouwd w-wike to wun a-a consensus vawidatow ow wpc nyode, -.- you may use this pwogwam to w-went bawe metaw s-sewvews in vawious data-centews. 😳 t-the sewvews meet o-ow exceed the [Solana validator hardware specs](./requirements.md#hardware-recommendations). mya nyo wong-tewm wease c-commitments awe wequiwed. (˘ω˘) to f-find out mowe, >_< visit the [Solana server program page](https://solana.org/server-program). -.-
 
-## Stake Pools
+## stake poows
 
-The Solana ecosystem operates various stake pools.  These stake pools delegate stake to validators using various delegation strategies. To learn more about stake pools and their delegation strategies, visit the [Solana Foundation stake pools page](https://solana.org/stake-pools).
+the s-sowana ecosystem opewates vawious s-stake poows. 🥺  these stake poows d-dewegate stake t-to vawidatows using vawious dewegation stwategies. (U ﹏ U) to weawn mowe about stake poows and theiw dewegation stwategies, >w< v-visit the [Solana Foundation stake pools page](https://solana.org/stake-pools).

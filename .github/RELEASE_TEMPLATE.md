@@ -1,28 +1,28 @@
-# Release v0.X.Y <milestone name>
+# wewease v0.x.y <milestone name>
 
-fun blurb about the name, what's in the release
+fun bwuwb about t-the nyame, 😳 nyani's i-in the wewease
 
-## Major Features And Improvements
+## m-majow featuwes a-and impwovements
 
-* bulleted
-* list of features and improvements
+* b-buwweted
+* w-wist of featuwes a-and impwovements
 
-## Breaking Changes
+## b-bweaking changes
 
-* bulleted
-* list
+* buwweted
+* wist
 * of
-* protocol changes/breaks
-* API breaks
-* CLI changes
-* etc.
+* pwotocow changes/bweaks
+* api bweaks
+* cwi c-changes
+* etc. XD
 
-## Bug Fixes and Other Changes
+## bug fixes and othew changes
 
-* can be pulled from commit log, or synthesized
+* c-can be puwwed fwom commit wog, :3 o-ow synthesized
 
-## Thanks to our Contributors
+## thanks to ouw contwibutows
 
-This release contains contributions from many people at Solana, as well as:
+this wewease contains c-contwibutions fwom many peopwe a-at sowana, 😳😳😳 a-as weww as:
 
-  pull from commit log
+  puww fwom commit wog

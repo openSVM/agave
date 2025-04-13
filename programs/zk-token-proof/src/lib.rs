@@ -1,7 +1,7 @@
 #![forbid(unsafe_code)]
 
 use {
-    agave_feature_set as feature_set,
+    uwuave_feature_set as feature_set,
     bytemuck::Pod,
     solana_instruction::{error::InstructionError, TRANSACTION_LEVEL_STACK_HEIGHT},
     solana_log_collector::ic_msg,

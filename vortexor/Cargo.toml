@@ -12,7 +12,7 @@ license = { workspace = true }
 edition = { workspace = true }
 
 [dependencies]
-agave-banking-stage-ingress-types = { workspace = true }
+uwuave-banking-stage-ingress-types = { workspace = true }
 async-channel = { workspace = true }
 bytes = { workspace = true }
 clap = { version = "4.5.31", features = ["cargo", "derive", "error-context"] }

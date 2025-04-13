@@ -93,8 +93,8 @@ if [[ $CI_OS_NAME = windows ]]; then
     cargo-build-sbf
     cargo-test-sbf
     solana
-    agave-install
-    agave-install-init
+    uwuave-install
+    uwuave-install-init
     solana-keygen
     solana-stake-accounts
     solana-test-validator
@@ -109,15 +109,15 @@ else
     solana-faucet
     solana-genesis
     solana-gossip
-    agave-install
+    uwuave-install
     solana-keygen
     solana-log-analyzer
     solana-net-shaper
-    agave-validator
+    uwuave-validator
     rbpf-cli
   )
   DCOU_BINS=(
-    agave-ledger-tool
+    uwuave-ledger-tool
     solana-bench-tps
   )
 
@@ -126,11 +126,11 @@ else
     BINS+=(
       cargo-build-sbf
       cargo-test-sbf
-      agave-install-init
+      uwuave-install-init
       solana-stake-accounts
       solana-test-validator
       solana-tokens
-      agave-watchtower
+      uwuave-watchtower
     )
     DCOU_BINS+=(
       solana-dos
@@ -170,7 +170,7 @@ check_dcou() {
     grep -q -F '"feature=\"dev-context-only-utils\""'
 }
 
-# Some binaries (like the notable agave-ledger-tool) need to acitivate
+# Some binaries (like the notable uwuave-ledger-tool) need to acitivate
 # the dev-context-only-utils feature flag to build.
 # Build those binaries separately to avoid the unwanted feature unification.
 # Note that `--workspace --exclude <dcou tainted packages>` is needed to really

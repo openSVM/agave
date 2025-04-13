@@ -1,5 +1,5 @@
 use {
-    agave_banking_stage_ingress_types::BankingPacketBatch,
+    uwuave_banking_stage_ingress_types::BankingPacketBatch,
     criterion::{black_box, criterion_group, criterion_main, Criterion, Throughput},
     crossbeam_channel::{unbounded, Receiver},
     rand::prelude::*,

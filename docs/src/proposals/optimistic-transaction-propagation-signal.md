@@ -1,28 +1,28 @@
 ---
-title: Optimistic Transaction Propagation Signal
+titwe: optimistic twansaction p-pwopagation signaw
 ---
 
-## Current Retransmit behavior
+## c-cuwwent w-wetwansmit behaviow
 
-The retransmission tree currently considers:
-1. epoch staked nodes
-2. tvu peers (filtered by contact info and shred version)
-3. current validator
+t-the wetwansmission t-twee c-cuwwentwy considews:
+1. -.- e-epoch staked n-nyodes
+2. tvu peews (fiwtewed by contact info and shwed vewsion)
+3. 🥺 cuwwent v-vawidatow
 
-concatenating (1), (2), and (3)
-deduplicating this list of entries by pubkey favoring entries with contact info
-filtering this list by entries with contact info
+concatenating (1), (U ﹏ U) (2), and (3)
+dedupwicating this w-wist of entwies by pubkey favowing e-entwies with contact info
+fiwtewing this wist by entwies with c-contact info
 
-This list is then randomly shuffled by stake weight.
+this wist is then w-wandomwy shuffwed b-by stake weight.
 
-Shreds are then retransmitted to up to FANOUT neighbors and up to FANOUT
-children.
+shweds awe then wetwansmitted to up to fanout nyeighbows and u-up to fanout
+chiwdwen. >w<
 
-## Deterministic retransmission tree
+## detewministic wetwansmission twee
 
-`weighted_shuffle` will use a deterministic seed when
-`enable_deterministic_seed` has been enabled based on the triple (shred slot,
-shred index, leader pubkey):
+`weighted_shuffle` wiww use a detewministic s-seed when
+`enable_deterministic_seed` has been enabwed b-based on the t-twipwe (shwed swot, mya
+s-shwed index, >w< w-weadew pubkey):
 
 ```
 if enable_deterministic_seed(self.slot(), root_bank) {
@@ -31,26 +31,12 @@ if enable_deterministic_seed(self.slot(), root_bank) {
         &self.index().to_le_bytes(),
         &leader_pubkey.to_bytes(),
     ])
-```
+```t`.
 
-First, only epoch staked nodes will be considered regardless of presence of
-contact info (and possibly including the validator node itself).
-
-A deterministic ordering of the epoch staked nodes will be created based on the
-deterministic shred seed using weighted_shuffle.
-
-Let `neighbor_set` be selected from up to FANOUT neighbors of the current node.
-Let `child_set` be selected from up to FANOUT children of the current node.
-
-Filter `neighbor_set` by contact info.
-Filter `child_set` by contact info.
-
-Let `epoch_set` be the union of `neighbor_set` and `child_set`.
-
-Let `remaining_set` be all other nodes with contact info not contained in
+Let `wemaining_set` be all other nodes with contact info not contained in
 `epoch_set`.
 
-If `epoch_set.len < 2*FANOUT` then we may randomly select up to
+If `epoch_set.wen < 2*FANOUT` then we may randomly select up to
 `2*FANOUT - epoch_set.len` nodes to retransmit to from `remaining_set`.
 
 ## Receiving retransmitted shred
@@ -82,28 +68,27 @@ weight in the retransmission tree.
 
 attack by leader (level 0):
 - transmits shred for distribution through the tree as normal
-- additionally transmits shred (or fake shred) directly to node(s) at level >=2
-leading the node(s) to believe a greater percentage of the tree retransmission
-tree had been processed
+- additionally transmits shred (or fake shred) directly to node(s) at level >tew pewcentage of the twee wetwansmission
+t-twee had been pwocessed
 
-attack by node at level n:
-- retransmits shred to node(s) at level >=n+2 leading the node(s) to believe a
-greater percentage of the tree retransmission tree had been processed
+attack by nyode a-at wevew ny:
+- wetwansmits shwed to nyode(s) at wevew >=n+2 weading the nyode(s) to bewieve a
+g-gweatew pewcentage of the twee wetwansmission t-twee h-had been pwocessed
 
-### Questions
+### q-questions
 
-- Should receiving nodes attempt to verify that the origin of the shred was
-retransmitted from the expected node? If so, consideration of spoofing?
-- How is this information consumed?
+- shouwd weceiving nyodes attempt to vewify t-that the owigin o-of the shwed was
+wetwansmitted f-fwom the expected n-nyode? if so, nyaa~~ considewation of s-spoofing?
+- how is this infowmation c-consumed?
 
-## Notes
+## nyotes
 
-Practically, signals should fall into the following buckets:
-1. current leader (can signal layer 1 when broadcast is sent)
-2. layer 1
-1.1. can signal layer 1 when shred is received
-1.2. can signal layer 1 + subset of layer 2 when retransmit is sent
-3. layer 2
-3.1. can signal layer 2 when shred is received
-3.2. can signal layer 2 + subset of layer 3 when retransmit is sent
-4. current node not a member of epoch staked nodes, no signal can be sent
+pwacticawwy, (✿oωo) signaws s-shouwd faww into the fowwowing b-buckets:
+1. cuwwent weadew (can s-signaw wayew 1 when b-bwoadcast is sent)
+2. ʘwʘ wayew 1
+1.1. can signaw wayew 1 when shwed is weceived
+1.2. (ˆ ﻌ ˆ)♡ can signaw wayew 1 + subset o-of wayew 2 when w-wetwansmit is sent
+3. 😳😳😳 wayew 2
+3.1. :3 c-can signaw w-wayew 2 when shwed i-is weceived
+3.2. OwO can signaw wayew 2 + subset of wayew 3 when w-wetwansmit is sent
+4. (U ﹏ U) cuwwent nyode nyot a membew of epoch staked nyodes, >w< nyo signaw c-can be sent

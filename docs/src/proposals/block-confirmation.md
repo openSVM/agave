@@ -1,85 +1,85 @@
 ---
-title: Block Confirmation
+titwe: bwock confiwmation
 ---
 
-A validator votes on a PoH hash for two purposes. First, the vote indicates it
-believes the ledger is valid up until that point in time. Second, since many
-valid forks may exist at a given height, the vote also indicates exclusive
-support for the fork. This document describes only the former. The latter is
-described in [Tower BFT](../implemented-proposals/tower-bft.md).
+a-a vawidatow votes o-on a poh hash f-fow two puwposes. :3 f-fiwst, (U ﹏ U) the vote i-indicates it
+b-bewieves the wedgew i-is vawid up u-untiw that point in time. OwO second, 😳😳😳 since many
+vawid fowks may exist at a given height, (ˆ ﻌ ˆ)♡ t-the vote awso indicates excwusive
+suppowt f-fow the fowk. XD this document descwibes o-onwy the fowmew. (ˆ ﻌ ˆ)♡ the wattew is
+descwibed in [Tower BFT](../implemented-proposals/tower-bft.md). ( ͡o ω ͡o )
 
-## Current Design
+## c-cuwwent design
 
-To start voting, a validator first registers an account to which it will send
-its votes. It then sends votes to that account. The vote contains the tick
-height of the block it is voting on. The account stores the 32 highest heights.
+to stawt v-voting, rawr x3 a vawidatow f-fiwst wegistews an account to which it wiww send
+its votes. nyaa~~ it then sends votes t-to that account. >_< the vote contains the tick
+height of the bwock it is voting o-on. ^^;; the account stowes the 32 highest h-heights. (ˆ ﻌ ˆ)♡
 
-### Problems
+### p-pwobwems
 
-- Only the validator knows how to find its own votes directly.
+- o-onwy the vawidatow k-knows how to find its own votes diwectwy. ^^;;
 
-  Other components, such as the one that calculates confirmation time, needs to
-  be baked into the validator code. The validator code queries the bank for all
-  accounts owned by the vote program.
+  o-othew components, (⑅˘꒳˘) such as the one that cawcuwates c-confiwmation time, rawr x3 nyeeds to
+  be baked into the vawidatow code. the vawidatow code quewies the b-bank fow aww
+  accounts owned b-by the vote pwogwam. (///ˬ///✿)
 
-- Voting ballots do not contain a PoH hash. The validator is only voting that
-  it has observed an arbitrary block at some height.
+- v-voting b-bawwots do nyot contain a poh hash. 🥺 the vawidatow is onwy voting t-that
+  it has obsewved a-an awbitwawy bwock at some h-height. >_<
 
-- Voting ballots do not contain a hash of the bank state. Without that hash,
-  there is no evidence that the validator executed the transactions and
-  verified there were no double spends.
+- voting b-bawwots do nyot contain a hash o-of the bank state. UwU without that h-hash, >_<
+  thewe is nyo evidence that the vawidatow e-exekawaii~d the twansactions a-and
+  vewified thewe wewe nyo d-doubwe spends. -.-
 
-## Proposed Design
+## p-pwoposed design
 
-### No Cross-block State Initially
+### nyo cwoss-bwock state initiawwy
 
-At the moment a block is produced, the leader shall add a NewBlock transaction
-to the ledger with a number of tokens that represents the validation reward.
-It is effectively an incremental multisig transaction that sends tokens from
-the mining pool to the validators. The account should allocate just enough
-space to collect the votes required to achieve a supermajority. When a
-validator observes the NewBlock transaction, it has the option to submit a vote
-that includes a hash of its ledger state (the bank state). Once the account has
-sufficient votes, the vote program should disperse the tokens to the
-validators, which causes the account to be deleted.
+at the moment a bwock is pwoduced, mya the weadew shaww add a-a nyewbwock twansaction
+t-to the wedgew with a nyumbew o-of tokens t-that wepwesents t-the vawidation wewawd. >w<
+it is effectivewy an incwementaw muwtisig t-twansaction that sends tokens fwom
+the mining poow to the vawidatows. (U ﹏ U) the account s-shouwd awwocate just enough
+space t-to cowwect t-the votes wequiwed t-to achieve a supewmajowity. 😳😳😳 when a-a
+vawidatow o-obsewves the nyewbwock t-twansaction, o.O i-it has the option to submit a vote
+that incwudes a-a hash of its w-wedgew state (the b-bank state). òωó o-once the account h-has
+sufficient votes, 😳😳😳 the vote pwogwam shouwd dispewse the tokens t-to the
+vawidatows, σωσ which causes the account to be deweted.
 
-#### Logging Confirmation Time
+#### wogging confiwmation time
 
-The bank will need to be aware of the vote program. After each transaction, it
-should check if it is a vote transaction and if so, check the state of that
-account. If the transaction caused the supermajority to be achieved, it should
-log the time since the NewBlock transaction was submitted.
+t-the bank wiww nyeed to be awawe of the vote pwogwam. (⑅˘꒳˘) aftew each t-twansaction, (///ˬ///✿) it
+s-shouwd check if i-it is a vote twansaction and if s-so, 🥺 check the state of that
+account. i-if the twansaction c-caused the supewmajowity to be achieved, it shouwd
+wog the time since the nyewbwock twansaction w-was submitted. OwO
 
-### Finality and Payouts
+### finawity a-and payouts
 
-[Tower BFT](../implemented-proposals/tower-bft.md) is the proposed fork selection algorithm. It proposes
-that payment to miners be postponed until the _stack_ of validator votes reaches
-a certain depth, at which point rollback is not economically feasible. The vote
-program may therefore implement Tower BFT. Vote instructions would need to
-reference a global Tower account so that it can track cross-block state.
+[Tower BFT](../implemented-proposals/tower-bft.md) is the pwoposed f-fowk sewection a-awgowithm. >w< it pwoposes
+that payment to minews be p-postponed untiw t-the _stack_ of vawidatow votes w-weaches
+a cewtain d-depth, 🥺 at which point wowwback is nyot economicawwy feasibwe. nyaa~~ the vote
+pwogwam m-may thewefowe i-impwement towew b-bft. ^^ vote instwuctions wouwd nyeed t-to
+wefewence a-a gwobaw towew account so that it c-can twack cwoss-bwock state. >w<
 
-## Challenges
+## chawwenges
 
-### On-chain voting
+### on-chain voting
 
-Using programs and accounts to implement this is a bit tedious. The hardest
-part is figuring out how much space to allocate in NewBlock. The two variables
-are the _active set_ and the stakes of those validators. If we calculate the
-active set at the time NewBlock is submitted, the number of validators to
-allocate space for is known upfront. If, however, we allow new validators to
-vote on old blocks, then we'd need a way to allocate space dynamically.
+using pwogwams a-and accounts t-to impwement this is a bit tedious. OwO the hawdest
+p-pawt is figuwing o-out how much space to awwocate in nyewbwock. the two vawiabwes
+a-awe the _active set_ and the stakes of those vawidatows. XD if we cawcuwate the
+active s-set at the time nyewbwock is submitted, ^^;; the n-nyumbew of vawidatows t-to
+awwocate space fow is known upfwont. 🥺 if, howevew, XD we awwow n-nyew vawidatows t-to
+vote on owd bwocks, (U ᵕ U❁) then we'd nyeed a way to awwocate space d-dynamicawwy.
 
-Similar in spirit, if the leader caches stakes at the time of NewBlock, the
-vote program doesn't need to interact with the bank when it processes votes. If
-we don't, then we have the option to allow stakes to float until a vote is
-submitted. A validator could conceivably reference its own staking account, but
-that'd be the current account value instead of the account value of the most
-recently finalized bank state. The bank currently doesn't offer a means to
-reference accounts from particular points in time.
+simiwaw in spiwit, :3 i-if the weadew caches stakes at the time of nyewbwock, ( ͡o ω ͡o ) the
+vote p-pwogwam doesn't nyeed to intewact w-with the bank w-when it pwocesses votes. òωó if
+we d-don't, σωσ then we have the option t-to awwow stakes t-to fwoat untiw a-a vote is
+submitted. (U ᵕ U❁) a vawidatow c-couwd conceivabwy w-wefewence its own staking account, (✿oωo) but
+that'd b-be the cuwwent a-account vawue instead o-of the account vawue of the most
+wecentwy f-finawized bank state. ^^ the bank cuwwentwy d-doesn't o-offew a means to
+wefewence accounts fwom pawticuwaw points in time. ^•ﻌ•^
 
-### Voting Implications on Previous Blocks
+### v-voting i-impwications on p-pwevious bwocks
 
-Does a vote on one height imply a vote on all blocks of lower heights of
-that fork? If it does, we'll need a way to lookup the accounts of all
-blocks that haven't yet reached supermajority. If not, the validator could
-send votes to all blocks explicitly to get the block rewards.
+d-does a vote on one height impwy a-a vote on aww bwocks of wowew heights of
+that fowk? if it does, XD we'ww nyeed a way to wookup the a-accounts of aww
+bwocks that haven't y-yet weached supewmajowity. :3 i-if not, (ꈍᴗꈍ) the vawidatow couwd
+send v-votes to aww bwocks expwicitwy t-to get the bwock w-wewawds. :3

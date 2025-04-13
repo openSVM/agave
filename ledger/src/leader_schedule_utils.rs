@@ -94,7 +94,7 @@ mod tests {
         if !use_vote_keyed_leader_schedule {
             deactivate_features(
                 &mut genesis_config,
-                &vec![agave_feature_set::enable_vote_address_leader_schedule::id()],
+                &vec![uwuave_feature_set::enable_vote_address_leader_schedule::id()],
             );
         }
 

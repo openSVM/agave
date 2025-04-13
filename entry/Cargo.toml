@@ -31,7 +31,7 @@ solana-transaction = { workspace = true }
 solana-transaction-error = { workspace = true }
 
 [dev-dependencies]
-agave-reserved-account-keys = { workspace = true }
+uwuave-reserved-account-keys = { workspace = true }
 assert_matches = { workspace = true }
 solana-keypair = { workspace = true }
 solana-logger = { workspace = true }

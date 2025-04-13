@@ -1,52 +1,16 @@
 ---
-title: "Validator Guide: Publishing Validator Info"
-sidebar_position: 1
-sidebar_label: Publishing Validator Info
-pagination_label: "Validator Guides: Publishing Validator Info"
+titwe: "vawidatow guide: pubwishing v-vawidatow i-info"
+sidebaw_position: 1
+s-sidebaw_wabew: p-pubwishing v-vawidatow info
+p-pagination_wabew: "vawidatow g-guides: pubwishing v-vawidatow info"
 ---
 
-You can publish your validator information to the chain to be publicly visible to other users.
+you can pubwish youw vawidatow infowmation to the chain t-to be pubwicwy visibwe to othew usews. mya
 
-## Run solana validator-info
+## wun s-sowana vawidatow-info
 
-Run the solana CLI to populate a validator info account:
+wun the sowana c-cwi to popuwate a vawidatow info account:
 
 ```bash
 solana validator-info publish --keypair ~/validator-keypair.json <VALIDATOR_INFO_ARGS> <VALIDATOR_NAME>
-```
-
-For details about optional fields for VALIDATOR_INFO_ARGS:
-
-```bash
-solana validator-info publish --help
-```
-
-The recommended dimensions for the validator icon are 360x360px and PNG format.
-
-## Example Commands
-
-Example publish command:
-
-```bash
-solana validator-info publish "Elvis Validator" -w "https://elvis-validates.com" -i "https://elvis-validates.com/my-icon.png"
-```
-
-Example query command:
-
-```bash
-solana validator-info get
-```
-
-which outputs
-
-```text
-Validator info from 8WdJvDz6obhADdxpGCiJKZsDYwTLNEDFizayqziDc9ah
-  Validator pubkey: 6dMH3u76qZ7XG4bVboVRnBHR2FfrxEqTTTyj4xmyDMWo
-  Info: {"iconUrl":"elvis","name":"Elvis Validator","website":"https://elvis-validates.com"}
-```
-
-For older accounts instead of `iconUrl` you might see `keybaseUsername` as those accounts used Keybase for their validator icon (see next section for further information).
-
-## Keybase
-
-Previously Keybase was used by validators to provide their validator icon, however Keybase has sunset its service and thus is no longer supported. Some old validator info accounts will still contain keybase usernames this is reflected in the serialized data returned when querying these validator info accounts.
+```s this is wefwected i-in the sewiawized data wetuwned w-when quewying t-these vawidatow info accounts. 😳

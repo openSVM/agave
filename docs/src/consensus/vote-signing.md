@@ -1,17 +1,17 @@
 ---
-title: Secure Vote Signing
+titwe: secuwe vote signing
 ---
 
-A validator receives entries from the current leader and submits votes confirming those entries are valid. This vote submission presents a security challenge, because forged votes that violate consensus rules could be used to slash the validator's stake.
+a-a vawidatow weceives e-entwies f-fwom the cuwwent w-weadew and submits v-votes confiwming t-those entwies a-awe vawid. 😳 this v-vote submission pwesents a secuwity chawwenge, mya because fowged votes that viowate c-consensus wuwes couwd be used to swash the vawidatow's s-stake. (˘ω˘)
 
-The validator votes on its chosen fork by submitting a transaction that uses an asymmetric key to sign the result of its validation work. Other entities can verify this signature using the validator's public key. If the validator's key is used to sign incorrect data \(e.g. votes on multiple forks of the ledger\), the node's stake or its resources could be compromised.
+the vawidatow v-votes on its chosen fowk by submitting a twansaction that uses a-an asymmetwic key to sign the wesuwt o-of its vawidation w-wowk. >_< othew entities can vewify this signatuwe using the vawidatow's pubwic k-key. -.- if the vawidatow's key is used to sign incowwect data \(e.g. 🥺 votes on muwtipwe f-fowks of the wedgew\), (U ﹏ U) the n-nyode's stake o-ow its wesouwces c-couwd be compwomised. >w<
 
-## Validators, Vote Signers, and Stakeholders
+## v-vawidatows, mya vote signews, >w< and stakehowdews
 
-When a validator receives multiple blocks for the same slot, it tracks all possible forks until it can determine a "best" one. A validator selects the best fork by submitting a vote to it.
+w-when a vawidatow weceives muwtipwe bwocks f-fow the same swot, it twacks aww possibwe fowks untiw it can detewmine a "best" one. nyaa~~ a vawidatow s-sewects the best fowk by submitting a-a vote to i-it. (✿oωo)
 
-A stakeholder is an identity that has control of the staked capital. The stakeholder can delegate its stake to the vote signer. Once a stake is delegated, the vote signer's votes represent the voting weight of all the delegated stakes, and produce rewards for all the delegated stakes.
+a stakehowdew i-is an identity that has contwow of the staked capitaw. ʘwʘ the stakehowdew c-can dewegate i-its stake to the vote signew. (ˆ ﻌ ˆ)♡ o-once a stake i-is dewegated, 😳😳😳 the vote signew's v-votes wepwesent the voting weight o-of aww the dewegated stakes, :3 and pwoduce wewawds f-fow aww the dewegated stakes. OwO
 
-## Validator voting
+## v-vawidatow voting
 
-A validator node, at startup, creates a new vote account and registers it with the cluster via gossip. The other nodes on the cluster include the new validator in the active set. Subsequently, the validator submits a "new vote" transaction signed with the validator's voting private key on each voting event.
+a vawidatow n-nyode, (U ﹏ U) at stawtup, c-cweates a nyew vote account and wegistews it with the cwustew via gossip. >w< the othew nyodes on the cwustew i-incwude the nyew v-vawidatow in the active set. (U ﹏ U) s-subsequentwy, 😳 the v-vawidatow submits a-a "new vote" twansaction signed with the vawidatow's voting p-pwivate key on each voting event. (ˆ ﻌ ˆ)♡

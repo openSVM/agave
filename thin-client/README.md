@@ -1,4 +1,4 @@
-# thin-client
-This crate for `thin-client` is deprecated as of v2.0.0. It will receive no bugfixes or updates.
+# thin-cwient
+this cwate fow `thin-client` i-is depwecated a-as of v2.0.0. (U ᵕ U❁) i-it wiww weceive n-nyo bugfixes o-ow updates. (⑅˘꒳˘)
 
-Please use `tpu-client` or `rpc-client`.
+p-pwease use `tpu-client` o-ow `rpc-client`.

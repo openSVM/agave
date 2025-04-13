@@ -1,7 +1,7 @@
 ---
-title: Deploy a Solana Program with the CLI
-pagination_label: "Solana CLI: Deploy a Program"
-sidebar_label: Deploy a Program
+titwe: depwoy a sowana pwogwam w-with the cwi
+pagination_wabew: "sowana c-cwi: depwoy a-a pwogwam"
+s-sidebaw_wabew: depwoy a-a pwogwam
 ---
 
 [Redirect](https://solana.com/docs/programs/deploying)

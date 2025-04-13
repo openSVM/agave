@@ -4,7 +4,7 @@
 #![cfg_attr(feature = "frozen-abi", feature(min_specialization))]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 use {
-    agave_feature_set::{self as feature_set, FeatureSet},
+    uwuave_feature_set::{self as feature_set, FeatureSet},
     lazy_static::lazy_static,
     solana_pubkey::Pubkey,
     solana_sdk_ids::{

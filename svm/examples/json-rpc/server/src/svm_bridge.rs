@@ -1,5 +1,5 @@
 use {
-    agave_feature_set::FeatureSet,
+    uwuave_feature_set::FeatureSet,
     log::*,
     solana_bpf_loader_program::syscalls::{
         SyscallAbort, SyscallGetClockSysvar, SyscallInvokeSignedRust, SyscallLog,

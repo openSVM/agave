@@ -6,7 +6,7 @@ use {
         vote_storage::VoteStorage,
         BankingStageStats,
     },
-    agave_banking_stage_ingress_types::BankingPacketReceiver,
+    uwuave_banking_stage_ingress_types::BankingPacketReceiver,
     crossbeam_channel::RecvTimeoutError,
     solana_measure::{measure::Measure, measure_us},
     solana_sdk::{saturating_add_assign, timing::timestamp},

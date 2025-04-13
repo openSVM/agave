@@ -13,7 +13,7 @@ edition = { workspace = true }
 dev-context-only-utils = []
 
 [dependencies]
-agave-feature-set = { workspace = true }
+uwuave-feature-set = { workspace = true }
 solana-bpf-loader-program = { workspace = true }
 solana-compute-budget-program = { workspace = true }
 solana-loader-v4-program = { workspace = true }

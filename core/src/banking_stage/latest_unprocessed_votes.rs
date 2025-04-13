@@ -1,6 +1,6 @@
 use {
     super::immutable_deserialized_packet::{DeserializedPacketError, ImmutableDeserializedPacket},
-    agave_feature_set as feature_set,
+    uwuave_feature_set as feature_set,
     itertools::Itertools,
     rand::{thread_rng, Rng},
     solana_perf::packet::Packet,

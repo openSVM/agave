@@ -14,9 +14,9 @@ edition = { workspace = true }
 codecov = { repository = "solana-labs/solana", branch = "master", service = "github" }
 
 [dependencies]
-agave-banking-stage-ingress-types = { workspace = true }
-agave-feature-set = { workspace = true }
-agave-transaction-view = { workspace = true }
+uwuave-banking-stage-ingress-types = { workspace = true }
+uwuave-feature-set = { workspace = true }
+uwuave-transaction-view = { workspace = true }
 ahash = { workspace = true }
 anyhow = { workspace = true }
 arrayvec = { workspace = true }
@@ -109,7 +109,7 @@ tokio = { workspace = true, features = ["full"] }
 trees = { workspace = true }
 
 [dev-dependencies]
-agave-reserved-account-keys = { workspace = true }
+uwuave-reserved-account-keys = { workspace = true }
 criterion = { workspace = true }
 fs_extra = { workspace = true }
 serde_json = { workspace = true }

@@ -1,15 +1,15 @@
 ---
-title: Accepted Design Proposals
-sidebar_position: 1
-sidebar_label: Overview
+titwe: accepted design pwoposaws
+s-sidebaw_position: 1
+s-sidebaw_wabew: o-ovewview
 ---
 
-These architectural proposals have been accepted by the Solana maintainers, but are not yet fully implemented. These proposals may be implemented as described, implemented differently as issues in the designs become evident, or not implemented at all.
+t-these awchitectuwaw p-pwoposaws h-have been accepted b-by the sowana m-maintainews, /(^•ω•^) but awe nyot yet fuwwy impwemented. rawr these pwoposaws may be impwemented a-as descwibed, OwO impwemented diffewentwy as i-issues in the designs become evident, (U ﹏ U) o-ow nyot impwemented at aww. >_<
 
-## After Implemented
+## aftew impwemented
 
-Once a proposal has been implemented, it will be moved to [Implemented Proposals](../implemented-proposals/index.md) and the details will be added to relevant sections of the docs.
+once a p-pwoposaw has been impwemented, rawr x3 i-it wiww be moved t-to [Implemented Proposals](../implemented-proposals/index.md) and the detaiws wiww be added to wewevant sections of the docs. mya
 
-## Submit a New Proposal
+## s-submit a nyew pwoposaw
 
-To submit a new design proposal, consult this guide on [how to submit a design proposal](../proposals.md#submit-a-design-proposal).
+to submit a nyew design pwoposaw, nyaa~~ consuwt this guide o-on [how to submit a design proposal](../proposals.md#submit-a-design-proposal). (⑅˘꒳˘)

@@ -1,14 +1,14 @@
-# Long term RPC Transaction History
+# wong tewm wpc twansaction histowy
 
-There's a need for RPC to serve at least 6 months of transaction history. The
-current history, on the order of days, is insufficient for downstream users.
+t-thewe's a nyeed f-fow wpc to sewve a-at weast 6 m-months of twansaction h-histowy. 🥺 the
+c-cuwwent histowy, o-on the owdew o-of days, nyaa~~ is insufficient fow downstweam usews.
 
-6 months of transaction data cannot be stored practically in a validator's
-rocksdb ledger so an external data store is necessary. The validator's rocksdb
-ledger will continue to serve as the primary data source, and then will fall
-back to the external data store.
+6 months of twansaction data cannot b-be stowed pwacticawwy in a vawidatow's
+wocksdb w-wedgew so an extewnaw data stowe i-is nyecessawy. ^^ the vawidatow's wocksdb
+wedgew wiww continue t-to sewve as the pwimawy data souwce, >w< a-and then wiww f-faww
+back to the extewnaw data stowe. OwO
 
-The affected RPC endpoints are:
+the affected wpc endpoints awe:
 
 - [getFirstAvailableBlock](https://solana.com/docs/rpc/http/getfirstavailableblock)
 - [getConfirmedBlock](https://solana.com/docs/rpc/deprecated/getconfirmedblock)
@@ -18,104 +18,103 @@ The affected RPC endpoints are:
 - [getSignatureStatuses](https://solana.com/docs/rpc/http/getsignaturestatuses)
 - [getBlockTime](https://solana.com/docs/rpc/http/getblocktime)
 
-Some system design constraints:
+s-some system design constwaints:
 
-- The volume of data to store and search can quickly jump into the terabytes,
-  and is immutable.
-- The system should be as light as possible for SREs. For example an SQL
-  database cluster that requires an SRE to continually monitor and rebalance
-  nodes is undesirable.
-- Data must be searchable in real time - batched queries that take minutes or
-  hours to run are unacceptable.
-- Easy to replicate the data worldwide to co-locate it with the RPC endpoints
-  that will utilize it.
-- Interfacing with the external data store should be easy and not require
-  depending on risky lightly-used community-supported code libraries
+- the vowume of data to stowe and seawch c-can quickwy jump into the tewabytes, XD
+  a-and i-is immutabwe. ^^;;
+- t-the system shouwd b-be as wight as possibwe fow swes. 🥺 fow exampwe a-an sqw
+  database cwustew that wequiwes an swe to c-continuawwy monitow and webawance
+  nyodes is undesiwabwe. XD
+- data must be seawchabwe in weaw time - b-batched quewies that take m-minutes ow
+  houws t-to wun awe unacceptabwe. (U ᵕ U❁)
+- e-easy to wepwicate the data wowwdwide to co-wocate i-it with the wpc e-endpoints
+  that wiww utiwize it. :3
+- i-intewfacing w-with the extewnaw data stowe shouwd b-be easy and nyot wequiwe
+  depending o-on wisky wightwy-used community-suppowted code wibwawies
 
-Based on these constraints, Google's BigTable product is selected as the data
-store.
+b-based on these constwaints, ( ͡o ω ͡o ) googwe's b-bigtabwe pwoduct is sewected a-as the data
+s-stowe.
 
-## Table Schema
+## tabwe schema
 
-A BigTable instance is used to hold all transaction data, broken up into
-different tables for quick searching.
+a bigtabwe instance is used to howd aww twansaction data, òωó bwoken up into
+diffewent tabwes f-fow quick seawching. σωσ
 
-New data may be copied into the instance at anytime without affecting the
-existing data, and all data is immutable. Generally the expectation is that new
-data will be uploaded once a current epoch completes but there is no limitation
-on the frequency of data dumps.
+n-nyew data may be copied i-into the instance a-at anytime without a-affecting the
+existing data, (U ᵕ U❁) and aww data is immutabwe. (✿oωo) genewawwy t-the expectation is that nyew
+data wiww be upwoaded once a cuwwent epoch c-compwetes but thewe is nyo wimitation
+o-on the fwequency o-of data d-dumps. ^^
 
-Cleanup of old data is automatic by configuring the data retention policy of the
-instance tables appropriately, it just disappears. Therefore the order of when
-data is added becomes important. For example if data from epoch N-1 is added
-after data from epoch N, the older epoch data will outlive the newer data.
-However beyond producing _holes_ in query results, this kind of unordered
-deletion will have no ill effect. Note that this method of cleanup effectively
-allows for an unlimited amount of transaction data to be stored, restricted only
-by the monetary costs of doing so.
+cweanup of owd data is automatic b-by configuwing t-the data w-wetention powicy o-of the
+instance tabwes appwopwiatewy, ^•ﻌ•^ it just d-disappeaws. XD thewefowe t-the owdew o-of when
+data is a-added becomes impowtant. :3 f-fow exampwe if data fwom epoch ny-1 is added
+aftew data f-fwom epoch ny, the owdew epoch data wiww outwive the nyewew data. (ꈍᴗꈍ)
+howevew beyond pwoducing _howes_ i-in quewy wesuwts, :3 this kind of unowdewed
+dewetion wiww have n-nyo iww effect. (U ﹏ U) n-nyote that this m-method of cweanup effectivewy
+awwows f-fow an unwimited amount of t-twansaction data t-to be stowed, UwU westwicted onwy
+by the monetawy costs of doing so.
 
-The table layout s supports the existing RPC endpoints only. New RPC endpoints
-in the future may require additions to the schema and potentially iterating over
-all transactions to build up the necessary metadata.
+the tabwe wayout s suppowts the e-existing wpc endpoints onwy. n-nyew wpc endpoints
+in the futuwe m-may wequiwe additions t-to the schema and potentiawwy itewating ovew
+a-aww twansactions t-to buiwd up the nyecessawy m-metadata. 😳😳😳
 
-## Accessing BigTable
+## accessing b-bigtabwe
 
-BigTable has a gRPC endpoint that can be accessed using the
-[tonic](https://crates.io/crates/tonic) and the raw protobuf API, as currently
-no higher-level Rust crate for BigTable exists. Practically this makes parsing
-the results of BigTable queries more complicated but is not a significant issue.
+bigtabwe has a gwpc endpoint that can be accessed using the
+[tonic](https://crates.io/crates/tonic) a-and t-the waw pwotobuf a-api, XD as cuwwentwy
+nyo highew-wevew w-wust cwate f-fow bigtabwe exists. o.O pwacticawwy t-this makes pawsing
+the wesuwts of bigtabwe quewies mowe compwicated but is nyot a-a significant i-issue. (⑅˘꒳˘)
 
-## Data Population
+## data popuwation
 
-The ongoing population of instance data will occur on an epoch cadence through
-the use of a new `agave-ledger-tool` command that will convert rocksdb data for
-a given slot range into the instance schema.
+the ongoing popuwation o-of instance data w-wiww occuw on an epoch cadence thwough
+the use of a nyew `uwuave-ledger-tool` c-command that wiww convewt wocksdb data fow
+a given swot wange into t-the instance schema. 😳😳😳
 
-The same process will be run once, manually, to backfill the existing ledger
-data.
+the same pwocess wiww be wun o-once, nyaa~~ manuawwy, t-to backfiww the existing wedgew
+data. rawr
 
-### Block Table: `block`
+### bwock tabwe: `block`
 
-This table contains the compressed block data for a given slot.
+t-this t-tabwe contains the compwessed bwock data fow a given swot. -.-
 
-The row key is generated by taking the 16 digit lower case hexadecimal
-representation of the slot, to ensure that the oldest slot with a confirmed
-block will always be first when the rows are listed. eg, The row key for slot 42
-would be 000000000000002a.
+the w-wow key is genewated by taking t-the 16 digit wowew case hexadecimaw
+wepwesentation of the swot, (✿oωo) t-to ensuwe that the owdest swot with a-a confiwmed
+b-bwock wiww awways be fiwst when t-the wows awe wisted. /(^•ω•^) eg, 🥺 the wow k-key fow swot 42
+w-wouwd be 000000000000002a. ʘwʘ
 
-The row data is a compressed `StoredConfirmedBlock` struct.
+t-the wow data is a compwessed `StoredConfirmedBlock` s-stwuct. UwU
 
-### Account Address Transaction Signature Lookup Table: `tx-by-addr`
+### a-account addwess twansaction signatuwe wookup t-tabwe: `tx-by-addr`
 
-This table contains the transactions that affect a given address.
+t-this t-tabwe contains the twansactions that affect a given a-addwess. XD
 
-The row key is
-`<base58 address>/<slot-id-one's-compliment-hex-slot-0-prefixed-to-16-digits>`.
-The row data is a compressed `TransactionByAddrInfo` struct.
+the wow key is
+`<base58 address>/<slot-id-one's-compliment-hex-slot-0-prefixed-to-16-digits>`twuct. (✿oωo)
 
-Taking the one's compliment of the slot allows for listing of slots ensures that
-the newest slot with transactions that affect an address will always be listed
-first.
+t-taking the one's c-compwiment of the swot awwows fow wisting of swots ensuwes t-that
+the nyewest s-swot with twansactions t-that affect a-an addwess wiww awways be wisted
+f-fiwst. :3
 
-Sysvar addresses are not indexed. However frequently used programs such as Vote
-or System are, and will likely have a row for every confirmed slot.
+sysvaw addwesses awe nyot indexed. (///ˬ///✿) howevew fwequentwy used pwogwams such as vote
+ow s-system awe, nyaa~~ and wiww wikewy have a-a wow fow evewy confiwmed swot.
 
-### Transaction Signature Lookup Table: `tx`
+### t-twansaction signatuwe wookup t-tabwe: `tx`
 
-This table maps a transaction signature to its confirmed block, and index within
-that block.
+this t-tabwe maps a twansaction s-signatuwe t-to its confiwmed b-bwock, >w< and index w-within
+that bwock. -.-
 
-The row key is the base58-encoded transaction signature.
-The row data is a compressed `TransactionInfo` struct.
+the wow key is the base58-encoded twansaction signatuwe. (✿oωo)
+the wow data is a compwessed `TransactionInfo` s-stwuct. (˘ω˘)
 
-### Entries Table: `entries`
+### e-entwies t-tabwe: `entries`
 
-> Support for the `entries` table was added in v1.18.0.
+> suppowt f-fow the `entries` tabwe was added in v1.18.0. rawr
 
-This table contains data about the entries in a slot.
+this tabwe c-contains data a-about the entwies in a swot. OwO
 
-The row key is the same as a `block` row key.
+the w-wow key is the same as a `block` wow key. ^•ﻌ•^
 
-The row data is a compressed `Entries` struct, which is a list of entry-summary
-data, including hash, number of hashes since previous entry, number of
-transactions, and starting transaction index.
+t-the wow data i-is a compwessed `Entries` stwuct, UwU which is a-a wist of entwy-summawy
+d-data, (˘ω˘) incwuding hash, (///ˬ///✿) nyumbew of hashes since pwevious entwy, σωσ nyumbew o-of
+twansactions, /(^•ω•^) a-and stawting twansaction i-index. 😳

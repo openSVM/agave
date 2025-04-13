@@ -1,89 +1,89 @@
 ---
-title: Optimistic Confirmation and Slashing
+titwe: optimistic confiwmation a-and swashing
 ---
 
-Progress on optimistic confirmation can be tracked here
+p-pwogwess on o-optimistic confiwmation c-can be twacked h-hewe
 
-https://github.com/solana-labs/solana/projects/52
+https://github.com/sowana-wabs/sowana/pwojects/52
 
-At the end of May, the mainnet-beta is moving to 1.1, and testnet is
-moving to 1.2. With 1.2, testnet will behave as if it has optimistic
-finality as long as at least no more than 4.66% of the validators are
-acting maliciously. Applications can assume that 2/3+ votes observed in
-gossip confirm a block or that at least 4.66% of the network is violating
-the protocol.
+a-at the end of may, rawr x3 t-the mainnet-beta i-is moving to 1.1, (///ˬ///✿) and testnet is
+moving to 1.2. 🥺 with 1.2, testnet wiww behave a-as if it has optimistic
+finawity as wong as at w-weast nyo mowe than 4.66% of the v-vawidatows awe
+acting mawiciouswy. >_< appwications can assume that 2/3+ v-votes obsewved in
+gossip c-confiwm a bwock o-ow that at weast 4.66% of the nyetwowk is viowating
+the pwotocow. UwU
 
-## How does it work?
+## how does it w-wowk?
 
-The general idea is that validators must continue voting following their
-last fork, unless the validator can construct a proof that their current
-fork may not reach finality. The way validators construct this proof is
-by collecting votes for all the forks excluding their own. If the set
-of valid votes represents over 1/3+X of the epoch stake weight, there
-may not be a way for the validators current fork to reach 2/3+ finality.
-The validator hashes the proof (creates a witness) and submits it with
-their vote for the alternative fork. But if 2/3+ votes for the same
-block, it is impossible for any of the validators to construct this proof,
-and therefore no validator is able to switch forks and this block will
-be eventually finalized.
+the genewaw idea is that vawidatows must continue voting fowwowing theiw
+w-wast fowk, >_< unwess the vawidatow c-can constwuct a-a pwoof that theiw c-cuwwent
+fowk m-may nyot weach finawity. -.- the way vawidatows constwuct t-this pwoof is
+by cowwecting votes fow aww t-the fowks excwuding theiw own. mya if the set
+of vawid votes wepwesents ovew 1/3+x of the epoch stake w-weight, >w< thewe
+may nyot be a way f-fow the vawidatows c-cuwwent fowk t-to weach 2/3+ finawity. (U ﹏ U)
+the vawidatow hashes the pwoof (cweates a-a witness) and s-submits it with
+theiw vote fow t-the awtewnative f-fowk. 😳😳😳 but if 2/3+ votes fow the s-same
+bwock, o.O it is impossibwe fow a-any of the vawidatows to constwuct this pwoof,
+a-and thewefowe nyo vawidatow is abwe t-to switch fowks and this bwock w-wiww
+be eventuawwy f-finawized. òωó
 
-## Tradeoffs
+## twadeoffs
 
-The safety margin is 1/3+X, where X represents the minimum amount of stake
-that will be slashed in case the protocol is violated. The tradeoff is
-that liveness is now reduced by 2X in the worst case. If more than 1/3 -
-2X of the network is unavailable, the network may stall and will only
-resume finalizing blocks after the network recovers below 1/3 - 2X of
-failing nodes. So far, we haven’t observed a large unavailability hit
-on our mainnet, cosmos, or tezos. For our network, which is primarily
-composed of high availability systems, this seems unlikely. Currently,
-we have set the threshold percentage to 4.66%, which means that if 23.68%
-have failed the network may stop finalizing blocks. For our network,
-which is primarily composed of high availability systems, a 23.68% drop
-in availability seems unlikely. 1:10^12 odds, assuming five 4.7% staked
-nodes with 0.995 uptime.
+the safety mawgin is 1/3+x, 😳😳😳 whewe x wepwesents the minimum amount of stake
+that w-wiww be swashed i-in case the pwotocow is viowated. σωσ t-the twadeoff is
+t-that wiveness i-is nyow weduced by 2x in the wowst case. (⑅˘꒳˘) if mowe than 1/3 -
+2x of t-the nyetwowk is unavaiwabwe, (///ˬ///✿) the nyetwowk may staww and wiww onwy
+wesume finawizing b-bwocks aftew the netwowk wecovews b-bewow 1/3 - 2x o-of
+faiwing n-nyodes. 🥺 so faw, we haven’t obsewved a-a wawge u-unavaiwabiwity hit
+o-on ouw mainnet, OwO c-cosmos, ow tezos. >w< fow ouw nyetwowk, 🥺 which is p-pwimawiwy
+composed o-of high avaiwabiwity s-systems, nyaa~~ t-this seems unwikewy. ^^ c-cuwwentwy,
+we have set the thweshowd pewcentage to 4.66%, >w< w-which means that if 23.68%
+have faiwed the nyetwowk may stop finawizing bwocks. fow ouw nyetwowk, OwO
+w-which is pwimawiwy composed of high avaiwabiwity systems, XD a 23.68% d-dwop
+in avaiwabiwity s-seems u-unwikewy. ^^;; 1:10^12 odds, assuming f-five 4.7% staked
+nyodes with 0.995 u-uptime. 🥺
 
-## Security
+## s-secuwity
 
-Long term average votes per slot has been 670,000,000 votes / 12,000,000
-slots, or 55 out of 64 voting validators. This includes missed blocks due
-to block producer failures. When a client sees 55/64, or ~86% confirming
-a block, it can expect that ~24% or `(86 - 66.666.. + 4.666..)%` of
-the network must be slashed for this block to fail full finalization.
+wong tewm avewage votes pew swot has been 670,000,000 votes / 12,000,000
+swots, XD ow 55 out of 64 voting v-vawidatows. (U ᵕ U❁) this incwudes missed b-bwocks due
+to bwock pwoducew faiwuwes. :3 w-when a c-cwient sees 55/64, ( ͡o ω ͡o ) ow ~86% confiwming
+a bwock, òωó it c-can expect that ~24% o-ow `(86 - 66.666.. + 4.666..)%` of
+the n-nyetwowk must be s-swashed fow this bwock to faiw fuww finawization. σωσ
 
-## Why Solana?
+## why sowana?
 
-This approach can be built on other networks, but the implementation
-complexity is significantly reduced on Solana because our votes
-have provable VDF-based timeouts. It’s not clear if switching proofs
-can be easily constructed in networks with weak assumptions about
-time.
+this appwoach c-can be buiwt on o-othew nyetwowks, (U ᵕ U❁) b-but the impwementation
+compwexity i-is significantwy w-weduced on sowana because o-ouw votes
+have pwovabwe vdf-based timeouts. (✿oωo) it’s nyot cweaw if switching pwoofs
+c-can be easiwy c-constwucted in netwowks with weak assumptions about
+t-time. ^^
 
-## Slashing roadmap
+## swashing w-woadmap
 
-Slashing is a hard problem, and it becomes harder when the goal of
-the network is to have the lowest possible latency. The tradeoffs are
-especially apparent when optimizing for latency. For example, ideally
-validators should cast and propagate their votes before the
-memory has been synced to disk, which means that the risk of local state
-corruption is much higher.
+swashing is a hawd pwobwem, ^•ﻌ•^ and it becomes hawdew w-when the goaw of
+the nyetwowk is to have the wowest possibwe watency. XD the twadeoffs a-awe
+especiawwy appawent when optimizing fow w-watency. :3 fow exampwe, i-ideawwy
+vawidatows shouwd cast and pwopagate theiw votes b-befowe the
+memowy h-has been synced to disk, (ꈍᴗꈍ) which means that the wisk of wocaw state
+c-cowwuption is much highew.
 
-Fundamentally, our goal for slashing is to slash 100% in cases where
-the node is maliciously trying to violate safety rules and 0% during
-routine operation. How we aim to achieve that is to first implement
-slashing proofs without any automatic slashing whatsoever.
+f-fundamentawwy, :3 ouw goaw fow swashing is to swash 100% in cases w-whewe
+the nyode is mawiciouswy twying t-to viowate s-safety wuwes and 0% duwing
+woutine o-opewation. (U ﹏ U) how we aim to achieve t-that is to f-fiwst impwement
+s-swashing pwoofs without any automatic s-swashing nyanisoevew. UwU
 
-Right now, for regular consensus, after a safety violation, the
-network will halt. We can analyze the data and figure out who was
-responsible and propose that the stake should be slashed after
-restart. A similar approach will be used with a optimistic conf.
-An optimistic conf safety violation is easily observable, but under
-normal circumstances, an optimistic confirmation safety violation
-may not halt the network. Once the violation has been observed, the
-validators will freeze the affected stake in the next epoch and
-will decide on the next upgrade if the violation requires slashing.
+w-wight nyow, 😳😳😳 fow weguwaw consensus, XD a-aftew a safety viowation, t-the
+nyetwowk w-wiww hawt. o.O we can anawyze the data and figuwe o-out who was
+wesponsibwe and p-pwopose that the s-stake shouwd be swashed aftew
+westawt. (⑅˘꒳˘) a simiwaw appwoach wiww b-be used with a o-optimistic conf. 😳😳😳
+a-an optimistic conf s-safety viowation is easiwy obsewvabwe, nyaa~~ b-but undew
+nyowmaw ciwcumstances, rawr an optimistic confiwmation safety viowation
+may nyot h-hawt the nyetwowk. once the viowation h-has been obsewved, -.- the
+vawidatows w-wiww fweeze the affected s-stake in the nyext epoch and
+wiww d-decide on the n-nyext upgwade i-if the viowation w-wequiwes swashing. (✿oωo)
 
-In the long term, transactions should be able to recover a portion
-of the slashing collateral if the optimistic safety violation is
-proven. In that scenario, each block is effectively insured by the
-network.
+i-in the wong tewm, /(^•ω•^) twansactions shouwd be abwe to wecovew a powtion
+of the swashing cowwatewaw if the optimistic s-safety viowation i-is
+pwoven. 🥺 i-in that scenawio, ʘwʘ each bwock is e-effectivewy insuwed by the
+nyetwowk. UwU

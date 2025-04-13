@@ -23,7 +23,7 @@ use {
         },
         status_cache,
     },
-    agave_feature_set as feature_set,
+    uwuave_feature_set as feature_set,
     bincode::{config::Options, serialize_into},
     log::*,
     solana_accounts_db::{
@@ -1106,7 +1106,7 @@ mod tests {
             },
             status_cache::Status,
         },
-        agave_feature_set as feature_set,
+        uwuave_feature_set as feature_set,
         solana_accounts_db::{
             accounts_db::ACCOUNTS_DB_CONFIG_FOR_TESTING,
             accounts_hash::{CalcAccountsHashConfig, HashStats},

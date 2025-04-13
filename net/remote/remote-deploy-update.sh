@@ -35,6 +35,6 @@ loadConfigFile
 PATH="$HOME"/.cargo/bin:"$PATH"
 
 set -x
-scripts/agave-install-deploy.sh \
+scripts/uwuave-install-deploy.sh \
   --keypair config/faucet.json \
   localhost "$releaseChannel" "$updatePlatform"

@@ -1,7 +1,7 @@
 [package]
-name = "agave-reserved-account-keys"
+name = "uwuave-reserved-account-keys"
 description = "Reserved Solana account keys"
-documentation = "https://docs.rs/agave-reserved-account-keys"
+documentation = "https://docs.rs/uwuave-reserved-account-keys"
 version = { workspace = true }
 authors = { workspace = true }
 repository = { workspace = true }
@@ -10,7 +10,7 @@ license = { workspace = true }
 edition = { workspace = true }
 
 [dependencies]
-agave-feature-set = { workspace = true }
+uwuave-feature-set = { workspace = true }
 lazy_static = { workspace = true }
 solana-frozen-abi = { workspace = true, optional = true, features = [
     "frozen-abi",

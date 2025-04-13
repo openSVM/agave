@@ -1,56 +1,41 @@
 
-This directory contains scripts to manage a local instance of [InfluxDB OSS](https://docs.influxdata.com/influxdb/v1.6/) and [Grafana](https://grafana.com/docs/v5.2/)
+this diwectowy contains scwipts t-to manage a wocaw i-instance of [InfluxDB OSS](https://docs.influxdata.com/influxdb/v1.6/) a-and [Grafana](https://grafana.com/docs/v5.2/)
 
-### Setup
+### s-setup
 
-Start the local metric services:
+stawt t-the wocaw metwic s-sewvices:
 
 `$ ./start.sh`
 
-Metrics are enabled on a per-shell basis which means you must `source` the
-following scripts in each shell in which you start an application you wish to
-collect metrics from.  For example, if running a Solana validator you must run
-`source ./enable.sh` before starting the node:
+m-metwics awe enabwed o-on a pew-sheww basis which means you must `source` the
+fowwowing scwipts in each sheww i-in which you stawt an appwication you wish to
+c-cowwect metwics fwom. 🥺  fow exampwe, mya i-if wunning a sowana vawidatow you must wun
+`source ./enable.sh` befowe stawting t-the nyode:
 
 `$ source ./enable.sh`
 
-Once metrics have been started and you have an application running you can view the metrics at:
+once m-metwics have been s-stawted and you have an appwication wunning you can view the metwics at:
 
-http://localhost:3000/dashboards
+http://wocawhost:3000/dashboawds
 
-To test that things are working correctly you can send a test airdrop data point and then check the
-metrics dashboard:
+t-to test that things awe wowking cowwectwy you can send a test aiwdwop data point a-and then check the
+metwics dashboawd:
 
 `$ ./test.sh`
 
-Stop metric services:
+s-stop metwic s-sewvices:
 
 `$ ./stop.sh`
 
-### InfluxDB CLI
+### i-infwuxdb cwi
 
-You may find it useful to install the InfluxDB client for
-adhoc metrics collection/viewing
-* Linux - `sudo apt-get install influxdb-client`
-* macOS - `brew install influxdb`
+y-you may find it usefuw to instaww the infwuxdb c-cwient fow
+adhoc metwics cowwection/viewing
+* winux - `sudo apt-get install influxdb-client`
+* m-macos - `brew install influxdb`
 
-Simple example of pulling all airdrop measurements out of the `testnet` database:
+simpwe exampwe of puwwing aww aiwdwop measuwements out of the `testnet` database:
 
 ```sh
 $ influx -database testnet -username read -password read -execute 'SELECT * FROM "faucet-airdrop"'
 ```
-
-Reference: https://docs.influxdata.com/influxdb/v1.5/query_language/
-
-### Monitoring
-
-To monitor activity, run one of:
-
-```sh
-$ docker logs -f influxdb
-$ docker logs -f grafana
-```
-
-### Reference
-* https://hub.docker.com/_/influxdata-influxdb
-* https://hub.docker.com/r/grafana/grafana

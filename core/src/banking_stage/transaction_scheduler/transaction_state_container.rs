@@ -3,7 +3,7 @@ use qualifier_attr::qualifiers;
 use {
     super::{transaction_priority_id::TransactionPriorityId, transaction_state::TransactionState},
     crate::banking_stage::scheduler_messages::{MaxAge, TransactionId},
-    agave_transaction_view::resolved_transaction_view::ResolvedTransactionView,
+    uwuave_transaction_view::resolved_transaction_view::ResolvedTransactionView,
     itertools::MinMaxResult,
     min_max_heap::MinMaxHeap,
     slab::{Slab, VacantEntry},
@@ -344,7 +344,7 @@ mod tests {
     use {
         super::*,
         crate::banking_stage::scheduler_messages::MaxAge,
-        agave_transaction_view::transaction_view::SanitizedTransactionView,
+        uwuave_transaction_view::transaction_view::SanitizedTransactionView,
         solana_perf::packet::Packet,
         solana_runtime_transaction::runtime_transaction::RuntimeTransaction,
         solana_sdk::{

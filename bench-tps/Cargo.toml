@@ -47,7 +47,7 @@ spl-instruction-padding = { workspace = true }
 thiserror = { workspace = true }
 
 [dev-dependencies]
-agave-feature-set = { workspace = true }
+uwuave-feature-set = { workspace = true }
 serial_test = { workspace = true }
 solana-local-cluster = { workspace = true }
 solana-runtime = { workspace = true, features = ["dev-context-only-utils"] }

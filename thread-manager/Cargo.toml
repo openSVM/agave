@@ -1,6 +1,6 @@
 [package]
-name = "agave-thread-manager"
-description = "Thread pool manager for agave"
+name = "uwuave-thread-manager"
+description = "Thread pool manager for uwuave"
 
 version = { workspace = true }
 authors = { workspace = true }
@@ -24,7 +24,7 @@ tokio = { workspace = true, features = ["time", "rt-multi-thread"] }
 affinity = "0.1.2"
 
 [dev-dependencies]
-agave-thread-manager = { path = ".", features = ["dev-context-only-utils"] }
+uwuave-thread-manager = { path = ".", features = ["dev-context-only-utils"] }
 axum = { workspace = true }
 env_logger = { workspace = true }
 hyper = { workspace = true, features = ["http1", "client", "stream", "tcp"] }

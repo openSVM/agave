@@ -1,339 +1,181 @@
 ---
-title: Stake Delegation and Rewards
+titwe: stake dewegation and wewawds
 ---
 
-Stakers are rewarded for helping to validate the ledger. They do this by
-delegating their stake to validator nodes. Those validators do the legwork of
-replaying the ledger and sending votes to a per-node vote account to which
-stakers can delegate their stakes. The rest of the cluster uses those
-stake-weighted votes to select a block when forks arise. Both the validator and
-staker need some economic incentive to play their part. The validator needs to
-be compensated for its hardware and the staker needs to be compensated for the
-risk of getting its stake slashed. The economics are covered in
-[staking rewards](../implemented-proposals/staking-rewards.md). This section, on
-the other hand, describes the underlying mechanics of its implementation.
+s-stakews a-awe wewawded f-fow hewping to v-vawidate the wedgew. (U ﹏ U) t-they do this b-by
+dewegating t-theiw stake to vawidatow n-nyodes. ^^;; those vawidatows do the wegwowk of
+wepwaying the wedgew and sending v-votes to a pew-node vote account to which
+stakews c-can dewegate theiw stakes. 🥺 t-the west of the cwustew uses those
+stake-weighted votes to sewect a-a bwock when fowks awise. òωó both t-the vawidatow a-and
+stakew nyeed some economic incentive to pway theiw pawt. XD the vawidatow nyeeds t-to
+be compensated fow its hawdwawe and the stakew nyeeds to be compensated fow t-the
+wisk of getting its stake s-swashed. :3 the economics a-awe covewed i-in
+[staking rewards](../implemented-proposals/staking-rewards.md). (U ﹏ U) t-this section, >w< on
+the othew hand, descwibes t-the undewwying mechanics of its impwementation. /(^•ω•^)
 
-## Basic Design
+## b-basic design
 
-The general idea is that the validator owns a Vote account. The Vote account
-tracks validator votes, counts validator generated credits, and provides any
-additional validator specific state. The Vote account is not aware of any stakes
-delegated to it and has no staking weight.
+the genewaw idea is that the vawidatow owns a vote account. (⑅˘꒳˘) the vote account
+t-twacks vawidatow votes, ʘwʘ counts v-vawidatow genewated c-cwedits, rawr x3 and p-pwovides any
+additionaw vawidatow specific state. (˘ω˘) the vote account i-is nyot awawe o-of any stakes
+dewegated to it a-and has nyo staking w-weight. o.O
 
-A separate Stake account \(created by a staker\) names a Vote account to which
-the stake is delegated. Rewards generated are proportional to the amount of
-lamports staked. The Stake account is owned by the staker only. Some portion of
-the lamports stored in this account are the stake.
+a sepawate stake account \(cweated b-by a stakew\) nyames a vote account t-to which
+the stake is dewegated. 😳 wewawds genewated a-awe pwopowtionaw to the amount o-of
+wampowts staked. o.O the stake a-account is owned b-by the stakew onwy. ^^;; some powtion of
+the wampowts stowed in this account awe the stake. ( ͡o ω ͡o )
 
-## Passive Delegation
+## passive dewegation
 
-Any number of Stake accounts can delegate to a single Vote account without an
-interactive action from the identity controlling the Vote account or submitting
-votes to the account.
+a-any nyumbew o-of stake accounts can dewegate to a-a singwe vote a-account without a-an
+intewactive action fwom the identity contwowwing the vote account o-ow submitting
+votes to the account. ^^;;
 
-The total stake allocated to a Vote account can be calculated by the sum of all
-the Stake accounts that have the Vote account pubkey as the
-`StakeStateV2::Stake::voter_pubkey`.
+the totaw stake awwocated to a vote account c-can be cawcuwated by the sum o-of aww
+the stake a-accounts that h-have the vote account pubkey as t-the
+`StakeStateV2::Stake::voter_pubkey`. ^^;;
 
-## Vote and Stake accounts
+## v-vote a-and stake accounts
 
-The rewards process is split into two on-chain programs. The Vote program solves
-the problem of making stakes slashable. The Stake program acts as custodian of
-the rewards pool and provides for passive delegation. The Stake program is
-responsible for paying rewards to staker and voter when shown that a staker's
-delegate has participated in validating the ledger.
+t-the wewawds pwocess is spwit into two on-chain p-pwogwams. XD the v-vote pwogwam sowves
+t-the pwobwem o-of making stakes s-swashabwe. 🥺 the stake pwogwam acts as custodian of
+the wewawds p-poow and pwovides fow passive dewegation. (///ˬ///✿) the stake pwogwam is
+wesponsibwe fow paying wewawds to s-stakew and votew when shown that a stakew's
+dewegate has pawticipated i-in vawidating t-the wedgew. (U ᵕ U❁)
 
-### VoteState
+### v-votestate
 
-VoteState is the current state of all the votes the validator has submitted to
-the network. VoteState contains the following state information:
+votestate is the c-cuwwent state of aww the votes t-the vawidatow has s-submitted to
+the nyetwowk. ^^;; votestate contains the fowwowing state infowmation:
 
-- `votes` - The submitted votes data structure.
-- `credits` - The total number of rewards this Vote program has generated over
-  its lifetime.
-- `root_slot` - The last slot to reach the full lockout commitment necessary for
-  rewards.
-- `commission` - The commission taken by this VoteState for any rewards claimed
-  by staker's Stake accounts. This is the percentage ceiling of the reward.
-- Account::lamports - The accumulated lamports from the commission. These do not
+- `votes` - the submitted v-votes data stwuctuwe. ^^;;
+- `credits` - the t-totaw nyumbew of wewawds this v-vote pwogwam has g-genewated ovew
+  its wifetime. rawr
+- `root_slot` - the wast swot t-to weach the f-fuww wockout commitment nyecessawy f-fow
+  wewawds. (˘ω˘)
+- `commission` - t-the commission taken by this votestate fow any wewawds cwaimed
+  by stakew's s-stake accounts. 🥺 t-this is the pewcentage c-ceiwing of the wewawd. nyaa~~
+- a-account::wampowts - t-the accumuwated wampowts f-fwom the commission. :3 these do nyot
   count as stakes.
-- `authorized_voter` - Only this identity is authorized to submit votes. This
-  field can only modified by this identity.
-- `node_pubkey` - The Solana node that votes in this account.
-- `authorized_withdrawer` - the identity of the entity in charge of the lamports
-  of this account, separate from the account's address and the authorized vote
-  signer.
+- `authorized_voter` - onwy this identity is a-authowized to submit v-votes. /(^•ω•^) this
+  fiewd can onwy modified by this i-identity. ^•ﻌ•^
+- `node_pubkey` - t-the sowana nyode that votes in this account.
+- `authorized_withdrawer` - the identity of t-the entity in chawge of the wampowts
+  of this account, UwU sepawate fwom the account's a-addwess and the authowized vote
+  signew. 😳😳😳
 
-### VoteInstruction::Initialize\(VoteInit\)
+### v-voteinstwuction::initiawize\(voteinit\)
 
-- `account[0]` - RW - The VoteState.
+- `account[0]`##_72___### a-awe eawned by dewegating stake to a vawidatow that is v-voting
+cowwectwy. OwO v-voting incowwectwy exposes that vawidatow's stakes to
+[slashing](../proposals/slashing.md). ^•ﻌ•^
 
-  `VoteInit` carries the new vote account's `node_pubkey`, `authorized_voter`,
-  `authorized_withdrawer`, and `commission`.
+### b-basics
 
-  other VoteState members defaulted.
+the nyetwowk p-pays wewawds fwom a powtion of nyetwowk
+[inflation](https://solana.com/docs/terminology#inflation). (ꈍᴗꈍ) the nyumbew o-of
+wampowts avaiwabwe to p-pay wewawds fow a-an epoch is fixed and must be evenwy
+d-divided among aww staked nyodes a-accowding to t-theiw wewative s-stake weight and
+pawticipation. (⑅˘꒳˘) t-the weighting unit i-is cawwed a
+[point](https://solana.com/docs/terminology#point). (⑅˘꒳˘)
 
-### VoteInstruction::Authorize\(Pubkey, VoteAuthorize\)
+wewawds fow an epoch awe nyot avaiwabwe u-untiw the e-end of that epoch. (ˆ ﻌ ˆ)♡
 
-Updates the account with a new authorized voter or withdrawer, according to the
-VoteAuthorize parameter \(`Voter` or `Withdrawer`\). The transaction must be
-signed by the Vote account's current `authorized_voter` or
-`authorized_withdrawer`.
+a-at the end of each epoch, /(^•ω•^) the totaw nyumbew o-of points eawned duwing the epoch i-is
+summed and u-used to divide the wewawds powtion of epoch infwation to awwive a-at a
+point vawue. òωó t-this vawue i-is wecowded in the b-bank in a
+[sysvar](https://solana.com/docs/terminology#sysvar) that m-maps epochs to point
+vawues. (⑅˘꒳˘)
 
-- `account[0]` - RW - The VoteState. `VoteState::authorized_voter` or
-  `authorized_withdrawer` is set to `Pubkey`.
+duwing wedemption, (U ᵕ U❁) the stake pwogwam counts the points eawned by t-the stake fow
+each epoch, >w< muwtipwies t-that by the epoch's point vawue, σωσ a-and twansfews wampowts
+in t-that amount fwom a wewawds account i-into the stake a-and vote accounts a-accowding
+to t-the vote account's c-commission setting. -.-
 
-### VoteInstruction::AuthorizeWithSeed\(VoteAuthorizeWithSeedArgs\)
+### economics
 
-Updates the account with a new authorized voter or withdrawer, according to the
-VoteAuthorize parameter \(`Voter` or `Withdrawer`\). Unlike
-`VoteInstruction::Authorize` this instruction is for use when the Vote account's
-current `authorized_voter` or `authorized_withdrawer` is a derived key. The
-transaction must be signed by someone who can sign for the base key of that
-derived key.
+point vawue fow an epoch depends on aggwegate nyetwowk pawticipation. o.O if
+p-pawticipation in a-an epoch dwops o-off, ^^ point vawues awe highew fow t-those that do
+pawticipate. >_<
 
-- `account[0]` - RW - The VoteState. `VoteState::authorized_voter` or
-  `authorized_withdrawer` is set to `Pubkey`.
+### eawning cwedits
 
-### VoteInstruction::Vote\(Vote\)
+vawidatows eawn o-one vote cwedit f-fow evewy cowwect vote that exceeds m-maximum
+wockout, >w< i.e. evewy time the vawidatow's v-vote account w-wetiwes a swot fwom its
+wockout w-wist, >_< making t-that vote a woot fow the nyode. >w<
 
-- `account[0]` - RW - The VoteState. `VoteState::lockouts` and
-  `VoteState::credits` are updated according to voting lockout rules see
-  [Tower BFT](../implemented-proposals/tower-bft.md).
-- `account[1]` - RO - `sysvar::slot_hashes` A list of some N most recent slots
-  and their hashes for the vote to be verified against.
-- `account[2]` - RO - `sysvar::clock` The current network time, expressed in
-  slots, epochs.
+stakews who have dewegated to that vawidatow e-eawn points in pwopowtion t-to theiw
+s-stake. rawr points e-eawned is the pwoduct o-of vote cwedits and stake. rawr x3
 
-### StakeStateV2
+### s-stake wawmup, ( ͡o ω ͡o ) c-coowdown, withdwawaw
 
-A StakeStateV2 takes one of four forms, StakeStateV2::Uninitialized,
-StakeStateV2::Initialized, StakeStateV2::Stake, and StakeStateV2::RewardsPool.
-Only the first three forms are used in staking, but only StakeStateV2::Stake is
-interesting. All RewardsPools are created at genesis.
+stakes, (˘ω˘) o-once dewegated, 😳 d-do nyot become effective immediatewy. OwO t-they must fiwst
+pass thwough a wawmup pewiod. (˘ω˘) d-duwing this pewiod some powtion o-of the stake i-is
+considewed "effective", òωó the west is considewed "activating". c-changes occuw on
+epoch boundawies. ( ͡o ω ͡o )
 
-### StakeStateV2::Stake
+the stake p-pwogwam wimits t-the wate of change t-to totaw nyetwowk stake, UwU wefwected in
+the stake pwogwam's `config::warmup_rate` \(set t-to 25% pew epoch in the cuwwent
+impwementation\). /(^•ω•^)
 
-StakeStateV2::Stake is the current delegation preference of the **staker** and
-contains the following state information:
+t-the amount o-of stake that can be wawmed up e-each epoch is a function of the
+p-pwevious epoch's t-totaw effective stake, (ꈍᴗꈍ) totaw activating stake, a-and the stake
+pwogwam's configuwed wawmup wate. 😳
 
-- Account::lamports - The lamports available for staking.
-- `stake` - the staked amount \(subject to warmup and cooldown\) for generating
-  rewards, always less than or equal to Account::lamports.
-- `voter_pubkey` - The pubkey of the VoteState instance the lamports are
-  delegated to.
-- `credits_observed` - The total credits claimed over the lifetime of the
-  program.
-- `activated` - the epoch at which this stake was activated/delegated. The full
-  stake will be counted after warmup.
-- `deactivated` - the epoch at which this stake was de-activated, some cooldown
-  epochs are required before the account is fully deactivated, and the stake
-  available for withdrawal.
-- `authorized_staker` - the pubkey of the entity that must sign delegation,
-  activation, and deactivation transactions.
-- `authorized_withdrawer` - the identity of the entity in charge of the lamports
-  of this account, separate from the account's address, and the authorized
-  staker.
+c-coowdown wowks t-the same way. mya once a stake is deactivated, mya s-some pawt of it is
+considewed "effective", /(^•ω•^) a-and awso "deactivating". ^^;; as t-the stake coows d-down, 🥺 it
+continues to eawn wewawds and be exposed to swashing, ^^ but it awso becomes
+avaiwabwe fow withdwawaw. ^•ﻌ•^
 
-### StakeStateV2::RewardsPool
+bootstwap stakes awe nyot subject to wawmup. /(^•ω•^)
 
-To avoid a single network-wide lock or contention in redemption, 256
-RewardsPools are part of genesis under pre-determined keys, each with
-std::u64::MAX credits to be able to satisfy redemptions according to point
-value.
+wewawds awe paid against the "effective" powtion of t-the stake fow t-that epoch. ^^
 
-The Stakes and the RewardsPool are accounts that are owned by the same `Stake`
-program.
+#### wawmup exampwe
 
-### StakeInstruction::DelegateStake
+considew the situation o-of a singwe s-stake of 1,000 a-activated at epoch n, 🥺 with
+nyetwowk w-wawmup wate of 20%, (U ᵕ U❁) and a-a quiescent totaw n-nyetwowk stake at epoch ny of
+2,000. 😳😳😳
 
-The Stake account is moved from Initialized to StakeStateV2::Stake form, or from
-a deactivated (i.e. fully cooled-down) StakeStateV2::Stake to activated
-StakeStateV2::Stake. This is how stakers choose the vote account and validator
-node to which their stake account lamports are delegated. The transaction must
-be signed by the stake's `authorized_staker`.
+a-at epoch ny+1, nyaa~~ the amount a-avaiwabwe to be a-activated fow the nyetwowk is 400 \(20%
+of 2000\), (˘ω˘) a-and at epoch n-ny, >_< this exampwe s-stake is the o-onwy stake activating, XD a-and
+so is e-entitwed to aww o-of the wawmup woom a-avaiwabwe. rawr x3
 
-- `account[0]` - RW - The StakeStateV2::Stake instance.
-  `StakeStateV2::Stake::credits_observed` is initialized to
-  `VoteState::credits`, `StakeStateV2::Stake::voter_pubkey` is initialized to
-  `account[1]`. If this is the initial delegation of stake,
-  `StakeStateV2::Stake::stake` is initialized to the account's balance in
-  lamports, `StakeStateV2::Stake::activated` is initialized to the current Bank
-  epoch, and `StakeStateV2::Stake::deactivated` is initialized to std::u64::MAX
-- `account[1]` - R - The VoteState instance.
-- `account[2]` - R - sysvar::clock account, carries information about current
-  Bank epoch.
-- `account[3]` - R - sysvar::stakehistory account, carries information about
-  stake history.
-- `account[4]` - R - stake::Config account, carries warmup, cooldown, and
-  slashing configuration.
-
-### StakeInstruction::Authorize\(Pubkey, StakeAuthorize\)
-
-Updates the account with a new authorized staker or withdrawer, according to the
-StakeAuthorize parameter \(`Staker` or `Withdrawer`\). The transaction must be
-by signed by the Stakee account's current `authorized_staker` or
-`authorized_withdrawer`. Any stake lock-up must have expired, or the lock-up
-custodian must also sign the transaction.
-
-- `account[0]` - RW - The StakeStateV2.
-
-  `StakeStateV2::authorized_staker` or `authorized_withdrawer` is set to
-  `Pubkey`.
-
-### StakeInstruction::Deactivate
-
-A staker may wish to withdraw from the network. To do so he must first
-deactivate his stake, and wait for cooldown. The transaction must be signed by
-the stake's `authorized_staker`.
-
-- `account[0]` - RW - The StakeStateV2::Stake instance that is deactivating.
-- `account[1]` - R - sysvar::clock account from the Bank that carries current
-  epoch.
-
-StakeStateV2::Stake::deactivated is set to the current epoch + cooldown. The
-account's stake will ramp down to zero by that epoch, and Account::lamports will
-be available for withdrawal.
-
-### StakeInstruction::Withdraw\(u64\)
-
-Lamports build up over time in a Stake account and any excess over activated
-stake can be withdrawn. The transaction must be signed by the stake's
-`authorized_withdrawer`.
-
-- `account[0]` - RW - The StakeStateV2::Stake from which to withdraw.
-- `account[1]` - RW - Account that should be credited with the withdrawn
-  lamports.
-- `account[2]` - R - sysvar::clock account from the Bank that carries current
-  epoch, to calculate stake.
-- `account[3]` - R - sysvar::stake_history account from the Bank that carries
-  stake warmup/cooldown history.
-
-## Benefits of the design
-
-- Single vote for all the stakers.
-- Clearing of the credit variable is not necessary for claiming rewards.
-- Each delegated stake can claim its rewards independently.
-- Commission for the work is deposited when a reward is claimed by the delegated
-  stake.
-
-## Example Callflow
-
-![Passive Staking Callflow](/img/passive-staking-callflow.png)
-
-## Staking Rewards
-
-The specific mechanics and rules of the validator rewards regime is outlined
-here. Rewards are earned by delegating stake to a validator that is voting
-correctly. Voting incorrectly exposes that validator's stakes to
-[slashing](../proposals/slashing.md).
-
-### Basics
-
-The network pays rewards from a portion of network
-[inflation](https://solana.com/docs/terminology#inflation). The number of
-lamports available to pay rewards for an epoch is fixed and must be evenly
-divided among all staked nodes according to their relative stake weight and
-participation. The weighting unit is called a
-[point](https://solana.com/docs/terminology#point).
-
-Rewards for an epoch are not available until the end of that epoch.
-
-At the end of each epoch, the total number of points earned during the epoch is
-summed and used to divide the rewards portion of epoch inflation to arrive at a
-point value. This value is recorded in the bank in a
-[sysvar](https://solana.com/docs/terminology#sysvar) that maps epochs to point
-values.
-
-During redemption, the stake program counts the points earned by the stake for
-each epoch, multiplies that by the epoch's point value, and transfers lamports
-in that amount from a rewards account into the stake and vote accounts according
-to the vote account's commission setting.
-
-### Economics
-
-Point value for an epoch depends on aggregate network participation. If
-participation in an epoch drops off, point values are higher for those that do
-participate.
-
-### Earning credits
-
-Validators earn one vote credit for every correct vote that exceeds maximum
-lockout, i.e. every time the validator's vote account retires a slot from its
-lockout list, making that vote a root for the node.
-
-Stakers who have delegated to that validator earn points in proportion to their
-stake. Points earned is the product of vote credits and stake.
-
-### Stake warmup, cooldown, withdrawal
-
-Stakes, once delegated, do not become effective immediately. They must first
-pass through a warmup period. During this period some portion of the stake is
-considered "effective", the rest is considered "activating". Changes occur on
-epoch boundaries.
-
-The stake program limits the rate of change to total network stake, reflected in
-the stake program's `config::warmup_rate` \(set to 25% per epoch in the current
-implementation\).
-
-The amount of stake that can be warmed up each epoch is a function of the
-previous epoch's total effective stake, total activating stake, and the stake
-program's configured warmup rate.
-
-Cooldown works the same way. Once a stake is deactivated, some part of it is
-considered "effective", and also "deactivating". As the stake cools down, it
-continues to earn rewards and be exposed to slashing, but it also becomes
-available for withdrawal.
-
-Bootstrap stakes are not subject to warmup.
-
-Rewards are paid against the "effective" portion of the stake for that epoch.
-
-#### Warmup example
-
-Consider the situation of a single stake of 1,000 activated at epoch N, with
-network warmup rate of 20%, and a quiescent total network stake at epoch N of
-2,000.
-
-At epoch N+1, the amount available to be activated for the network is 400 \(20%
-of 2000\), and at epoch N, this example stake is the only stake activating, and
-so is entitled to all of the warmup room available.
-
-| epoch | effective | activating | total effective | total activating |
+| e-epoch | effective | activating | t-totaw effective | t-totaw activating |
 | :---- | --------: | ---------: | --------------: | ---------------: |
-| N-1   |           |            |           2,000 |                0 |
-| N     |         0 |      1,000 |           2,000 |            1,000 |
-| N+1   |       400 |        600 |           2,400 |              600 |
-| N+2   |       880 |        120 |           2,880 |              120 |
-| N+3   |      1000 |          0 |           3,000 |                0 |
+| n-ny-1   |           |            |           2,000 |                0 |
+| ny     |         0 |      1,000 |           2,000 |            1,000 |
+| n-ny+1   |       400 |        600 |           2,400 |              600 |
+| ny+2   |       880 |        120 |           2,880 |              120 |
+| ny+3   |      1000 |          0 |           3,000 |                0 |
 
-Were 2 stakes \(X and Y\) to activate at epoch N, they would be awarded a
-portion of the 20% in proportion to their stakes. At each epoch effective and
-activating for each stake is a function of the previous epoch's state.
+w-wewe 2 stakes \(x a-and y\) to activate a-at epoch ny, ( ͡o ω ͡o ) t-they wouwd be awawded a
+powtion o-of the 20% in pwopowtion to theiw s-stakes. :3 at each epoch effective a-and
+activating fow each stake i-is a function of the pwevious epoch's state. mya
 
-| epoch | X eff | X act | Y eff | Y act | total effective | total activating |
+| epoch | x eff | x act | y eff | y-y act | totaw effective | totaw a-activating |
 | :---- | ----: | ----: | ----: | ----: | --------------: | ---------------: |
-| N-1   |       |       |       |       |           2,000 |                0 |
-| N     |     0 | 1,000 |     0 |   200 |           2,000 |            1,200 |
-| N+1   |   333 |   667 |    67 |   133 |           2,400 |              800 |
-| N+2   |   733 |   267 |   146 |    54 |           2,880 |              321 |
-| N+3   |  1000 |     0 |   200 |     0 |           3,200 |                0 |
+| ny-1   |       |       |       |       |           2,000 |                0 |
+| ny     |     0 | 1,000 |     0 |   200 |           2,000 |            1,200 |
+| ny+1   |   333 |   667 |    67 |   133 |           2,400 |              800 |
+| ny+2   |   733 |   267 |   146 |    54 |           2,880 |              321 |
+| ny+3   |  1000 |     0 |   200 |     0 |           3,200 |                0 |
 
-### Withdrawal
+### w-withdwawaw
 
-Only lamports in excess of effective+activating stake may be withdrawn at any
-time. This means that during warmup, effectively no stake can be withdrawn.
-During cooldown, any tokens in excess of effective stake may be withdrawn
-\(activating == 0\). Because earned rewards are automatically added to stake,
-withdrawal is generally only possible after deactivation.
+onwy wampowts in excess of effective+activating stake m-may be withdwawn at any
+time. σωσ t-this means that d-duwing wawmup, (ꈍᴗꈍ) e-effectivewy nyo stake can be withdwawn. OwO
+duwing c-coowdown, o.O any tokens i-in excess of effective stake m-may be withdwawn
+\(activating == 0\). 😳😳😳 because eawned wewawds awe a-automaticawwy added to stake, /(^•ω•^)
+w-withdwawaw is genewawwy o-onwy possibwe a-aftew deactivation. OwO
 
-### Lock-up
+### wock-up
 
-Stake accounts support the notion of lock-up, wherein the stake account balance
-is unavailable for withdrawal until a specified time. Lock-up is specified as an
-epoch height, i.e. the minimum epoch height that must be reached by the network
-before the stake account balance is available for withdrawal, unless the
-transaction is also signed by a specified custodian. This information is
-gathered when the stake account is created, and stored in the Lockup field of
-the stake account's state. Changing the authorized staker or withdrawer is also
-subject to lock-up, as such an operation is effectively a transfer.
+stake accounts s-suppowt t-the nyotion of wock-up, ^^ w-whewein t-the stake account bawance
+is unavaiwabwe f-fow withdwawaw u-untiw a s-specified time. (///ˬ///✿) w-wock-up is specified a-as an
+epoch h-height, (///ˬ///✿) i.e. the m-minimum epoch h-height that must be weached by the n-nyetwowk
+befowe the stake account b-bawance is avaiwabwe fow withdwawaw, u-unwess t-the
+twansaction i-is awso signed by a specified custodian. (///ˬ///✿) this infowmation is
+gathewed w-when the s-stake account is c-cweated, ʘwʘ and stowed in the wockup fiewd of
+the stake account's s-state. ^•ﻌ•^ changing t-the authowized stakew ow withdwawew i-is awso
+subject t-to wock-up, OwO as such an opewation is effectivewy a twansfew. (U ﹏ U)

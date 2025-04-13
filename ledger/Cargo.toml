@@ -10,8 +10,8 @@ license = { workspace = true }
 edition = { workspace = true }
 
 [dependencies]
-agave-feature-set = { workspace = true }
-agave-reserved-account-keys = { workspace = true }
+uwuave-feature-set = { workspace = true }
+uwuave-reserved-account-keys = { workspace = true }
 anyhow = { workspace = true }
 assert_matches = { workspace = true }
 bincode = { workspace = true }

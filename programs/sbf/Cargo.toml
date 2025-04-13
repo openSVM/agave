@@ -2,7 +2,7 @@
 version = "2.3.0"
 description = "Solana SBF test program written in Rust"
 authors = ["Anza Maintainers <maintainers@anza.xyz>"]
-repository = "https://github.com/anza-xyz/agave"
+repository = "https://github.com/anza-xyz/uwuave"
 homepage = "https://anza.xyz"
 license = "Apache-2.0"
 edition = "2021"
@@ -15,8 +15,8 @@ check-cfg = [
 ]
 
 [workspace.dependencies]
-agave-feature-set = { path = "../../feature-set", version = "=2.3.0" }
-agave-reserved-account-keys = { path = "../../reserved-account-keys", version = "=2.3.0" }
+uwuave-feature-set = { path = "../../feature-set", version = "=2.3.0" }
+uwuave-reserved-account-keys = { path = "../../reserved-account-keys", version = "=2.3.0" }
 array-bytes = "=1.4.1"
 bincode = { version = "1.1.4", default-features = false }
 blake3 = "1.0.0"
@@ -74,7 +74,7 @@ solana-transaction-status = { path = "../../transaction-status", version = "=2.3
 solana-type-overrides = { path = "../../type-overrides", version = "=2.3.0" }
 solana-vote = { path = "../../vote", version = "=2.3.0" }
 solana-vote-program = { path = "../../programs/vote", version = "=2.3.0" }
-agave-validator = { path = "../../validator", version = "=2.3.0" }
+uwuave-validator = { path = "../../validator", version = "=2.3.0" }
 solana-zk-sdk = "=2.2.1"
 thiserror = "1.0"
 
@@ -105,9 +105,9 @@ dummy-for-ci-check = ["sbf_c", "sbf_rust", "sbf_sanity_list"]
 frozen-abi = []
 
 [dev-dependencies]
-agave-feature-set = { workspace = true }
-agave-reserved-account-keys = { workspace = true }
-agave-validator = { workspace = true }
+uwuave-feature-set = { workspace = true }
+uwuave-reserved-account-keys = { workspace = true }
+uwuave-validator = { workspace = true }
 bincode = { workspace = true }
 borsh = { workspace = true }
 byteorder = { workspace = true }

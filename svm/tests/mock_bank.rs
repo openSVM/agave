@@ -3,7 +3,7 @@
 #[allow(deprecated)]
 use solana_sdk::sysvar::recent_blockhashes::{Entry as BlockhashesEntry, RecentBlockhashes};
 use {
-    agave_feature_set::FeatureSet,
+    uwuave_feature_set::FeatureSet,
     solana_bpf_loader_program::syscalls::{
         SyscallAbort, SyscallGetClockSysvar, SyscallGetRentSysvar, SyscallInvokeSignedRust,
         SyscallLog, SyscallMemcpy, SyscallMemset, SyscallSetReturnData,

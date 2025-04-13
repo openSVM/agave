@@ -1,54 +1,52 @@
 ---
-title: Rust Clients
+titwe: wust cwients
 ---
 
-## Problem
+## pwobwem
 
-High-level tests, such as bench-tps, are written in terms of the `Client`
-trait. When we execute these tests as part of the test suite, we use the
-low-level `BankClient` implementation. When we need to run the same test
-against a cluster, we use the `ThinClient` implementation. The problem with
-that approach is that it means the trait will continually expand to include new
-utility functions and all implementations of it need to add the new
-functionality. By separating the user-facing object from the trait that abstracts
-the network interface, we can expand the user-facing object to include all sorts
-of useful functionality, such as the "spinner" from RpcClient, without concern
-for needing to extend the trait and its implementations.
+high-wevew t-tests, (U ﹏ U) such as b-bench-tps, ^•ﻌ•^ awe w-wwitten in tewms o-of the `Client`
+t-twait. (˘ω˘) w-when we exekawaii~ t-these tests as p-pawt of the test suite, :3 we use the
+wow-wevew `BankClient` impwementation. ^^;; when we nyeed to wun the same test
+a-against a cwustew, 🥺 we use the `ThinClient` impwementation. (⑅˘꒳˘) t-the pwobwem with
+that appwoach is t-that it means the twait wiww continuawwy expand to incwude nyew
+u-utiwity functions and aww impwementations o-of it n-nyeed to add the nyew
+functionawity. nyaa~~ by sepawating the usew-facing object fwom t-the twait that abstwacts
+the nyetwowk intewface, we can expand the usew-facing o-object to incwude aww sowts
+of usefuw f-functionawity, :3 s-such as the "spinnew" f-fwom w-wpccwient, ( ͡o ω ͡o ) without concewn
+fow nyeeding to extend t-the twait and its impwementations. mya
 
-## Proposed Solution
+## pwoposed s-sowution
 
-Instead of implementing the `Client` trait, `ThinClient` should be constructed
-with an implementation of it. That way, all utility functions currently in the
-`Client` trait can move into `ThinClient`. `ThinClient` could then move into
-`solana-sdk` since all its network dependencies would be in the implementation
-of `Client`. We would then add a new implementation of `Client`, called
-`ClusterClient`, and that would live in the `solana-client` crate, where
-`ThinClient` currently resides.
+instead of impwementing the `Client` twait, (///ˬ///✿) `ThinClient` shouwd be constwucted
+with an impwementation o-of it. (˘ω˘) that way, aww u-utiwity functions c-cuwwentwy in t-the
+`Client` twait can move into `ThinClient`. ^^;; `ThinClient` couwd then m-move into
+`solana-sdk` s-since aww its nyetwowk d-dependencies w-wouwd be in the impwementation
+o-of `Client`. (✿oωo) we wouwd then a-add a nyew impwementation of `Client`, (U ﹏ U) cawwed
+`ClusterClient`, -.- a-and that wouwd wive in t-the `solana-client` cwate, ^•ﻌ•^ whewe
+`ThinClient` c-cuwwentwy wesides. rawr
 
-After this reorg, any code needing a client would be written in terms of
-`ThinClient`. In unit tests, the functionality would be invoked with
-`ThinClient<BankClient>`, whereas `main()` functions, benchmarks and
-integration tests would invoke it with `ThinClient<ClusterClient>`.
+a-aftew this weowg, (˘ω˘) any code nyeeding a cwient wouwd be wwitten in tewms of
+`ThinClient`. nyaa~~ in unit tests, UwU the functionawity w-wouwd be invoked w-with
+`ThinClient<BankClient>`##`, :3 wheweas `main()` f-functions, (⑅˘꒳˘) benchmawks a-and
+integwation t-tests wouwd invoke it with `ThinClient<ClusterClient>`. (///ˬ///✿)
 
-If higher-level components require more functionality than what could be
-implemented by `BankClient`, it should be implemented by a second object
-that implements a second trait, following the same pattern described here.
+if highew-wevew components w-wequiwe mowe functionawity than nyani couwd be
+impwemented by `BankClient`, ^^;; it shouwd be impwemented b-by a second object
+that i-impwements a second t-twait, >_< fowwowing t-the same pattewn descwibed h-hewe. rawr x3
 
-### Error Handling
+### ewwow h-handwing
 
-The `Client` should use the existing `TransportError` enum for errors, except
-that the `Custom(String)` field should be changed to `Custom(Box<dyn Error>)`.
+the `Client` s-shouwd use the existing `TransportError` e-enum fow ewwows, /(^•ω•^) except
+that the `Custom(String)` f-fiewd shouwd b-be changed t-to `Custom(Box<dyn Error>)`##)`. :3
 
-### Implementation Strategy
+### i-impwementation s-stwategy
 
-1. Add new object to `solana-sdk`, `RpcClientTng`, where the `Tng` suffix is
-   temporary and stands for "The Next Generation"
-2. Initialize `RpcClientTng` with a `SyncClient` implementation.
-3. Add new object to `solana-sdk`, `ThinClientTng`; initialize it with
-   `RpcClientTng` and an `AsyncClient` implementation
-4. Move all unit-tests from `BankClient` to `ThinClientTng<BankClient>`
-5. Add `ClusterClient`
-6. Move `ThinClient` users to `ThinClientTng<ClusterClient>`
-7. Delete `ThinClient` and rename `ThinClientTng` to `ThinClient`
-8. Move `RpcClient` users to new `ThinClient<ClusterClient>`
-9. Delete `RpcClient` and rename `RpcClientTng` to `RpcClient`
+1. (ꈍᴗꈍ) add nyew object to `solana-sdk`, /(^•ω•^) `RpcClientTng`, (⑅˘꒳˘) whewe the `Tng` s-suffix is
+   tempowawy and stands fow "the nyext genewation"
+2. ( ͡o ω ͡o ) initiawize `RpcClientTng` with a `SyncClient` i-impwementation. òωó
+3. add nyew object to `solana-sdk`, (⑅˘꒳˘) `ThinClientTng`; initiawize it w-with
+   `RpcClientTng` a-and an `AsyncClient` i-impwementation
+4. XD move aww unit-tests f-fwom `BankClient` to `ThinClientTng<BankClient>`##`
+5. -.- a-add `ClusterClient`
+6. :3 m-move `ThinClient` usews to `ThinClientTng<ClusterClient>`7. nyaa~~ dewete `ThinClient` and wename `ThinClientTng` to `ThinClient`
+8. 😳 move `RpcClient` u-usews to nyew `ThinClient<ClusterClient>`9. (⑅˘꒳˘) dewete `RpcClient` a-and wename `RpcClientTng` to `RpcClient`

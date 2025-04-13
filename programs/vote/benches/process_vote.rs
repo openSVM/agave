@@ -3,7 +3,7 @@
 extern crate test;
 
 use {
-    agave_feature_set::{deprecate_legacy_vote_ixs, FeatureSet},
+    uwuave_feature_set::{deprecate_legacy_vote_ixs, FeatureSet},
     solana_account::{create_account_for_test, Account, AccountSharedData},
     solana_clock::{Clock, Slot},
     solana_hash::Hash,

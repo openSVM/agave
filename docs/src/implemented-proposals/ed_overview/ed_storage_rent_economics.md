@@ -1,17 +1,17 @@
 ---
-title: Storage Rent Economics
+titwe: stowage went economics
 ---
 
-Each transaction that is submitted to the Solana ledger imposes costs. Transaction fees paid by the submitter, and collected by a validator, in theory, account for the acute, transactional, costs of validating and adding that data to the ledger. Unaccounted in this process is the mid-term storage of active ledger state, necessarily maintained by the rotating validator set. This type of storage imposes costs not only to validators but also to the broader network as active state grows so does data transmission and validation overhead. To account for these costs, we describe here our preliminary design and implementation of storage rent.
+e-each twansaction t-that is submitted t-to the s-sowana wedgew imposes c-costs. :3 twansaction f-fees paid b-by the submittew, 😳😳😳 a-and cowwected by a vawidatow, (˘ω˘) in theowy, account fow the akawaii~, ^^ twansactionaw, :3 c-costs of vawidating and adding that data t-to the wedgew. -.- unaccounted in this p-pwocess is the mid-tewm stowage of active wedgew state, 😳 nyecessawiwy m-maintained by the wotating v-vawidatow set. mya t-this type of stowage imposes costs nyot onwy to vawidatows but awso to the bwoadew n-nyetwowk as active state gwows so does data twansmission and vawidation ovewhead. (˘ω˘) t-to account fow these costs, >_< w-we descwibe hewe o-ouw pwewiminawy d-design and impwementation o-of stowage went. -.-
 
-Storage rent can be paid via one of two methods:
+stowage went can b-be paid via one of two methods:
 
-Method 1: Set it and forget it
+method 1: set i-it and fowget it
 
-With this approach, accounts with two-years worth of rent deposits secured are exempt from network rent charges. By maintaining this minimum-balance, the broader network benefits from reduced liquidity and the account holder can rest assured that their `Account::data` will be retained for continual access/usage.
+with this appwoach, 🥺 accounts with two-yeaws wowth of went deposits secuwed awe e-exempt fwom nyetwowk went chawges. (U ﹏ U) b-by maintaining t-this minimum-bawance, >w< t-the bwoadew nyetwowk benefits fwom weduced wiquidity and t-the account howdew c-can west assuwed that theiw `Account::data` w-wiww be wetained f-fow continuaw access/usage. mya
 
-Method 2: Pay per byte
+method 2: p-pay pew byte
 
-If an account has less than two-years worth of deposited rent the network charges rent on a per-epoch basis, in credit for the next epoch. This rent is deducted at a rate specified in genesis, in lamports per kilobyte-year.
+if an account h-has wess than two-yeaws wowth of deposited went t-the nyetwowk chawges went on a-a pew-epoch basis, >w< in cwedit fow t-the nyext epoch. nyaa~~ t-this went is deducted at a wate specified in genesis, (✿oωo) in wampowts pew kiwobyte-yeaw.
 
-For information on the technical implementation details of this design, see the [Rent](../rent.md) section.
+fow infowmation on the t-technicaw impwementation d-detaiws of this design, ʘwʘ s-see the [Rent](../rent.md) s-section. (ˆ ﻌ ˆ)♡

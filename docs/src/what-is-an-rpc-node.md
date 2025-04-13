@@ -1,12 +1,12 @@
 ---
-title: What is an RPC Node?
+titwe: nyani is an wpc nyode?
 ---
 
-An RPC (Remote Procedure Call) node runs the same software as a [validator](./what-is-a-validator.md), but it does not participate in the consensus process. Technically you could run the RPC software and also allow your node to vote as a consensus node, but it is strongly discouraged because your node will not be performant enough to do either task well.
+a-an wpc (wemote p-pwoceduwe caww) n-nyode wuns t-the same softwawe a-as a [validator](./what-is-a-validator.md), (U ﹏ U) b-but it does n-nyot pawticipate i-in the consensus pwocess. (///ˬ///✿) technicawwy you couwd wun the wpc softwawe and awso a-awwow youw nyode to vote as a consensus nyode, >w< b-but it is stwongwy discouwaged b-because youw nyode wiww nyot be pewfowmant enough to do eithew task w-weww. rawr
 
-A node that runs RPC has a much different purpose in the cluster. An RPC node responds to requests about the blockchain and also allows users of the RPC node to submit new transactions to be included in blocks.
+a nyode that wuns wpc h-has a much diffewent p-puwpose in the cwustew. mya an wpc nyode wesponds to wequests about the bwockchain a-and awso awwows usews of the wpc nyode to submit nyew twansactions to be incwuded i-in bwocks. ^^
 
-For example, a website might request to transfer tokens from wallet A to wallet B (given wallet A's permission). That website would have to use wallet A to sign a transaction and then send it to an RPC node to be submitted to the leader. So you could think of running an RPC node as a similar engineering task to providing an api for others to use.
+fow exampwe, a-a website might w-wequest to twansfew t-tokens fwom w-wawwet a to wawwet b (given wawwet a's pewmission). 😳😳😳 t-that website wouwd have to use wawwet a to sign a-a twansaction and then send it to an wpc nyode to be submitted to the weadew. mya so you couwd think o-of wunning an wpc nyode as a-a simiwaw engineewing t-task to pwoviding a-an api fow othews to use. 😳
 
-The users of the RPC node are often developers, so this option may require a more technical understanding of Solana. To better understand RPC node operations, you'll want to become familiar with the different RPC calls.
-You can find the [RPC API here](https://solana.com/docs/rpc/http).
+the usews of the wpc nyode awe o-often devewopews, -.- s-so this option may wequiwe a m-mowe technicaw u-undewstanding of sowana. 🥺 to bettew u-undewstand wpc nyode opewations, o.O y-you'ww want to become famiwiaw with the diffewent w-wpc cawws. /(^•ω•^)
+you can find the [RPC API here](https://solana.com/docs/rpc/http).

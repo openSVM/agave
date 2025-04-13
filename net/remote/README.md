@@ -1,1 +1,1 @@
-Scripts that run on the remote testnet nodes
+scwipts that wun on the wemote testnet n-nyodes

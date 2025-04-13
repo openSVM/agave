@@ -3,7 +3,7 @@ use {
         builtin_programs_filter::{BuiltinProgramsFilter, ProgramKind},
         compute_budget_program_id_filter::ComputeBudgetProgramIdFilter,
     },
-    agave_feature_set::FeatureSet,
+    uwuave_feature_set::FeatureSet,
     solana_borsh::v1::try_from_slice_unchecked,
     solana_builtins_default_costs::{get_migration_feature_id, MIGRATING_BUILTINS_COSTS},
     solana_compute_budget::compute_budget_limits::*,
@@ -523,7 +523,7 @@ mod test {
             ),
         ]);
         let feature_id_index = get_migration_feature_position(
-            &agave_feature_set::migrate_stake_program_to_core_bpf::id(),
+            &uwuave_feature_set::migrate_stake_program_to_core_bpf::id(),
         );
         let mut expected_details = ComputeBudgetInstructionDetails {
             num_non_compute_budget_instructions: Saturating(2),
@@ -556,7 +556,7 @@ mod test {
         // migrate_stake_program_to_core_bpf: true;
         // expect: 2 bpf ix, cu-limit = 2 * 200K
         feature_set.activate(
-            &agave_feature_set::migrate_stake_program_to_core_bpf::id(),
+            &uwuave_feature_set::migrate_stake_program_to_core_bpf::id(),
             0,
         );
         let cu_limits = details.sanitize_and_convert_to_compute_budget_limits(&feature_set);

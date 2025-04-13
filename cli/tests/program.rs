@@ -3,7 +3,7 @@
 #![allow(clippy::items_after_test_module)]
 
 use {
-    agave_feature_set::enable_alt_bn128_syscall,
+    uwuave_feature_set::enable_alt_bn128_syscall,
     assert_matches::assert_matches,
     serde_json::Value,
     solana_cli::{

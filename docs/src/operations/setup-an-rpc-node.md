@@ -1,28 +1,28 @@
 ---
-title: Setup an Agave RPC Node
-sidebar_label: Setup an Agave RPC Node
-sidebar_position: 6
+titwe: setup an uwuave wpc nyode
+s-sidebaw_wabew: s-setup an uwuave w-wpc nyode
+sidebaw_position: 6
 ---
 
-Since a Solana RPC server runs the same process as a consensus validator, first follow the instructions on [how to setup a Solana validator](./setup-a-validator.md) to get started. Note, that you do not need to create a vote account if you are operating an RPC node.  An RPC node typically does not vote.
+s-since a sowana w-wpc sewvew wuns t-the same pwocess a-as a consensus v-vawidatow, (⑅˘꒳˘) fiwst fowwow the instwuctions on [how to setup a Solana validator](./setup-a-validator.md) to get stawted. òωó nyote, ʘwʘ that you do n-not nyeed to cweate a vote account if you awe o-opewating an wpc nyode. /(^•ω•^)  an wpc n-nyode typicawwy does not vote. ʘwʘ
 
-After your validator is running, you can refer to this section for the RPC node specific setup instructions.
+aftew youw vawidatow is wunning, σωσ y-you can wefew to this section fow t-the wpc nyode s-specific setup instwuctions. OwO
 
-## Sample RPC Node
+## sampwe wpc nyode
 
-Below is an example `validator.sh` file for a `testnet` RPC server.
+bewow is an exampwe `validator.sh` f-fiwe fow a `testnet` wpc sewvew. 😳😳😳
 
-You will want to be aware of the following flags:
+you wiww want to be awawe of the f-fowwowing fwags:
 
-- `--full-rpc-api`: enables all RPC operations on this validator.
-- `--no-voting`: runs the validator without participating in consensus. Typically, you do not want to run a validator as _both_ a consensus node and a full RPC node due to resource constraints.
-- `--private-rpc`: does not publish the validator's open RPC port in the `solana gossip` command
+- `--full-rpc-api`: enabwes aww w-wpc opewations o-on this vawidatow. 😳😳😳
+- `--no-voting`: w-wuns the v-vawidatow without pawticipating in consensus. o.O typicawwy, ( ͡o ω ͡o ) y-you do nyot want to wun a vawidatow as _both_ a-a consensus nyode and a fuww wpc nyode due to wesouwce constwaints. (U ﹏ U)
+- `--private-rpc`: does nyot pubwish t-the vawidatow's open wpc powt in t-the `solana gossip` c-command
 
-> For more explanation on the flags used in the command, refer to the `agave-validator --help` command
+> f-fow mowe expwanation on the fwags used in the command, (///ˬ///✿) wefew to t-the `uwuave-validator --help` c-command
 
 ```
 #!/bin/bash
-exec agave-validator \
+exec uwuave-validator \
     --identity /home/sol/validator-keypair.json \
     --known-validator 5D1fNXzvv5NjV1ysLjirC4WY92RNsVH18vjmcszZd8on \
     --known-validator dDzy5SR3AXdYWVqbDEkVFdvSPCtS9ihF5kJkHCtXoFs \
@@ -47,40 +47,3 @@ exec agave-validator \
     --wal-recovery-mode skip_any_corrupted_record \
     --limit-ledger-size
 ```
-
-### Solana Bigtable
-
-The Solana blockchain is able to create many transactions per second. Because of the volume of transactions on the chain, it is not practical for an RPC node to store the entire blockchain on the machine. Instead, RPC operators use the `--limit-ledger-size` flag to specify how many blocks to store on the RPC node. If the user of the RPC node needs historical blockchain data then the RPC server will have to access older blocks through a Solana bigtable instance.
-
-If you are interested in setting up your own bigtable instance, see these docs in the Solana GitHub repository: [solana-labs/solana-bigtable](https://github.com/solana-labs/solana-bigtable)
-
-### Example Known Validators
-
-The identities of the [known validators](./guides/validator-start.md#known-validators) supplied in these example snippets (via the `--known-validator` flag) are:
-
-- `5D1fNXzvv5NjV1ysLjirC4WY92RNsVH18vjmcszZd8on` - Solana Labs
-- `dDzy5SR3AXdYWVqbDEkVFdvSPCtS9ihF5kJkHCtXoFs` - MonkeDAO
-- `Ft5fbkqNa76vnsjYNwjDZUXoTWpP7VYm3mtsaQckQADN` - Certus One
-- `eoKpUABi59aT4rR9HGS3LcMecfut9x7zJyodWWP43YQ` - SerGo
-- `9QxCLckBiJc783jnMvXZubK4wH86Eqqvashtrwvcsgkv` - Algo|Stake
-
-## Examples for other clusters
-
-Additional examples of other Solana cluster specific validator commands can be found on the [Clusters](../clusters/available.md) page.
-
-Keep in mind, you will still need to customize these commands to operate as an RPC node, as well other operator specific configuration settings.
-
-## Account indexing
-
-As the number of populated accounts on the cluster grows, account-data RPC
-requests that scan the entire account set -- like
-[`getProgramAccounts`](https://solana.com/docs/rpc/http/getprogramaccounts) and
-[SPL-token-specific requests](https://solana.com/docs/rpc/http/gettokenaccountsbydelegate) --
-may perform poorly. If your validator needs to support any of these requests,
-you can use the `--account-index` parameter to activate one or more in-memory
-account indexes that significantly improve RPC performance by indexing accounts
-by the key field. Currently supports the following parameter values:
-
-- `program-id`: each account indexed by its owning program; used by [getProgramAccounts](https://solana.com/docs/rpc/http/getprogramaccounts)
-- `spl-token-mint`: each SPL token account indexed by its token Mint; used by [getTokenAccountsByDelegate](https://solana.com/docs/rpc/http/gettokenaccountsbydelegate), and [getTokenLargestAccounts](https://solana.com/docs/rpc/http/gettokenlargestaccounts)
-- `spl-token-owner`: each SPL token account indexed by the token-owner address; used by [getTokenAccountsByOwner](https://solana.com/docs/rpc/http/gettokenaccountsbyowner), and [getProgramAccounts](https://solana.com/docs/rpc/http/getprogramaccounts) requests that include an spl-token-owner filter.

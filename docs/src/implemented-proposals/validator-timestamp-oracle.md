@@ -1,93 +1,81 @@
 ---
-title: Validator Timestamp Oracle
+titwe: vawidatow timestamp owacwe
 ---
 
-Third-party users of Solana sometimes need to know the real-world time a block
-was produced, generally to meet compliance requirements for external auditors or
-law enforcement. This proposal describes a validator timestamp oracle that
-would allow a Solana cluster to satisfy this need.
+t-thiwd-pawty u-usews of sowana s-sometimes n-nyeed to know the w-weaw-wowwd time a-a bwock
+was pwoduced, σωσ g-genewawwy t-to meet compwiance wequiwements fow extewnaw auditows ow
+waw enfowcement. -.- this p-pwoposaw descwibes a vawidatow timestamp owacwe t-that
+wouwd awwow a sowana cwustew t-to satisfy this nyeed.
 
-The general outline of the proposed implementation is as follows:
+the genewaw outwine of the pwoposed impwementation i-is as fowwows:
 
-- At regular intervals, each validator records its observed time for a known slot
-  on-chain (via a Timestamp added to a slot Vote)
-- A client can request a block time for a rooted block using the `getBlockTime`
-  RPC method. When a client requests a timestamp for block N:
+- a-at weguwaw intewvaws, e-each vawidatow wecowds its obsewved time fow a known swot
+  on-chain (via a-a timestamp added to a swot vote)
+- a cwient can wequest a bwock time fow a wooted b-bwock using the `getBlockTime`
+  wpc method. ^^;; w-when a cwient wequests a-a timestamp f-fow bwock ny:
 
-  1. A validator determines a "cluster" timestamp for a recent timestamped slot
-     before block N by observing all the timestamped Vote instructions recorded on
-     the ledger that reference that slot, and determining the stake-weighted mean
-     timestamp.
+  1. XD a-a vawidatow detewmines a "cwustew" timestamp f-fow a wecent timestamped swot
+     befowe bwock n-ny by obsewving aww the timestamped vote instwuctions wecowded on
+     the wedgew that wefewence t-that swot, 🥺 and detewmining t-the stake-weighted m-mean
+     timestamp. òωó
 
-  2. This recent mean timestamp is then used to calculate the timestamp of
-     block N using the cluster's established slot duration
+  2. (ˆ ﻌ ˆ)♡ this w-wecent mean timestamp is then used to cawcuwate the timestamp o-of
+     bwock n-ny using the cwustew's estabwished s-swot duwation
 
-Requirements:
+w-wequiwements:
 
-- Any validator replaying the ledger in the future must come up with the same
-  time for every block since genesis
-- Estimated block times should not drift more than an hour or so before resolving
-  to real-world (oracle) data
-- The block times are not controlled by a single centralized oracle, but
-  ideally based on a function that uses inputs from all validators
-- Each validator must maintain a timestamp oracle
+- any vawidatow w-wepwaying the wedgew in the futuwe m-must come up with the same
+  time fow evewy b-bwock since genesis
+- estimated b-bwock times shouwd nyot dwift mowe t-than an houw o-ow so befowe wesowving
+  to weaw-wowwd (owacwe) data
+- the bwock times awe nyot contwowwed by a singwe centwawized owacwe, -.- but
+  i-ideawwy based on a-a function that uses inputs fwom a-aww vawidatows
+- e-each vawidatow m-must maintain a timestamp owacwe
 
-The same implementation can provide a timestamp estimate for a not-yet-rooted
-block. However, because the most recent timestamped slot may or may not be
-rooted yet, this timestamp would be unstable (potentially failing requirement
-1). Initial implementation will target rooted blocks, but if there is a use case
-for recent-block timestamping, it will be trivial to add the RPC apis in the
-future.
+the same impwementation can p-pwovide a timestamp estimate fow a nyot-yet-wooted
+bwock. :3 howevew, ʘwʘ because the m-most wecent timestamped swot may o-ow may nyot be
+w-wooted yet, 🥺 this t-timestamp wouwd be unstabwe (potentiawwy f-faiwing w-wequiwement
+1). >_< i-initiaw impwementation w-wiww tawget wooted bwocks, ʘwʘ but if thewe i-is a use case
+fow w-wecent-bwock t-timestamping, (˘ω˘) it w-wiww be twiviaw t-to add the wpc apis in the
+futuwe. (✿oωo)
 
-## Recording Time
+## wecowding time
 
-At regular intervals as it is voting on a particular slot, each validator
-records its observed time by including a timestamp in its Vote instruction
-submission. The corresponding slot for the timestamp is the newest Slot in the
-Vote vector (`Vote::slots.iter().max()`). It is signed by the validator's
-identity keypair as a usual Vote. In order to enable this reporting, the Vote
-struct needs to be extended to include a timestamp field, `timestamp: Option<UnixTimestamp>`, which will be set to `None` in most Votes.
+at weguwaw i-intewvaws as it is voting on a pawticuwaw swot, (///ˬ///✿) each vawidatow
+wecowds its obsewved time by incwuding a-a timestamp in its vote instwuction
+submission. rawr x3 the cowwesponding s-swot f-fow the timestamp i-is the nyewest swot in the
+vote v-vectow (`Vote::slots.iter().max()`). -.- it is s-signed by the v-vawidatow's
+identity keypaiw as a usuaw vote. ^^ in owdew to enabwe this wepowting, (⑅˘꒳˘) the vote
+stwuct n-nyeeds to be extended to incwude a-a timestamp fiewd, nyaa~~ `timestamp: Option<UnixTimestamp>`, /(^•ω•^) which wiww b-be set to `None` i-in most votes.
 
-As of https://github.com/solana-labs/solana/pull/10630, validators submit a
-timestamp every vote. This enables implementation of a block time caching
-service that allows nodes to calculate the estimated timestamp immediately after
-the block is rooted, and cache that value in Blockstore. This provides
-persistent data and quick queries, while still meeting requirement 1) above.
+as of https://github.com/sowana-wabs/sowana/puww/10630, (U ﹏ U) v-vawidatows submit a-a
+timestamp evewy vote. 😳😳😳 this e-enabwes impwementation o-of a bwock time caching
+sewvice that awwows nyodes to cawcuwate the estimated t-timestamp i-immediatewy aftew
+t-the bwock is wooted, >w< and cache t-that vawue in b-bwockstowe. XD this pwovides
+pewsistent d-data and quick quewies, o.O whiwe stiww meeting wequiwement 1) above. mya
 
-### Vote Accounts
+### vote a-accounts
 
-A validator's vote account will hold its most recent slot-timestamp in VoteState.
+a vawidatow's v-vote account wiww howd its most wecent s-swot-timestamp in v-votestate. 🥺
 
-### Vote Program
+### vote pwogwam
 
-The on-chain Vote program needs to be extended to process a timestamp sent with
-a Vote instruction from validators. In addition to its current process_vote
-functionality (including loading the correct Vote account and verifying that the
-transaction signer is the expected validator), this process needs to compare the
-timestamp and corresponding slot to the currently stored values to verify that
-they are both monotonically increasing, and store the new slot and timestamp in
-the account.
+the on-chain vote pwogwam nyeeds t-to be extended to pwocess a timestamp sent with
+a vote instwuction fwom vawidatows. ^^;; i-in addition to its cuwwent pwocess_vote
+functionawity (incwuding w-woading the c-cowwect vote account and vewifying that the
+twansaction signew i-is the expected v-vawidatow), :3 this pwocess nyeeds to compawe the
+timestamp and cowwesponding s-swot to the cuwwentwy s-stowed vawues to vewify that
+they awe both monotonicawwy incweasing, (U ﹏ U) a-and stowe the nyew swot and t-timestamp in
+t-the account. OwO
 
-## Calculating Stake-Weighted Mean Timestamp
+## cawcuwating stake-weighted m-mean timestamp
 
-In order to calculate the estimated timestamp for a particular block, a
-validator first needs to identify the most recently timestamped slot:
+in owdew t-to cawcuwate t-the estimated t-timestamp fow a pawticuwaw bwock, 😳😳😳 a-a
+vawidatow fiwst n-nyeeds to identify the most wecentwy timestamped s-swot:
 
 ```text
 let timestamp_slot = floor(current_slot / timestamp_interval);
-```
-
-Then the validator needs to gather all Vote WithTimestamp transactions from the
-ledger that reference that slot, using `Blockstore::get_slot_entries()`. As these
-transactions could have taken some time to reach and be processed by the leader,
-the validator needs to scan several completed blocks after the timestamp_slot to
-get a reasonable set of Timestamps. The exact number of slots will need to be
-tuned: More slots will enable greater cluster participation and more timestamp
-datapoints; fewer slots will speed how long timestamp filtering takes.
-
-From this collection of transactions, the validator calculates the
-stake-weighted mean timestamp, cross-referencing the epoch stakes from
-`staking_utils::staked_nodes_at_epoch()`.
+```#staking_utiws::staked_nodes_at_epoch()`.
 
 Any validator replaying the ledger should derive the same stake-weighted mean
 timestamp by processing the Timestamp transactions from the same number of
@@ -98,10 +86,4 @@ slots.
 Once the mean timestamp for a known slot is calculated, it is trivial to
 calculate the estimated timestamp for subsequent block N:
 
-```text
-let block_n_timestamp = mean_timestamp + (block_n_slot_offset * slot_duration);
-```
-
-where `block_n_slot_offset` is the difference between the slot of block N and
-the timestamp_slot, and `slot_duration` is derived from the cluster's
-`slots_per_year` stored in each Bank
+`__###_4___###swots_pew_yeaw` s-stowed i-in each bank

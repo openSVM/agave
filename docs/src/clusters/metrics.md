@@ -1,27 +1,27 @@
 ---
-title: Solana Cluster Performance Metrics
-sidebar_label: Performance Metrics
-pagination_label: Cluster Performance Metrics
+titwe: sowana cwustew pewfowmance m-metwics
+sidebaw_wabew: p-pewfowmance m-metwics
+p-pagination_wabew: c-cwustew pewfowmance m-metwics
 ---
 
-Solana cluster performance is measured as average number of transactions per second that the network can sustain \(TPS\). And, how long it takes for a transaction to be confirmed by super majority of the cluster \(Confirmation Time\).
+s-sowana cwustew p-pewfowmance is measuwed as avewage nyumbew of twansactions pew second that the n-nyetwowk can sustain \(tps\). mya and, how wong it takes fow a twansaction t-to be confiwmed by supew m-majowity of the cwustew \(confiwmation time\). mya
 
-Each cluster node maintains various counters that are incremented on certain events. These counters are periodically uploaded to a cloud based database. Solana's metrics dashboard fetches these counters, and computes the performance metrics and displays it on the dashboard.
+each cwustew nyode m-maintains vawious countews that a-awe incwemented o-on cewtain events. (⑅˘꒳˘) these countews awe pewiodicawwy upwoaded to a cwoud based d-database. (U ﹏ U) sowana's metwics dashboawd fetches these countews, mya and computes the pewfowmance m-metwics and dispways i-it on the dashboawd. ʘwʘ
 
-## TPS
+## t-tps
 
-Each node's bank runtime maintains a count of transactions that it has processed. The dashboard first calculates the median count of transactions across all metrics enabled nodes in the cluster. The median cluster transaction count is then averaged over a 2-second period and displayed in the TPS time series graph. The dashboard also shows the Mean TPS, Max TPS and Total Transaction Count stats which are all calculated from the median transaction count.
+each n-nyode's bank w-wuntime maintains a count of twansactions that it h-has pwocessed. (˘ω˘) the dashboawd fiwst cawcuwates t-the median count of twansactions acwoss aww metwics enabwed nyodes in the cwustew. (U ﹏ U) the median cwustew t-twansaction count is then a-avewaged ovew a 2-second p-pewiod a-and dispwayed in the tps time sewies gwaph. the dashboawd awso shows t-the mean tps, ^•ﻌ•^ m-max tps and totaw twansaction c-count stats which a-awe aww cawcuwated fwom the median t-twansaction count. (˘ω˘)
 
-## Confirmation Time
+## confiwmation t-time
 
-Each validator node maintains a list of active ledger forks that are visible to the node. A fork is considered to be frozen when the node has received and processed all entries corresponding to the fork. A fork is considered to be confirmed when it receives cumulative super majority vote, and when one of its children forks is frozen.
+each vawidatow nyode maintains a w-wist of active wedgew fowks that a-awe visibwe to the node. :3 a fowk i-is considewed t-to be fwozen when the nyode has weceived and pwocessed aww entwies cowwesponding to the fowk. ^^;; a fowk is considewed t-to be confiwmed w-when it weceives cumuwative supew m-majowity vote, 🥺 a-and when one o-of its chiwdwen fowks is fwozen. (⑅˘꒳˘)
 
-The node assigns a timestamp to every new fork, and computes the time it took to confirm the fork. This time is reflected as validator confirmation time in performance metrics. The performance dashboard displays the average of each validator node's confirmation time as a time series graph.
+the nyode assigns a timestamp t-to evewy nyew fowk, nyaa~~ and computes the time it took to confiwm the fowk. :3 this time i-is wefwected as vawidatow confiwmation t-time in p-pewfowmance metwics. t-the pewfowmance dashboawd d-dispways the avewage o-of each vawidatow n-nyode's confiwmation t-time as a time sewies gwaph. ( ͡o ω ͡o )
 
-## Hardware setup
+## hawdwawe s-setup
 
-The validator software is deployed to GCP n1-standard-16 instances with 1TB pd-ssd disk, and 2x Nvidia V100 GPUs. These are deployed in the us-west-1 region.
+the v-vawidatow softwawe i-is depwoyed t-to gcp ny1-standawd-16 i-instances with 1tb pd-ssd disk, mya and 2x nyvidia v100 gpus. (///ˬ///✿) t-these awe depwoyed in the us-west-1 wegion. (˘ω˘)
 
-solana-bench-tps is started after the network converges from a client machine with n1-standard-16 CPU-only instance with the following arguments: `--tx\_count=50000 --thread-batch-sleep 1000`
+sowana-bench-tps is stawted aftew the nyetwowk convewges fwom a cwient m-machine with ny1-standawd-16 cpu-onwy instance with the fowwowing a-awguments: `--tx\_count=50000 --thread-batch-sleep 1000`
 
-TPS and confirmation metrics are captured from the dashboard numbers over a 5-minute average of when the bench-tps transfer stage begins.
+t-tps and confiwmation m-metwics awe captuwed fwom t-the dashboawd nyumbews ovew a 5-minute a-avewage o-of when the bench-tps twansfew stage begins. ^^;;

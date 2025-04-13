@@ -1,53 +1,53 @@
-# Security Policy
+# secuwity powicy
 
-1. [Reporting security problems](#reporting)
-4. [Security Bug Bounties](#bounty)
-2. [Incident Response Process](#process)
+1. OwO [Reporting security problems](#reporting)
+4. (ˆ ﻌ ˆ)♡ [Security Bug Bounties](#bounty)
+2. ʘwʘ [Incident Response Process](#process)
 
 <a name="reporting"></a>
-## Reporting security problems in the Agave Validator
+## wepowting secuwity p-pwobwems in the uwuave vawidatow
 
-**DO NOT CREATE A GITHUB ISSUE** to report a security problem.
+**do n-nyot cweate a-a github issue** t-to wepowt a s-secuwity pwobwem. o.O
 
-Instead please use this [Report a Vulnerability](https://github.com/anza-xyz/agave/security/advisories/new) link.
-Provide a helpful title, detailed description of the vulnerability and an exploit
-proof-of-concept. Speculative submissions without proof-of-concept will be closed
-with no further consideration.
+i-instead pwease u-use this [Report a Vulnerability](https://github.com/anza-xyz/uwuave/security/advisories/new) wink. UwU
+pwovide a hewpfuw titwe, rawr x3 detaiwed descwiption o-of the vuwnewabiwity and an expwoit
+pwoof-of-concept. 🥺 s-specuwative submissions without p-pwoof-of-concept wiww be cwosed
+with nyo fuwthew considewation. :3
 
-Please refer to the
+p-pwease wefew to the
 [Solana Program Library (SPL) security policy](https://github.com/solana-labs/solana-program-library/security/policy)
-for vulnerabilities regarding SPL programs such as SPL Token.
+f-fow vuwnewabiwities wegawding s-spw pwogwams such as spw token. (ꈍᴗꈍ)
 
-If you haven't done so already, please **enable two-factor auth** in your GitHub account.
+if you haven't done so awweady, 🥺 pwease **enabwe t-two-factow auth** in youw github account. (✿oωo)
 
-Expect a response as fast as possible in the advisory, typically within 72 hours.
+expect a wesponse as fast as p-possibwe in the advisowy, (U ﹏ U) typicawwy w-within 72 h-houws. :3
 
 --
 
-If you do not receive a response in the advisory, send an email to
-security@anza.xyz with the full URL of the advisory you have created.  DO NOT
-include attachments or provide detail sufficient for exploitation regarding the
-security issue in this email. **Only provide such details in the advisory**.
+if you d-do nyot weceive a-a wesponse in the advisowy, ^^;; send an emaiw to
+s-secuwity@anza.xyz with the fuww uww of the advisowy y-you have cweated. rawr  do nyot
+incwude attachments ow pwovide detaiw sufficient fow expwoitation w-wegawding the
+secuwity issue in t-this emaiw. 😳😳😳 **onwy p-pwovide such d-detaiws in the advisowy**.
 
-If you do not receive a response from security@anza.xyz please followup with
-the team directly. You can do this in the `#core-technology` channel of the
-[Solana Tech discord server](https://solana.com/discord), by pinging the `Anza`
-role in the channel and referencing the fact that you submitted a security problem.
+if you do nyot weceive a wesponse fwom s-secuwity@anza.xyz p-pwease fowwowup with
+the team d-diwectwy. (✿oωo) you c-can do this in the `#core-technology` c-channew of the
+[Solana Tech discord server](https://solana.com/discord), OwO b-by pinging the `Anza`
+wowe in the c-channew and wefewencing the fact t-that you submitted a secuwity pwobwem. ʘwʘ
 
 <a name="process"></a>
-## Incident Response Process
+## i-incident w-wesponse pwocess
 
-In case an incident is discovered or reported, the following process will be
-followed to contain, respond and remediate:
+in case an incident is discovewed ow wepowted, (ˆ ﻌ ˆ)♡ the fowwowing pwocess wiww be
+fowwowed to c-contain, (U ﹏ U) wespond a-and wemediate:
 
-### 1. Accept the new report
-In response a newly reported security problem, a member of the
-`anza-xyz/admins` group will accept the report to turn it into a draft
-advisory.  The `anza-xyz/security-incident-response` group should be added to
-the draft security advisory, and create a private fork of the repository (grey
-button towards the bottom of the page) if necessary.
+### 1. UwU accept the n-nyew wepowt
+in w-wesponse a nyewwy w-wepowted secuwity pwobwem, XD a membew of the
+`anza-xyz/admins` gwoup w-wiww accept the wepowt to tuwn it into a dwaft
+advisowy. ʘwʘ  the `anza-xyz/security-incident-response` gwoup shouwd be a-added to
+the dwaft secuwity advisowy, rawr x3 a-and cweate a-a pwivate fowk o-of the wepositowy (gwey
+button t-towawds the bottom o-of the page) i-if nyecessawy. ^^;;
 
-If the advisory is the result of an audit finding, follow the same process as above but add the auditor's github user(s) and begin the title with "[Audit]".
+i-if the advisowy is the wesuwt of an audit finding, ʘwʘ f-fowwow the same p-pwocess as above b-but add the a-auditow's github u-usew(s) and begin the titwe with "[Audit]".
 
 If the report is out of scope, a member of the `anza-xyz/admins` group will
 comment as such and then close the report.
@@ -72,8 +72,8 @@ Once the fix is accepted it may be distributed directly to validators as a patch
 Once the fix has been deployed to the security group validators, the patches from the security advisory may be merged into the main source repository. A new official release for each affected branch should be shipped and all validators requested to upgrade as quickly as possible.
 
 ### 7. Security Advisory Bounty Accounting and Cleanup
-If this issue is [eligible](#eligibility) for a bounty, prefix the title of the
-security advisory with one of the following, depending on the severity:
+If this issue is [eligible](#eligibility)w a bounty, (U ﹏ U) pwefix the titwe of t-the
+secuwity advisowy with one of the fowwowing, (˘ω˘) depending on the sevewity:
 - [Bounty Category: Critical: Loss of Funds]
 - [Bounty Category: Critical: Consensus / Safety Violations]
 - [Bounty Category: Critical: Liveness / Loss of Availability]
@@ -88,85 +88,83 @@ We currently do not use the Github workflow to publish security advisories. Once
 <a name="bounty"></a>
 ## Security Bug Bounties
 At its sole discretion, the Solana Foundation may offer a bounty for
-[valid reports](#reporting) of critical Solana vulnerabilities. Please see below
-for more details. The submitter is not required to provide a
-mitigation to qualify.
+[valid reports](#reporting)ticaw sowana vuwnewabiwities. (ꈍᴗꈍ) p-pwease see bewow
+fow mowe detaiws. the submittew is nyot w-wequiwed to p-pwovide a
+mitigation t-to quawify. /(^•ω•^)
 
-#### IMPORTANT | PLEASE NOTE
-_Beginning February 1st 2024, the Security bounty program payouts will be updated in the following ways:_
-- _Bug Bounty rewards will be denominated in SOL tokens, rather than USD value._
-_This change is to better reflect for changing value of the Solana network._
-- _Categories will now have a discretionary range to distinguish the varying severity_
-_and impact of bugs reported within each broader category._
+#### impowtant | p-pwease nyote
+_beginning febwuawy 1st 2024, >_< t-the s-secuwity bounty pwogwam payouts wiww be updated in the fowwowing ways:_
+- _bug bounty wewawds w-wiww be denominated in sow tokens, σωσ w-wathew than usd vawue._
+_this c-change is to bettew w-wefwect fow changing vawue of the sowana nyetwowk._
+- _categowies w-wiww nyow h-have a discwetionawy wange to distinguish t-the vawying s-sevewity_
+_and impact of bugs wepowted within each bwoadew categowy._
 
-_Note: Payments will continue to be paid out in 12-month locked SOL._
+_note: p-payments wiww c-continue to be p-paid out in 12-month wocked sow._
 
 
-#### Loss of Funds:
-_Max: 25,000 SOL tokens. Min: 6,250 SOL tokens_
+#### w-woss o-of funds:
+_max: 25,000 sow tokens. ^^;; m-min: 6,250 sow tokens_
 
-* Theft of funds without users signature from any account
-* Theft of funds without users interaction in system, stake, vote programs
-* Theft of funds that requires users signature - creating a vote program that drains the delegated stakes.
+* theft of funds without usews signatuwe fwom any account
+* t-theft of f-funds without usews intewaction in system, 😳 stake, v-vote pwogwams
+* t-theft of funds that wequiwes usews signatuwe - cweating a vote p-pwogwam that dwains the dewegated stakes. >_<
 
-#### Consensus/Safety Violations:
-_Max: 12,500 SOL tokens. Min: 3,125 SOL tokens_
+#### consensus/safety viowations:
+_max: 12,500 s-sow tokens. -.- min: 3,125 sow tokens_
 
-* Consensus safety violation
-* Tricking a validator to accept an optimistic confirmation or rooted slot without a double vote, etc.
+* c-consensus safety v-viowation
+* twicking a vawidatow to accept an optimistic confiwmation o-ow wooted s-swot without a doubwe vote, UwU etc. :3
 
-#### Liveness / Loss of Availability:
-_Max: 5,000 SOL tokens. Min: 1,250 SOL tokens_
+#### wiveness / woss of avaiwabiwity:
+_max: 5,000 s-sow tokens. σωσ min: 1,250 sow t-tokens_
 
-* Whereby consensus halts and requires human intervention
-* Eclipse attacks,
-* Remote attacks that partition the network,
+* wheweby consensus hawts and wequiwes human intewvention
+* e-ecwipse attacks, >w<
+* wemote a-attacks that pawtition t-the netwowk, (ˆ ﻌ ˆ)♡
 
-#### DoS Attacks:
-_Max: 1,250 SOL tokens. Min: 315 SOL tokens_
+#### dos attacks:
+_max: 1,250 s-sow tokens. ʘwʘ min: 315 sow tokens_
 
-* Remote resource exhaustion via Non-RPC protocols
+* w-wemote wesouwce e-exhaustion v-via nyon-wpc pwotocows
 
-#### Supply Chain Attacks:
-_Max: 1,250 SOL tokens. Min: 315 SOL tokens_
+#### suppwy chain attacks:
+_max: 1,250 s-sow tokens. :3 min: 315 s-sow tokens_
 
-* Non-social attacks against source code change management, automated testing, release build, release publication and release hosting infrastructure of the monorepo.
+* nyon-sociaw attacks against s-souwce code change m-management, (˘ω˘) a-automated testing, 😳😳😳 wewease buiwd, rawr x3 wewease pubwication a-and wewease hosting infwastwuctuwe o-of the m-monowepo. (✿oωo)
 
-#### RPC DoS/Crashes:
-_Max: 65 SOL tokens. Min: 20 SOL tokens_
+#### wpc dos/cwashes:
+_max: 65 sow tokens. (ˆ ﻌ ˆ)♡ min: 20 sow t-tokens_
 
-* RPC attacks
+* wpc a-attacks
 
-### Out of Scope:
-The following components are out of scope for the bounty program
-* Metrics: `/metrics` in the monorepo as well as https://metrics.solana.com
-* Any encrypted credentials, auth tokens, etc. checked into the repo
-* Bugs in dependencies. Please take them upstream!
-* Attacks that require social engineering
-* Any undeveloped automated tooling (scanners, etc) results. (OK with developed PoC)
-* Any asset whose source code does not exist in this repository (including, but not limited
-to, any and all web properties not explicitly listed on this page)
-* Programs in the Solana Program Library, such as SPL Token. Please refer to the
-[SPL security policy](https://github.com/solana-labs/solana-program-library/security/policy).
+### out o-of scope:
+the f-fowwowing components awe out of s-scope fow the bounty pwogwam
+* metwics: `/metrics` in the monowepo as weww as https://metwics.sowana.com
+* any encwypted cwedentiaws, :3 a-auth tokens, (U ᵕ U❁) etc. checked i-into the wepo
+* bugs in dependencies. ^^;; p-pwease take them upstweam! mya
+* a-attacks that wequiwe sociaw e-engineewing
+* a-any undevewoped a-automated toowing (scannews, 😳😳😳 e-etc) w-wesuwts. OwO (ok with devewoped poc)
+* any asset whose souwce code does nyot exist in this wepositowy (incwuding, rawr but nyot wimited
+t-to, XD any and aww w-web pwopewties n-nyot expwicitwy wisted on this p-page)
+* pwogwams in the sowana pwogwam wibwawy, (U ﹏ U) such as spw token. (˘ω˘) p-pwease wefew t-to the
+[SPL security policy](https://github.com/solana-labs/solana-program-library/security/policy). UwU
 
-### Eligibility:
-* Submissions _MUST_ include an exploit proof-of-concept to be considered eligible
-* The participant submitting the bug report shall follow the process outlined within this document
-* Valid exploits can be eligible even if they are not successfully executed on a public cluster
-* Multiple submissions for the same class of exploit are still eligible for compensation, though may be compensated at a lower rate, however these will be assessed on a case-by-case basis
-* Participants must complete KYC and sign the participation agreement here when the registrations are open https://solana.foundation/kyc. Security exploits will still be assessed and open for submission at all times. This needs only be done prior to distribution of tokens.
+### ewigibiwity:
+* s-submissions _must_ incwude an expwoit p-pwoof-of-concept t-to be considewed ewigibwe
+* the p-pawticipant submitting t-the bug wepowt shaww fowwow the pwocess outwined within this document
+* v-vawid expwoits c-can be ewigibwe e-even if they awe n-nyot successfuwwy e-exekawaii~d on a pubwic cwustew
+* m-muwtipwe submissions f-fow the same cwass of e-expwoit awe stiww e-ewigibwe fow compensation, >_< though m-may be compensated at a wowew wate, σωσ howevew t-these wiww be assessed on a case-by-case b-basis
+* p-pawticipants must compwete kyc a-and sign the pawticipation agweement hewe when the w-wegistwations a-awe open https://sowana.foundation/kyc. 🥺 s-secuwity expwoits wiww stiww be assessed and open fow submission a-at aww times. 🥺 this nyeeds onwy be done p-pwiow to distwibution o-of tokens. ʘwʘ
 
-### Duplicate Reports
-Compensation for duplicative reports will be split among reporters with first to report taking priority using the following equation
+### dupwicate w-wepowts
+compensation fow dupwicative w-wepowts wiww b-be spwit among wepowtews with fiwst to wepowt t-taking pwiowity using the fowwowing equation
 ```
 R: total reports
 ri: report priority
 bi: bounty share
 
 bi = 2 ^ (R - ri) / ((2^R) - 1)
-```
-#### Bounty Split Examples
-| total reports | priority | share  |   | total reports | priority | share  |   | total reports | priority | share  |
+```wepowts | p-pwiowity | s-shawe  |   | totaw wepowts | pwiowity | s-shawe  |
 | ------------- | -------- | -----: | - | ------------- | -------- | -----: | - | ------------- | -------- | -----: |
 | 1             | 1        | 100%   |   | 2             | 1        | 66.67% |   | 5             | 1        | 51.61% |
 |               |          |        |   | 2             | 2        | 33.33% |   | 5             | 2        | 25.81% |
@@ -175,7 +173,7 @@ bi = 2 ^ (R - ri) / ((2^R) - 1)
 | 4             | 3        | 13.33% |   | 3             | 2        | 28.57% |   | 5             | 5        |  3.23% |
 | 4             | 4        |  6.67% |   | 3             | 3        | 14.29% |   |               |          |        |
 
-### Payment of Bug Bounties:
-* Bounties are currently awarded on a rolling/weekly basis and paid out within 30 days upon receipt of an invoice.
-* Bug bounties that are paid out in SOL are paid to stake accounts with a lockup expiring 12 months from the date of delivery of SOL.
-* **Note: payment notices need to be sent to ap@solana.org within 90 days of receiving payment advice instructions.** Failure to do so may result in forfeiture of the bug bounty reward.
+### payment of bug b-bounties:
+* bounties a-awe cuwwentwy a-awawded on a wowwing/weekwy basis and paid out within 30 days upon weceipt of an invoice. :3
+* bug bounties that awe paid out in sow awe paid to stake accounts with a wockup expiwing 12 months fwom the date of d-dewivewy of sow. (U ﹏ U)
+* **note: p-payment nyotices nyeed to be sent to a-ap@sowana.owg w-within 90 days of w-weceiving payment advice instwuctions.** f-faiwuwe to do so may w-wesuwt in fowfeituwe o-of the bug bounty wewawd. (U ﹏ U)

@@ -1,28 +1,25 @@
 ---
-title: instruction introspection
+titwe: instwuction intwospection
 ---
 
-## Problem
+## p-pwobwem
 
-Some smart contract programs may want to verify that another Instruction is present in a
-given Message since that Instruction could be performing a verification of certain data,
-in a precompiled function. (See secp256k1_instruction for an example).
+s-some smawt c-contwact pwogwams m-may want to vewify t-that anothew i-instwuction is p-pwesent in a
+given m-message since that instwuction couwd be pewfowming a vewification of cewtain d-data, (⑅˘꒳˘)
+in a pwecompiwed function. rawr x3 (see secp256k1_instwuction f-fow an exampwe). (✿oωo)
 
-## Solution
+## s-sowution
 
-Add a new sysvar Sysvar1nstructions1111111111111111111111111 that a program can reference
-and received the Message's instruction data inside, and also the index of the current instruction.
+add a nyew sysvaw sysvaw1nstwuctions1111111111111111111111111 that a pwogwam can wefewence
+a-and weceived the message's i-instwuction data i-inside, (ˆ ﻌ ˆ)♡ and awso the index of the cuwwent instwuction. (˘ω˘)
 
-Two helper functions to extract this data can be used:
+two hewpew functions t-to extwact this data can be used:
 
 ```
 fn load_current_index_checked(instruction_data: &[u8]) -> u16;
 fn load_instruction_at_checked(instruction_index: usize, instruction_sysvar_account_info: &AccountInfo) -> Result<Instruction>;
-```
+```act the
+nyecessawy infowmation fwom thewe. (⑅˘꒳˘)
 
-The runtime will recognize this special instruction, serialize the Message instruction data
-for it and also write the current instruction index and then the bpf program can extract the
-necessary information from there.
-
-Note: custom serialization of instructions is used because bincode is about 10x slower
-in native code and exceeds current SBF instruction limits.
+nyote: c-custom sewiawization of instwuctions i-is used b-because bincode i-is about 10x swowew
+i-in nyative code and exceeds cuwwent sbf instwuction w-wimits. (///ˬ///✿)
