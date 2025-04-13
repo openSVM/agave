@@ -4,6 +4,7 @@
 // Export tokio for test clients
 pub use tokio;
 use {
+    agave_feature_set::FEATURE_NAMES,
     async_trait::async_trait,
     base64::{prelude::BASE64_STANDARD, Engine},
     chrono_humanize::{Accuracy, HumanTime, Tense},
@@ -12,7 +13,6 @@ use {
     solana_banks_client::start_client,
     solana_banks_server::banks_server::start_local_server,
     solana_compute_budget::compute_budget::ComputeBudget,
-    solana_feature_set::FEATURE_NAMES,
     solana_instruction::{error::InstructionError, Instruction},
     solana_log_collector::ic_msg,
     solana_program_runtime::{
@@ -20,12 +20,13 @@ use {
         serialization::serialize_parameters, stable_log,
     },
     solana_runtime::{
-        accounts_background_service::{AbsRequestSender, SnapshotRequestKind},
+        accounts_background_service::SnapshotRequestKind,
         bank::Bank,
         bank_forks::BankForks,
         commitment::BlockCommitmentCache,
         genesis_utils::{create_genesis_config_with_leader_ex, GenesisConfigInfo},
         runtime_config::RuntimeConfig,
+        snapshot_config::SnapshotConfig,
         snapshot_controller::SnapshotController,
     },
     solana_sdk::{
@@ -74,7 +75,7 @@ pub use {
         error::EbpfError,
         vm::{get_runtime_environment_key, EbpfVm},
     },
-    solana_sdk::transaction_context::IndexOfAccount,
+    solana_transaction_context::IndexOfAccount,
 };
 
 pub mod programs;
@@ -128,10 +129,14 @@ pub fn invoke_builtin_function(
     let deduplicated_indices: HashSet<IndexOfAccount> = instruction_account_indices.collect();
 
     // Serialize entrypoint parameters with SBF ABI
+    let mask_out_rent_epoch_in_vm_serialization = invoke_context
+        .get_feature_set()
+        .is_active(&agave_feature_set::mask_out_rent_epoch_in_vm_serialization::id());
     let (mut parameter_bytes, _regions, _account_lengths) = serialize_parameters(
         transaction_context,
         instruction_context,
         true, // copy_account_data // There is no VM so direct mapping can not be implemented here
+        mask_out_rent_epoch_in_vm_serialization,
     )?;
 
     // Deserialize data back into instruction params
@@ -1172,15 +1177,18 @@ impl ProgramTestContext {
         };
 
         let (snapshot_request_sender, snapshot_request_receiver) = crossbeam_channel::unbounded();
-        let abs_request_sender = AbsRequestSender::new(snapshot_request_sender);
         let snapshot_controller = SnapshotController::new(
-            abs_request_sender,
-            None, /* snapshot_config */
+            snapshot_request_sender,
+            SnapshotConfig::new_disabled(),
             bank_forks.root(),
         );
 
         bank_forks
-            .set_root(pre_warp_slot, &snapshot_controller, Some(pre_warp_slot))
+            .set_root(
+                pre_warp_slot,
+                Some(&snapshot_controller),
+                Some(pre_warp_slot),
+            )
             .unwrap();
 
         // The call to `set_root()` above will send an EAH request.  Need to intercept and handle
@@ -1246,7 +1254,7 @@ impl ProgramTestContext {
         bank_forks
             .set_root(
                 pre_warp_slot,
-                &SnapshotController::default(),
+                None, // snapshot_controller
                 Some(pre_warp_slot),
             )
             .unwrap();

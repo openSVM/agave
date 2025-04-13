@@ -6,6 +6,7 @@ edition = { workspace = true }
 publish = false
 
 [dependencies]
+agave-feature-set = { workspace = true }
 solana-bpf-loader-program = { workspace = true }
 solana-client = { workspace = true }
 solana-compute-budget = { workspace = true }
@@ -14,6 +15,7 @@ solana-logger = { workspace = true }
 solana-program-runtime = { workspace = true, features = ["dev-context-only-utils"] }
 solana-sdk = { workspace = true }
 solana-svm = { workspace = true }
+solana-svm-callback = { workspace = true }
 solana-system-program = { workspace = true }
 spl-associated-token-account = { workspace = true }
 spl-token = { workspace = true }

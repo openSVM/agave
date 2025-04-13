@@ -4,10 +4,11 @@ use {
             account_map_entry::{
                 AccountMapEntry, AccountMapEntryMeta, PreAllocatedAccountMapEntry,
             },
-            DiskIndexValue, IndexValue, RefCount, SlotList, UpsertReclaim, ZeroLamport,
+            DiskIndexValue, IndexValue, RefCount, SlotList, UpsertReclaim,
         },
         bucket_map_holder::{Age, AtomicAge, BucketMapHolder},
         bucket_map_holder_stats::BucketMapHolderStats,
+        is_zero_lamport::IsZeroLamport,
         pubkey_bins::PubkeyBinCalculator24,
         waitable_condvar::WaitableCondvar,
     },
@@ -1063,9 +1064,7 @@ impl<T: IndexValue, U: DiskIndexValue + From<T> + Into<T>> InMemAccountsIndex<T,
 
     /// assumes 1 entry in the slot list. Ignores overhead of the HashMap and such
     pub const fn approx_size_of_one_entry() -> usize {
-        std::mem::size_of::<T>()
-            + std::mem::size_of::<Pubkey>()
-            + std::mem::size_of::<AccountMapEntry<T>>()
+        size_of::<(Slot, T)>() + size_of::<Pubkey>() + size_of::<AccountMapEntry<T>>()
     }
 
     fn should_evict_based_on_age(

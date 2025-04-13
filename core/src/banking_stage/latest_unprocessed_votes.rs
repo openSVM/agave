@@ -1,5 +1,6 @@
 use {
     super::immutable_deserialized_packet::{DeserializedPacketError, ImmutableDeserializedPacket},
+    agave_feature_set as feature_set,
     itertools::Itertools,
     rand::{thread_rng, Rng},
     solana_perf::packet::Packet,
@@ -7,7 +8,6 @@ use {
     solana_sdk::{
         account::from_account,
         clock::{Slot, UnixTimestamp},
-        feature_set::{self},
         hash::Hash,
         program_utils::limited_deserialize,
         pubkey::Pubkey,
@@ -406,7 +406,7 @@ impl LatestUnprocessedVotes {
     /// Drains all votes yet to be processed sorted by a weighted random ordering by stake
     /// Do not touch votes that are for a different fork from `bank` as we know they will fail,
     /// however the next bank could be built on a different fork and consume these votes.
-    pub fn drain_unprocessed(&self, bank: Arc<Bank>) -> Vec<Arc<ImmutableDeserializedPacket>> {
+    pub fn drain_unprocessed(&self, bank: &Bank) -> Vec<Arc<ImmutableDeserializedPacket>> {
         let slot_hashes = bank
             .get_account(&sysvar::slot_hashes::id())
             .and_then(|account| from_account::<SlotHashes, _>(&account));

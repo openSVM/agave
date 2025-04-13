@@ -22,6 +22,7 @@ use {
         slot_stats::{ShredSource, SlotsStats},
         transaction_address_lookup_table_scanner::scan_transaction,
     },
+    agave_feature_set::FeatureSet,
     assert_matches::debug_assert_matches,
     bincode::{deserialize, serialize},
     crossbeam_channel::{bounded, Receiver, Sender, TrySendError},
@@ -40,7 +41,6 @@ use {
         account::ReadableAccount,
         address_lookup_table::state::AddressLookupTable,
         clock::{Slot, UnixTimestamp, DEFAULT_TICKS_PER_SECOND},
-        feature_set::FeatureSet,
         genesis_config::{GenesisConfig, DEFAULT_GENESIS_ARCHIVE, DEFAULT_GENESIS_FILE},
         hash::Hash,
         pubkey::Pubkey,
@@ -1205,7 +1205,7 @@ impl Blockstore {
     ///   - [`cf::MerkleRootMeta`]: the associated MerkleRootMeta of the coding and data
     ///     shreds inside `shreds` will be updated and committed to
     ///     `cf::MerkleRootMeta`.
-    ///   - [`cf::Index`]: stores (slot id, index to the index_working_set_entry)
+    ///   - [`cf::Index`][]: stores (slot id, index to the index_working_set_entry)
     ///     pair to the `cf::Index` column family for each index_working_set_entry which insert did occur in this function call.
     ///
     /// Arguments:
@@ -3452,16 +3452,15 @@ impl Blockstore {
         }
         address_signatures_iter_timer.stop();
 
-        let mut address_signatures: Vec<(Slot, Signature)> = address_signatures
+        let address_signatures_iter = address_signatures
             .into_iter()
             .filter(|(_, signature)| !until_excluded_signatures.contains(signature))
-            .collect();
-        address_signatures.truncate(limit);
+            .take(limit);
 
         // Fill in the status information for each found transaction
         let mut get_status_info_timer = Measure::start("get_status_info_timer");
         let mut infos = vec![];
-        for (slot, signature) in address_signatures.into_iter() {
+        for (slot, signature) in address_signatures_iter {
             let transaction_status =
                 self.get_transaction_status(signature, &confirmed_unrooted_slots)?;
             let err = transaction_status.and_then(|(_slot, status)| status.status.err());

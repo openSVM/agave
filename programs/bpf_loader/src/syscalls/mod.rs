@@ -13,17 +13,7 @@ pub use self::{
 #[allow(deprecated)]
 use {
     crate::syscalls::mem_ops::is_nonoverlapping,
-    solana_account_info::AccountInfo,
-    solana_big_mod_exp::{big_mod_exp, BigModExpParams},
-    solana_blake3_hasher as blake3,
-    solana_bn254::prelude::{
-        alt_bn128_addition, alt_bn128_multiplication, alt_bn128_multiplication_128,
-        alt_bn128_pairing, AltBn128Error, ALT_BN128_ADDITION_OUTPUT_LEN,
-        ALT_BN128_MULTIPLICATION_OUTPUT_LEN, ALT_BN128_PAIRING_ELEMENT_LEN,
-        ALT_BN128_PAIRING_OUTPUT_LEN,
-    },
-    solana_cpi::MAX_RETURN_DATA,
-    solana_feature_set::{
+    agave_feature_set::{
         self as feature_set, abort_on_invalid_curve, blake3_syscall_enabled,
         bpf_account_data_direct_mapping, curve25519_syscall_enabled,
         disable_deploy_of_alloc_free_syscall, disable_fees_sysvar, disable_sbpf_v0_execution,
@@ -34,12 +24,21 @@ use {
         last_restart_slot_sysvar, reenable_sbpf_v0_execution,
         remaining_compute_units_syscall_enabled, FeatureSet,
     },
+    solana_account_info::AccountInfo,
+    solana_big_mod_exp::{big_mod_exp, BigModExpParams},
+    solana_blake3_hasher as blake3,
+    solana_bn254::prelude::{
+        alt_bn128_addition, alt_bn128_multiplication, alt_bn128_multiplication_128,
+        alt_bn128_pairing, AltBn128Error, ALT_BN128_ADDITION_OUTPUT_LEN,
+        ALT_BN128_MULTIPLICATION_OUTPUT_LEN, ALT_BN128_PAIRING_ELEMENT_LEN,
+        ALT_BN128_PAIRING_OUTPUT_LEN,
+    },
+    solana_cpi::MAX_RETURN_DATA,
     solana_hash::Hash,
     solana_instruction::{error::InstructionError, AccountMeta, ProcessedSiblingInstruction},
     solana_keccak_hasher as keccak,
     solana_log_collector::{ic_logger_msg, ic_msg},
     solana_poseidon as poseidon,
-    solana_precompiles::is_precompile,
     solana_program_entrypoint::{BPF_ALIGN_OF_U128, MAX_PERMITTED_DATA_INCREASE, SUCCESS},
     solana_program_runtime::{
         execution_budget::{SVMTransactionExecutionBudget, SVMTransactionExecutionCost},
@@ -2200,7 +2199,7 @@ declare_builtin_function!(
             //     - Compute budget is exceeded.
             // - Otherwise, the syscall returns a `u64` integer representing the total active
             //   stake on the cluster for the current epoch.
-            Ok(invoke_context.get_epoch_total_stake())
+            Ok(invoke_context.get_epoch_stake())
         } else {
             // As specified by SIMD-0133: If `var_addr` is _not_ a null pointer:
             //
@@ -2232,7 +2231,7 @@ declare_builtin_function!(
             let check_aligned = invoke_context.get_check_aligned();
             let vote_address = translate_type::<Pubkey>(memory_mapping, var_addr, check_aligned)?;
 
-            Ok(invoke_context.get_epoch_vote_account_stake(vote_address))
+            Ok(invoke_context.get_epoch_stake_for_vote_account(vote_address))
         }
     }
 );
@@ -4912,7 +4911,16 @@ mod tests {
         let mut compute_budget = SVMTransactionExecutionBudget::default();
         let sysvar_cache = Arc::<SysvarCache>::default();
 
-        let expected_total_stake = 200_000_000_000_000u64;
+        const EXPECTED_TOTAL_STAKE: u64 = 200_000_000_000_000;
+
+        struct MockCallback {}
+        impl InvokeContextCallback for MockCallback {
+            fn get_epoch_stake(&self) -> u64 {
+                EXPECTED_TOTAL_STAKE
+            }
+            // Vote accounts are not needed for this test.
+        }
+
         // Compute units, as specified by SIMD-0133.
         // cu = syscall_base_cost
         let expected_cus = compute_cost.syscall_base_cost;
@@ -4925,8 +4933,7 @@ mod tests {
         invoke_context.environment_config = EnvironmentConfig::new(
             Hash::default(),
             0,
-            expected_total_stake,
-            &|_| 0, // Vote accounts are not needed for this test.
+            &MockCallback {},
             Arc::<FeatureSet>::default(),
             &sysvar_cache,
         );
@@ -4946,7 +4953,7 @@ mod tests {
         )
         .unwrap();
 
-        assert_eq!(result, expected_total_stake);
+        assert_eq!(result, EXPECTED_TOTAL_STAKE);
     }
 
     #[test]
@@ -4956,7 +4963,21 @@ mod tests {
         let compute_cost = SVMTransactionExecutionCost::default();
         let sysvar_cache = Arc::<SysvarCache>::default();
 
-        let expected_epoch_stake = 55_000_000_000u64;
+        const TARGET_VOTE_ADDRESS: Pubkey = Pubkey::new_from_array([2; 32]);
+        const EXPECTED_EPOCH_STAKE: u64 = 55_000_000_000;
+
+        struct MockCallback {}
+        impl InvokeContextCallback for MockCallback {
+            // Total stake is not needed for this test.
+            fn get_epoch_stake_for_vote_account(&self, vote_address: &Pubkey) -> u64 {
+                if *vote_address == TARGET_VOTE_ADDRESS {
+                    EXPECTED_EPOCH_STAKE
+                } else {
+                    0
+                }
+            }
+        }
+
         // Compute units, as specified by SIMD-0133.
         // cu = syscall_base_cost
         //     + floor(32/cpi_bytes_per_unit)
@@ -4969,20 +4990,11 @@ mod tests {
         // doesn't exceed the expected usage.
         compute_budget.compute_unit_limit = expected_cus;
 
-        let vote_address = Pubkey::new_unique();
         with_mock_invoke_context!(invoke_context, transaction_context, vec![]);
-        let callback = |pubkey: &Pubkey| {
-            if *pubkey == vote_address {
-                expected_epoch_stake
-            } else {
-                0
-            }
-        };
         invoke_context.environment_config = EnvironmentConfig::new(
             Hash::default(),
             0,
-            0, // Total stake is not needed for this test.
-            &callback,
+            &MockCallback {},
             Arc::<FeatureSet>::default(),
             &sysvar_cache,
         );
@@ -5024,7 +5036,7 @@ mod tests {
 
             let mut memory_mapping = MemoryMapping::new(
                 vec![MemoryRegion::new_readonly(
-                    bytes_of(&vote_address),
+                    bytes_of(&TARGET_VOTE_ADDRESS),
                     vote_address_var,
                 )],
                 &config,
@@ -5043,7 +5055,7 @@ mod tests {
             )
             .unwrap();
 
-            assert_eq!(result, expected_epoch_stake);
+            assert_eq!(result, EXPECTED_EPOCH_STAKE);
         }
 
         invoke_context.mock_set_remaining(compute_budget.compute_unit_limit);

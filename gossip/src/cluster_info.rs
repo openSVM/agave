@@ -42,7 +42,7 @@ use {
         },
         weighted_shuffle::WeightedShuffle,
     },
-    crossbeam_channel::{bounded, Receiver, SendError, Sender, TryRecvError, TrySendError},
+    crossbeam_channel::{Receiver, TrySendError},
     itertools::{Either, Itertools},
     rand::{seq::SliceRandom, CryptoRng, Rng},
     rayon::{prelude::*, ThreadPool, ThreadPoolBuilder},
@@ -135,9 +135,10 @@ const MIN_STAKE_FOR_GOSSIP: u64 = solana_native_token::LAMPORTS_PER_SOL;
 const MIN_NUM_STAKED_NODES: usize = 500;
 
 // Must have at least one socket to monitor the TVU port
-// The unsafes are safe because we're using fixed, known non-zero values
-pub const MINIMUM_NUM_TVU_SOCKETS: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(1) };
-pub const DEFAULT_NUM_TVU_SOCKETS: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(8) };
+pub const MINIMUM_NUM_TVU_RECEIVE_SOCKETS: NonZeroUsize = NonZeroUsize::new(1).unwrap();
+pub const DEFAULT_NUM_TVU_RECEIVE_SOCKETS: NonZeroUsize = NonZeroUsize::new(8).unwrap();
+pub const MINIMUM_NUM_TVU_RETRANSMIT_SOCKETS: NonZeroUsize = NonZeroUsize::new(1).unwrap();
+pub const DEFAULT_NUM_TVU_RETRANSMIT_SOCKETS: NonZeroUsize = NonZeroUsize::new(12).unwrap();
 
 #[derive(Debug, PartialEq, Eq, Error)]
 pub enum ClusterInfoError {
@@ -204,75 +205,6 @@ fn should_retain_crds_value(
                 stake.unwrap_or_default() >= MIN_STAKE_FOR_GOSSIP
             }
         }
-    }
-}
-
-/// A sender implementation that evicts the oldest message when the channel is full.
-#[derive(Clone)]
-pub(crate) struct EvictingSender<T> {
-    sender: Sender<T>,
-    receiver: Receiver<T>,
-}
-
-impl<T> EvictingSender<T> {
-    /// Create a new evicting sender with provided sender, receiver.
-    #[inline]
-    pub(crate) fn new(sender: Sender<T>, receiver: Receiver<T>) -> Self {
-        Self { sender, receiver }
-    }
-
-    /// Create a new `EvictingSender` with a bounded channel of the specified capacity.
-    #[inline]
-    pub(crate) fn new_bounded(capacity: usize) -> (Self, Receiver<T>) {
-        let (sender, receiver) = bounded(capacity);
-        (Self::new(sender, receiver.clone()), receiver)
-    }
-}
-
-impl<T> ChannelSend<T> for EvictingSender<T>
-where
-    T: Send + 'static,
-{
-    #[inline]
-    fn send(&self, msg: T) -> std::result::Result<(), SendError<T>> {
-        self.sender.send(msg)
-    }
-
-    fn try_send(&self, msg: T) -> std::result::Result<(), TrySendError<T>> {
-        let Err(e) = self.sender.try_send(msg) else {
-            return Ok(());
-        };
-
-        match e {
-            // Prefer newer messages over older messages.
-            TrySendError::Full(msg) => match self.receiver.try_recv() {
-                Ok(older) => {
-                    // Attempt to requeue the newer message.
-                    // NB: if multiple senders are used, and another sender is faster than us to send() after we've popped `older`,
-                    // our try_send() will fail with Full(msg), in which case we drop the new message.
-                    self.sender.try_send(msg)?;
-                    // Propagate the error _with the older message_.
-                    Err(TrySendError::Full(older))
-                }
-                // Unlikely race condition -- it was just indicated that the channel is full.
-                // Attempt to requeue the message.
-                Err(TryRecvError::Empty) => self.sender.try_send(msg),
-                // Unreachable in practice since we maintain a reference to both the sender and receiver.
-                Err(TryRecvError::Disconnected) => unreachable!(),
-            },
-            // Unreachable in practice since we maintain a reference to both the sender and receiver.
-            TrySendError::Disconnected(_) => unreachable!(),
-        }
-    }
-
-    #[inline]
-    fn is_empty(&self) -> bool {
-        self.receiver.is_empty()
-    }
-
-    #[inline]
-    fn len(&self) -> usize {
-        self.receiver.len()
     }
 }
 
@@ -1772,6 +1704,7 @@ impl ClusterInfo {
                         value, stakes, /*drop_unstaked_node_instance:*/ true,
                     )
                 },
+                self.my_shred_version(),
                 &self.stats,
             )
         };
@@ -2455,8 +2388,10 @@ pub struct NodeConfig {
     pub bind_ip_addr: IpAddr,
     pub public_tpu_addr: Option<SocketAddr>,
     pub public_tpu_forwards_addr: Option<SocketAddr>,
-    /// The number of TVU sockets to create
-    pub num_tvu_sockets: NonZeroUsize,
+    /// The number of TVU receive sockets to create
+    pub num_tvu_receive_sockets: NonZeroUsize,
+    /// The number of TVU retransmit sockets to create
+    pub num_tvu_retransmit_sockets: NonZeroUsize,
     /// The number of QUIC tpu endpoints
     pub num_quic_endpoints: NonZeroUsize,
 }
@@ -2780,7 +2715,8 @@ impl Node {
             bind_ip_addr,
             public_tpu_addr,
             public_tpu_forwards_addr,
-            num_tvu_sockets,
+            num_tvu_receive_sockets,
+            num_tvu_retransmit_sockets,
             num_quic_endpoints,
         } = config;
 
@@ -2794,7 +2730,7 @@ impl Node {
             bind_ip_addr,
             port_range,
             socket_config_reuseport,
-            num_tvu_sockets.get(),
+            num_tvu_receive_sockets.get(),
         )
         .expect("tvu multi_bind");
 
@@ -2847,9 +2783,13 @@ impl Node {
         )
         .unwrap();
 
-        let (_, retransmit_sockets) =
-            multi_bind_in_range_with_config(bind_ip_addr, port_range, socket_config_reuseport, 8)
-                .expect("retransmit multi_bind");
+        let (_, retransmit_sockets) = multi_bind_in_range_with_config(
+            bind_ip_addr,
+            port_range,
+            socket_config_reuseport,
+            num_tvu_retransmit_sockets.get(),
+        )
+        .expect("retransmit multi_bind");
 
         let (_, repair) = Self::bind_with_config(bind_ip_addr, port_range, socket_config);
         let (_, repair_quic) = Self::bind_with_config(bind_ip_addr, port_range, socket_config);
@@ -3385,7 +3325,8 @@ mod tests {
             bind_ip_addr: IpAddr::V4(ip),
             public_tpu_addr: None,
             public_tpu_forwards_addr: None,
-            num_tvu_sockets: MINIMUM_NUM_TVU_SOCKETS,
+            num_tvu_receive_sockets: MINIMUM_NUM_TVU_RECEIVE_SOCKETS,
+            num_tvu_retransmit_sockets: MINIMUM_NUM_TVU_RECEIVE_SOCKETS,
             num_quic_endpoints: DEFAULT_NUM_QUIC_ENDPOINTS,
         };
 
@@ -3408,7 +3349,8 @@ mod tests {
             bind_ip_addr: ip,
             public_tpu_addr: None,
             public_tpu_forwards_addr: None,
-            num_tvu_sockets: MINIMUM_NUM_TVU_SOCKETS,
+            num_tvu_receive_sockets: MINIMUM_NUM_TVU_RECEIVE_SOCKETS,
+            num_tvu_retransmit_sockets: MINIMUM_NUM_TVU_RECEIVE_SOCKETS,
             num_quic_endpoints: DEFAULT_NUM_QUIC_ENDPOINTS,
         };
 

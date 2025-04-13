@@ -2,7 +2,6 @@ use solana_sdk::{
     account::{Account, AccountSharedData},
     bpf_loader,
     bpf_loader_upgradeable::{self, get_program_data_address, UpgradeableLoaderState},
-    feature_set,
     pubkey::Pubkey,
     rent::Rent,
 };
@@ -23,7 +22,7 @@ static SPL_PROGRAMS: &[(Pubkey, Pubkey, &[u8])] = &[
     (
         solana_inline_spl::token_2022::ID,
         solana_sdk_ids::bpf_loader_upgradeable::ID,
-        include_bytes!("programs/spl_token_2022-5.0.2.so"),
+        include_bytes!("programs/spl_token_2022-8.0.0.so"),
     ),
     (
         spl_memo_1_0::ID,
@@ -49,12 +48,12 @@ static SPL_PROGRAMS: &[(Pubkey, Pubkey, &[u8])] = &[
 static CORE_BPF_PROGRAMS: &[(Pubkey, Option<Pubkey>, &[u8])] = &[
     (
         solana_sdk_ids::address_lookup_table::ID,
-        Some(feature_set::migrate_address_lookup_table_program_to_core_bpf::ID),
+        None,
         include_bytes!("programs/core_bpf_address_lookup_table-3.0.0.so"),
     ),
     (
         solana_sdk_ids::config::ID,
-        Some(feature_set::migrate_config_program_to_core_bpf::ID),
+        None,
         include_bytes!("programs/core_bpf_config-3.0.0.so"),
     ),
     (

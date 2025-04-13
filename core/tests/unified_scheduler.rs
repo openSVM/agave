@@ -5,7 +5,7 @@ use {
     itertools::Itertools,
     log::*,
     solana_core::{
-        banking_stage::unified_scheduler::ensure_banking_stage_setup,
+        banking_stage::{unified_scheduler::ensure_banking_stage_setup, BankingStage},
         banking_trace::BankingTracer,
         consensus::{
             heaviest_subtree_fork_choice::HeaviestSubtreeForkChoice,
@@ -29,7 +29,7 @@ use {
     solana_runtime::{
         bank::Bank, bank_forks::BankForks, genesis_utils::GenesisConfigInfo,
         installed_scheduler_pool::SchedulingContext,
-        prioritization_fee_cache::PrioritizationFeeCache, snapshot_controller::SnapshotController,
+        prioritization_fee_cache::PrioritizationFeeCache,
     },
     solana_runtime_transaction::runtime_transaction::RuntimeTransaction,
     solana_sdk::{
@@ -165,7 +165,7 @@ fn test_scheduler_waited_by_drop_bank_service() {
             root,
             &bank_forks,
             &mut progress,
-            &SnapshotController::default(),
+            None, // snapshot_controller
             None,
             &mut heaviest_subtree_fork_choice,
             &mut duplicate_slots_tracker,
@@ -251,6 +251,7 @@ fn test_scheduler_producing_blocks() {
         &cluster_info,
         &poh_recorder,
         transaction_recorder,
+        BankingStage::num_threads(),
     );
     bank_forks.write().unwrap().install_scheduler_pool(pool);
 
@@ -279,6 +280,7 @@ fn test_scheduler_producing_blocks() {
         .write()
         .unwrap()
         .set_bank(tpu_bank.clone_with_scheduler(), false);
+    tpu_bank.unpause_new_block_production_scheduler();
     let tpu_bank = bank_forks.read().unwrap().working_bank_with_scheduler();
     assert_eq!(tpu_bank.transaction_count(), 0);
 

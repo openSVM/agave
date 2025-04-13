@@ -10,6 +10,7 @@ use {
         ancestors::Ancestors,
         bucket_map_holder::Age,
         contains::Contains,
+        is_zero_lamport::IsZeroLamport,
         pubkey_bins::PubkeyBinCalculator24,
         rolling_bit_field::RollingBitField,
         secondary_index::*,
@@ -52,7 +53,7 @@ pub const BINS_DEFAULT: usize = 8192;
 pub const BINS_FOR_TESTING: usize = 2; // we want > 1, but each bin is a few disk files with a disk based index, so fewer is better
 pub const BINS_FOR_BENCHMARKS: usize = 8192;
 // The unsafe is safe because we're using a fixed, known non-zero value
-pub const FLUSH_THREADS_TESTING: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(1) };
+pub const FLUSH_THREADS_TESTING: NonZeroUsize = NonZeroUsize::new(1).unwrap();
 pub const ACCOUNTS_INDEX_CONFIG_FOR_TESTING: AccountsIndexConfig = AccountsIndexConfig {
     bins: Some(BINS_FOR_TESTING),
     num_flush_threads: Some(FLUSH_THREADS_TESTING),
@@ -60,7 +61,6 @@ pub const ACCOUNTS_INDEX_CONFIG_FOR_TESTING: AccountsIndexConfig = AccountsIndex
     index_limit_mb: IndexLimitMb::Unlimited,
     ages_to_stay_in_cache: None,
     scan_results_limit_bytes: None,
-    started_from_validator: false,
 };
 pub const ACCOUNTS_INDEX_CONFIG_FOR_BENCHMARKS: AccountsIndexConfig = AccountsIndexConfig {
     bins: Some(BINS_FOR_BENCHMARKS),
@@ -69,11 +69,11 @@ pub const ACCOUNTS_INDEX_CONFIG_FOR_BENCHMARKS: AccountsIndexConfig = AccountsIn
     index_limit_mb: IndexLimitMb::Unlimited,
     ages_to_stay_in_cache: None,
     scan_results_limit_bytes: None,
-    started_from_validator: false,
 };
 pub type ScanResult<T> = Result<T, ScanError>;
 pub type SlotList<T> = Vec<(Slot, T)>;
 pub type RefCount = u64;
+pub type AtomicRefCount = AtomicU64;
 
 #[derive(Default, Debug, PartialEq, Eq)]
 pub(crate) struct GenerateIndexResult<T: IndexValue> {
@@ -178,7 +178,7 @@ pub trait IsCached {
     fn is_cached(&self) -> bool;
 }
 
-pub trait IndexValue: 'static + IsCached + ZeroLamport + DiskIndexValue {}
+pub trait IndexValue: 'static + IsCached + IsZeroLamport + DiskIndexValue {}
 
 pub trait DiskIndexValue:
     'static + Clone + Debug + PartialEq + Copy + Default + Sync + Send
@@ -217,8 +217,6 @@ pub struct AccountsIndexConfig {
     pub index_limit_mb: IndexLimitMb,
     pub ages_to_stay_in_cache: Option<Age>,
     pub scan_results_limit_bytes: Option<usize>,
-    /// true if the accounts index is being created as a result of being started as a validator (as opposed to test, etc.)
-    pub started_from_validator: bool,
 }
 
 pub fn default_num_flush_threads() -> NonZeroUsize {
@@ -234,10 +232,6 @@ pub struct AccountsIndexRootsStats {
     pub unrooted_cleaned_count: usize,
     pub clean_unref_from_storage_us: u64,
     pub clean_dead_slot_us: u64,
-}
-
-pub trait ZeroLamport {
-    fn is_zero_lamport(&self) -> bool;
 }
 
 #[derive(Copy, Clone)]
@@ -385,17 +379,17 @@ impl<T: IndexValue, U: DiskIndexValue + From<T> + Into<T>> AccountsIndex<T, U> {
     }
 
     /// returns the start bin and the number of bins to scan
-    fn bin_start_and_range<R>(&self, range: &R) -> (usize, usize)
+    fn bin_start_and_len<R>(&self, range: &R) -> (usize, usize)
     where
         R: RangeBounds<Pubkey> + Debug + Sync,
     {
         let (start_bin, end_bin_inclusive) = self.bin_start_end_inclusive(range);
-        let bin_range = if start_bin > end_bin_inclusive {
+        let bins_len = if start_bin > end_bin_inclusive {
             0
         } else {
             end_bin_inclusive - start_bin + 1
         };
-        (start_bin, bin_range)
+        (start_bin, bins_len)
     }
 
     #[allow(clippy::type_complexity)]
@@ -1056,11 +1050,11 @@ impl<T: IndexValue, U: DiskIndexValue + From<T> + Into<T>> AccountsIndex<T, U> {
     where
         R: RangeBounds<Pubkey> + Debug + Sync,
     {
-        let (start_bin, bin_range) = self.bin_start_and_range(range);
-        // the idea is this range shouldn't be more than a few buckets, but the process of loading from disk buckets is very slow
-        // so, parallelize the bucket loads
+        let (start_bin, bins_len) = self.bin_start_and_len(range);
+        // the idea is this range shouldn't be more than a few buckets, but the process of loading
+        // from disk buckets is very slow, so, parallelize the bucket loads
         thread_pool.install(|| {
-            (0..bin_range).into_par_iter().for_each(|idx| {
+            (0..bins_len).into_par_iter().for_each(|idx| {
                 let map = &self.account_maps[idx + start_bin];
                 map.hold_range_in_memory(range, start_holding);
             });
@@ -1215,18 +1209,14 @@ impl<T: IndexValue, U: DiskIndexValue + From<T> + Into<T>> AccountsIndex<T, U> {
         slot_list: &[(Slot, T)],
         max_allowed_root_inclusive: Option<Slot>,
     ) -> Slot {
-        let mut max_root = 0;
-        for (slot, _) in slot_list.iter() {
-            if let Some(max_allowed_root_inclusive) = max_allowed_root_inclusive {
-                if *slot > max_allowed_root_inclusive {
-                    continue;
-                }
-            }
-            if *slot > max_root && alive_roots.contains(slot) {
-                max_root = *slot;
-            }
-        }
-        max_root
+        slot_list
+            .iter()
+            .map(|(slot, _)| slot)
+            .filter(|slot| max_allowed_root_inclusive.is_none_or(|max_root| **slot <= max_root))
+            .filter(|slot| alive_roots.contains(slot))
+            .max()
+            .copied()
+            .unwrap_or(0)
     }
 
     fn update_spl_token_secondary_indexes<G: solana_inline_spl::token::GenericTokenAccount>(
@@ -2001,7 +1991,7 @@ pub mod tests {
         }
     }
 
-    impl ZeroLamport for AccountInfoTest {
+    impl IsZeroLamport for AccountInfoTest {
         fn is_zero_lamport(&self) -> bool {
             true
         }
@@ -3521,13 +3511,13 @@ pub mod tests {
             false
         }
     }
-    impl ZeroLamport for bool {
+    impl IsZeroLamport for bool {
         fn is_zero_lamport(&self) -> bool {
             false
         }
     }
 
-    impl ZeroLamport for u64 {
+    impl IsZeroLamport for u64 {
         fn is_zero_lamport(&self) -> bool {
             false
         }
@@ -3537,20 +3527,20 @@ pub mod tests {
     fn test_bin_start_and_range() {
         let index = AccountsIndex::<bool, bool>::default_for_tests();
         let range = (Unbounded::<Pubkey>, Unbounded);
-        assert_eq!((0, BINS_FOR_TESTING), index.bin_start_and_range(&range));
+        assert_eq!((0, BINS_FOR_TESTING), index.bin_start_and_len(&range));
 
         let key_0 = Pubkey::from([0; 32]);
         let key_ff = Pubkey::from([0xff; 32]);
 
         let range = (Included(key_0), Included(key_ff));
         let bins = index.bins();
-        assert_eq!((0, bins), index.bin_start_and_range(&range));
+        assert_eq!((0, bins), index.bin_start_and_len(&range));
         let range = (Included(key_ff), Included(key_0));
-        assert_eq!((bins - 1, 0), index.bin_start_and_range(&range));
+        assert_eq!((bins - 1, 0), index.bin_start_and_len(&range));
         let range = (Included(key_0), Unbounded);
-        assert_eq!((0, BINS_FOR_TESTING), index.bin_start_and_range(&range));
+        assert_eq!((0, BINS_FOR_TESTING), index.bin_start_and_len(&range));
         let range = (Included(key_ff), Unbounded);
-        assert_eq!((bins - 1, 1), index.bin_start_and_range(&range));
+        assert_eq!((bins - 1, 1), index.bin_start_and_len(&range));
     }
 
     #[test]

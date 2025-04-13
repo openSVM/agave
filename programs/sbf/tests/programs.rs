@@ -9,10 +9,11 @@
 
 #[cfg(feature = "sbf_rust")]
 use {
+    agave_feature_set::{self as feature_set, FeatureSet},
+    agave_reserved_account_keys::ReservedAccountKeys,
     borsh::{from_slice, to_vec, BorshDeserialize, BorshSerialize},
     solana_compute_budget::compute_budget::ComputeBudget,
     solana_compute_budget_instruction::instructions_processor::process_compute_budget_instructions,
-    solana_feature_set::{self as feature_set, FeatureSet},
     solana_program_runtime::invoke_context::mock_process_instruction,
     solana_runtime::{
         bank::Bank,
@@ -47,7 +48,6 @@ use {
         message::{Message, SanitizedMessage},
         pubkey::Pubkey,
         rent::Rent,
-        reserved_account_keys::ReservedAccountKeys,
         signature::{Keypair, Signer},
         stake,
         system_instruction::MAX_PERMITTED_DATA_LENGTH,
@@ -170,6 +170,20 @@ fn test_program_sbf_sanity() {
         ]);
     }
 
+    #[cfg(all(feature = "sbf_rust", feature = "sbf_sanity_list"))]
+    {
+        // This code generates the list of sanity programs for a CI job to build with
+        // cargo-build-sbf and ensure it is working correctly.
+        use std::{env, fs::File, io::Write};
+        let current_dir = env::current_dir().unwrap();
+        let mut file = File::create(current_dir.join("sanity_programs.txt")).unwrap();
+        for program in programs.iter() {
+            writeln!(file, "{}", program.0.trim_start_matches("solana_sbf_rust_"))
+                .expect("Failed to write to file");
+        }
+    }
+
+    #[cfg(not(feature = "sbf_sanity_list"))]
     for program in programs.iter() {
         println!("Test program: {:?}", program.0);
 
@@ -231,7 +245,7 @@ fn test_program_sbf_loader_deprecated() {
         } = create_genesis_config(50);
         genesis_config
             .accounts
-            .remove(&solana_feature_set::disable_deploy_of_alloc_free_syscall::id())
+            .remove(&agave_feature_set::disable_deploy_of_alloc_free_syscall::id())
             .unwrap();
         let (bank, bank_forks) = Bank::new_with_bank_forks_for_tests(&genesis_config);
         let program_id = create_program(&bank, &bpf_loader_deprecated::id(), program);
@@ -1911,7 +1925,7 @@ fn test_program_sbf_disguised_as_sbf_loader() {
             ..
         } = create_genesis_config(50);
         let mut bank = Bank::new_for_tests(&genesis_config);
-        bank.deactivate_feature(&solana_feature_set::remove_bpf_loader_incorrect_program_id::id());
+        bank.deactivate_feature(&agave_feature_set::remove_bpf_loader_incorrect_program_id::id());
         let (bank, bank_forks) = bank.wrap_with_bank_forks_for_tests();
         let mut bank_client = BankClient::new_shared(bank);
         let authority_keypair = Keypair::new();
@@ -4024,31 +4038,25 @@ fn test_cpi_change_account_data_memory_allocation() {
         let transaction_context = &invoke_context.transaction_context;
         let instruction_context = transaction_context.get_current_instruction_context()?;
         let instruction_data = instruction_context.get_instruction_data();
-
-        let index_in_transaction =
-            instruction_context.get_index_of_instruction_account_in_transaction(0)?;
-
-        let mut account = transaction_context
-            .accounts()
-            .get(index_in_transaction)
-            .unwrap()
-            .borrow_mut();
+        let mut borrowed_account =
+            instruction_context.try_borrow_instruction_account(transaction_context, 0)?;
 
         // Test changing the account data both in place and by changing the
         // underlying vector. CPI will have to detect the vector change and
         // update the corresponding memory region. In all cases CPI will have
         // to zero the spare bytes correctly.
         match instruction_data[0] {
-            0xFE => account.set_data(instruction_data.to_vec()),
-            0xFD => account.set_data_from_slice(instruction_data),
+            0xFE => borrowed_account.set_data(instruction_data.to_vec()),
+            0xFD => borrowed_account.set_data_from_slice(instruction_data),
             0xFC => {
                 // Exercise the update_caller_account capacity check where account len != capacity.
                 let mut data = instruction_data.to_vec();
                 data.reserve_exact(1);
-                account.set_data(data)
+                borrowed_account.set_data(data)
             }
             _ => panic!(),
         }
+        .unwrap();
 
         Ok(())
     });
@@ -4095,6 +4103,7 @@ fn test_cpi_change_account_data_memory_allocation() {
 }
 
 #[test]
+#[cfg(any(feature = "sbf_c", feature = "sbf_rust"))]
 fn test_cpi_invalid_account_info_pointers() {
     solana_logger::setup();
 
@@ -4191,66 +4200,52 @@ fn test_deplete_cost_meter_with_access_violation() {
         ..
     } = create_genesis_config(100_123_456_789);
 
-    for deplete_cu_meter_on_vm_failure in [false, true] {
-        let mut bank = Bank::new_for_tests(&genesis_config);
-        let feature_set = Arc::make_mut(&mut bank.feature_set);
-        // by default test banks have all features enabled, so we only need to
-        // disable when needed
-        if !deplete_cu_meter_on_vm_failure {
-            feature_set.deactivate(&feature_set::deplete_cu_meter_on_vm_failure::id());
-        }
-        let (bank, bank_forks) = bank.wrap_with_bank_forks_for_tests();
-        let mut bank_client = BankClient::new_shared(bank.clone());
-        let authority_keypair = Keypair::new();
-        let (bank, invoke_program_id) = load_program_of_loader_v4(
-            &mut bank_client,
-            bank_forks.as_ref(),
-            &mint_keypair,
-            &authority_keypair,
-            "solana_sbf_rust_invoke",
-        );
+    let bank = Bank::new_for_tests(&genesis_config);
+    let (bank, bank_forks) = bank.wrap_with_bank_forks_for_tests();
+    let mut bank_client = BankClient::new_shared(bank.clone());
+    let authority_keypair = Keypair::new();
+    let (bank, invoke_program_id) = load_program_of_loader_v4(
+        &mut bank_client,
+        bank_forks.as_ref(),
+        &mint_keypair,
+        &authority_keypair,
+        "solana_sbf_rust_invoke",
+    );
 
-        let account_keypair = Keypair::new();
-        let mint_pubkey = mint_keypair.pubkey();
-        let account_metas = vec![
-            AccountMeta::new(mint_pubkey, true),
-            AccountMeta::new(account_keypair.pubkey(), false),
-            AccountMeta::new_readonly(invoke_program_id, false),
-        ];
+    let account_keypair = Keypair::new();
+    let mint_pubkey = mint_keypair.pubkey();
+    let account_metas = vec![
+        AccountMeta::new(mint_pubkey, true),
+        AccountMeta::new(account_keypair.pubkey(), false),
+        AccountMeta::new_readonly(invoke_program_id, false),
+    ];
 
-        let mut instruction_data = vec![TEST_WRITE_ACCOUNT, 2];
-        instruction_data.extend_from_slice(3usize.to_le_bytes().as_ref());
-        instruction_data.push(42);
+    let mut instruction_data = vec![TEST_WRITE_ACCOUNT, 2];
+    instruction_data.extend_from_slice(3usize.to_le_bytes().as_ref());
+    instruction_data.push(42);
 
-        let instruction = Instruction::new_with_bytes(
-            invoke_program_id,
-            &instruction_data,
-            account_metas.clone(),
-        );
+    let instruction =
+        Instruction::new_with_bytes(invoke_program_id, &instruction_data, account_metas.clone());
 
-        let compute_unit_limit = 10_000u32;
-        let message = Message::new(
-            &[
-                ComputeBudgetInstruction::set_compute_unit_limit(compute_unit_limit),
-                instruction,
-            ],
-            Some(&mint_keypair.pubkey()),
-        );
-        let tx = Transaction::new(&[&mint_keypair], message, bank.last_blockhash());
+    let compute_unit_limit = 10_000u32;
+    let message = Message::new(
+        &[
+            ComputeBudgetInstruction::set_compute_unit_limit(compute_unit_limit),
+            instruction,
+        ],
+        Some(&mint_keypair.pubkey()),
+    );
+    let tx = Transaction::new(&[&mint_keypair], message, bank.last_blockhash());
 
-        let result = load_execute_and_commit_transaction(&bank, tx).unwrap();
+    let result = load_execute_and_commit_transaction(&bank, tx).unwrap();
 
-        assert_eq!(
-            result.status.unwrap_err(),
-            TransactionError::InstructionError(1, InstructionError::ReadonlyDataModified)
-        );
+    assert_eq!(
+        result.status.unwrap_err(),
+        TransactionError::InstructionError(1, InstructionError::ReadonlyDataModified)
+    );
 
-        if deplete_cu_meter_on_vm_failure {
-            assert_eq!(result.executed_units, u64::from(compute_unit_limit));
-        } else {
-            assert!(result.executed_units < u64::from(compute_unit_limit));
-        }
-    }
+    // all compute unit limit should be consumed due to SBF VM error
+    assert_eq!(result.executed_units, u64::from(compute_unit_limit));
 }
 
 #[test]
@@ -4264,49 +4259,38 @@ fn test_program_sbf_deplete_cost_meter_with_divide_by_zero() {
         ..
     } = create_genesis_config(50);
 
-    for deplete_cu_meter_on_vm_failure in [false, true] {
-        let mut bank = Bank::new_for_tests(&genesis_config);
-        let feature_set = Arc::make_mut(&mut bank.feature_set);
-        // by default test banks have all features enabled, so we only need to
-        // disable when needed
-        if !deplete_cu_meter_on_vm_failure {
-            feature_set.deactivate(&feature_set::deplete_cu_meter_on_vm_failure::id());
-        }
-        let (bank, bank_forks) = bank.wrap_with_bank_forks_for_tests();
-        let mut bank_client = BankClient::new_shared(bank.clone());
-        let authority_keypair = Keypair::new();
-        let (bank, program_id) = load_program_of_loader_v4(
-            &mut bank_client,
-            bank_forks.as_ref(),
-            &mint_keypair,
-            &authority_keypair,
-            "solana_sbf_rust_divide_by_zero",
-        );
+    let bank = Bank::new_for_tests(&genesis_config);
+    let (bank, bank_forks) = bank.wrap_with_bank_forks_for_tests();
+    let mut bank_client = BankClient::new_shared(bank.clone());
+    let authority_keypair = Keypair::new();
+    let (bank, program_id) = load_program_of_loader_v4(
+        &mut bank_client,
+        bank_forks.as_ref(),
+        &mint_keypair,
+        &authority_keypair,
+        "solana_sbf_rust_divide_by_zero",
+    );
 
-        let instruction = Instruction::new_with_bytes(program_id, &[], vec![]);
-        let compute_unit_limit = 10_000;
-        let message = Message::new(
-            &[
-                ComputeBudgetInstruction::set_compute_unit_limit(compute_unit_limit),
-                instruction,
-            ],
-            Some(&mint_keypair.pubkey()),
-        );
-        let tx = Transaction::new(&[&mint_keypair], message, bank.last_blockhash());
+    let instruction = Instruction::new_with_bytes(program_id, &[], vec![]);
+    let compute_unit_limit = 10_000;
+    let message = Message::new(
+        &[
+            ComputeBudgetInstruction::set_compute_unit_limit(compute_unit_limit),
+            instruction,
+        ],
+        Some(&mint_keypair.pubkey()),
+    );
+    let tx = Transaction::new(&[&mint_keypair], message, bank.last_blockhash());
 
-        let result = load_execute_and_commit_transaction(&bank, tx).unwrap();
+    let result = load_execute_and_commit_transaction(&bank, tx).unwrap();
 
-        assert_eq!(
-            result.status.unwrap_err(),
-            TransactionError::InstructionError(1, InstructionError::ProgramFailedToComplete)
-        );
+    assert_eq!(
+        result.status.unwrap_err(),
+        TransactionError::InstructionError(1, InstructionError::ProgramFailedToComplete)
+    );
 
-        if deplete_cu_meter_on_vm_failure {
-            assert_eq!(result.executed_units, u64::from(compute_unit_limit));
-        } else {
-            assert!(result.executed_units < u64::from(compute_unit_limit));
-        }
-    }
+    // all compute unit limit should be consumed due to SBF VM error
+    assert_eq!(result.executed_units, u64::from(compute_unit_limit));
 }
 
 #[test]

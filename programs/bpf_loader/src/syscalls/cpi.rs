@@ -1,7 +1,7 @@
 use {
     super::*,
+    agave_feature_set::{self as feature_set, enable_bpf_loader_set_authority_checked_ix},
     scopeguard::defer,
-    solana_feature_set::{self as feature_set, enable_bpf_loader_set_authority_checked_ix},
     solana_loader_v3_interface::instruction as bpf_loader_upgradeable,
     solana_measure::measure::Measure,
     solana_program_runtime::{
@@ -1069,9 +1069,7 @@ fn check_authorized_program(
                         instruction_data,
                     ))
                 || bpf_loader_upgradeable::is_close_instruction(instruction_data)))
-        || is_precompile(program_id, |feature_id: &Pubkey| {
-            invoke_context.get_feature_set().is_active(feature_id)
-        })
+        || invoke_context.is_precompile(program_id)
     {
         return Err(Box::new(SyscallError::ProgramNotSupported(*program_id)));
     }
@@ -1616,10 +1614,10 @@ mod tests {
     use {
         super::*,
         crate::mock_create_vm,
+        agave_feature_set::bpf_account_data_direct_mapping,
         assert_matches::assert_matches,
         solana_account::{Account, AccountSharedData, ReadableAccount},
         solana_clock::Epoch,
-        solana_feature_set::bpf_account_data_direct_mapping,
         solana_instruction::Instruction,
         solana_program_runtime::{
             invoke_context::SerializedAccountMetadata, with_mock_invoke_context,
@@ -2212,8 +2210,9 @@ mod tests {
         {
             let mut account = invoke_context
                 .transaction_context
-                .accounts()
-                .try_borrow_mut(1)
+                .get_account_at_index(1)
+                .unwrap()
+                .try_borrow_mut()
                 .unwrap();
             account.set_data(b"baz".to_vec());
         }

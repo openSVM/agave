@@ -56,9 +56,11 @@ use {
         stakes::{Stakes, StakesCache, StakesEnum},
         status_cache::{SlotDelta, StatusCache},
         transaction_batch::{OwnedOrBorrowed, TransactionBatch},
-        verify_precompiles::verify_precompiles,
     },
     accounts_lt_hash::{CacheValue as AccountsLtHashCacheValue, Stats as AccountsLtHashStats},
+    agave_feature_set::{self as feature_set, FeatureSet},
+    agave_precompiles::{get_precompile, get_precompiles, is_precompile},
+    agave_reserved_account_keys::ReservedAccountKeys,
     ahash::AHashSet,
     dashmap::{DashMap, DashSet},
     log::*,
@@ -94,8 +96,10 @@ use {
     solana_builtins::{prototype::BuiltinPrototype, BUILTINS, STATELESS_BUILTINS},
     solana_compute_budget::compute_budget::ComputeBudget,
     solana_compute_budget_instruction::instructions_processor::process_compute_budget_instructions,
-    solana_cost_model::{block_cost_limits::simd_0207_block_limits, cost_tracker::CostTracker},
-    solana_feature_set::{self as feature_set, FeatureSet},
+    solana_cost_model::{
+        block_cost_limits::{simd_0207_block_limits, simd_0256_block_limits},
+        cost_tracker::CostTracker,
+    },
     solana_fee::FeeFeatures,
     solana_lattice_hash::lt_hash::LtHash,
     solana_measure::{meas_dur, measure::Measure, measure_time, measure_us},
@@ -133,11 +137,10 @@ use {
         native_loader,
         native_token::LAMPORTS_PER_SOL,
         packet::PACKET_DATA_SIZE,
-        precompiles::get_precompiles,
+        precompiles::PrecompileError,
         pubkey::Pubkey,
         rent_collector::{CollectedInfo, RentCollector},
         rent_debits::RentDebits,
-        reserved_account_keys::ReservedAccountKeys,
         reward_info::RewardInfo,
         signature::{Keypair, Signature},
         slot_hashes::SlotHashes,
@@ -154,12 +157,12 @@ use {
     solana_svm::{
         account_loader::{collect_rent_from_account, LoadedTransaction},
         account_overrides::AccountOverrides,
+        program_loader::load_program_with_pubkey,
         transaction_commit_result::{CommittedTransaction, TransactionCommitResult},
         transaction_error_metrics::TransactionErrorMetrics,
         transaction_execution_result::{
             TransactionExecutionDetails, TransactionLoadedAccountsStats,
         },
-        transaction_processing_callback::{AccountState, TransactionProcessingCallback},
         transaction_processing_result::{
             ProcessedTransaction, TransactionProcessingResult,
             TransactionProcessingResultExtensions,
@@ -169,13 +172,13 @@ use {
             TransactionProcessingConfig, TransactionProcessingEnvironment,
         },
     },
+    solana_svm_callback::{AccountState, InvokeContextCallback, TransactionProcessingCallback},
     solana_svm_transaction::svm_message::SVMMessage,
     solana_timings::{ExecuteTimingType, ExecuteTimings},
     solana_transaction_context::{TransactionAccount, TransactionReturnData},
     solana_vote::vote_account::{VoteAccount, VoteAccountsHashMap},
     std::{
         collections::{HashMap, HashSet},
-        convert::TryFrom,
         fmt,
         ops::{AddAssign, RangeFull, RangeInclusive},
         path::PathBuf,
@@ -183,7 +186,7 @@ use {
         sync::{
             atomic::{
                 AtomicBool, AtomicI64, AtomicU64, AtomicUsize,
-                Ordering::{AcqRel, Acquire, Relaxed},
+                Ordering::{self, AcqRel, Acquire, Relaxed},
             },
             Arc, LockResult, Mutex, RwLock, RwLockReadGuard, RwLockWriteGuard, Weak,
         },
@@ -202,7 +205,6 @@ use {
     solana_nonce_account::{get_system_account_kind, SystemAccountKind},
     solana_program_runtime::{loaded_programs::ProgramCacheForTxBatch, sysvar_cache::SysvarCache},
     solana_sdk::nonce,
-    solana_svm::program_loader::load_program_with_pubkey,
 };
 
 /// params to `verify_accounts_hash`
@@ -271,7 +273,7 @@ impl AddAssign for SquashTiming {
 }
 
 #[derive(Debug, Default, PartialEq)]
-pub(crate) struct CollectorFeeDetails {
+pub struct CollectorFeeDetails {
     transaction_fee: u64,
     priority_fee: u64,
 }
@@ -739,7 +741,6 @@ struct HashOverride {
 }
 
 /// Manager for the state of all accounts and programs after processing its entries.
-#[derive(Debug)]
 pub struct Bank {
     /// References to accounts, parent and signature status
     pub rc: BankRc,
@@ -951,7 +952,6 @@ struct VoteReward {
     vote_account: AccountSharedData,
     commission: u8,
     vote_rewards: u64,
-    vote_needs_store: bool,
 }
 
 type VoteRewards = DashMap<Pubkey, VoteReward>;
@@ -1428,18 +1428,8 @@ impl Bank {
             new.distribute_partitioned_epoch_rewards();
         });
 
-        let (_epoch, slot_index) = new.epoch_schedule.get_epoch_and_slot_index(new.slot);
-        let slots_in_epoch = new.epoch_schedule.get_slots_in_epoch(new.epoch);
-
-        let (_, cache_preparation_time_us) = measure_us!(new
-            .transaction_processor
-            .prepare_program_cache_for_upcoming_feature_set(
-                &new,
-                &new.compute_active_feature_set(true).0,
-                &new.compute_budget.unwrap_or_default().to_budget(),
-                slot_index,
-                slots_in_epoch,
-            ));
+        let (_, cache_preparation_time_us) =
+            measure_us!(new.prepare_program_cache_for_upcoming_feature_set());
 
         // Update sysvars before processing transactions
         let (_, update_sysvars_time_us) = measure_us!({
@@ -1532,6 +1522,94 @@ impl Bank {
             .write()
             .unwrap()
             .set_fork_graph(fork_graph);
+    }
+
+    fn prepare_program_cache_for_upcoming_feature_set(&self) {
+        let (_epoch, slot_index) = self.epoch_schedule.get_epoch_and_slot_index(self.slot);
+        let slots_in_epoch = self.epoch_schedule.get_slots_in_epoch(self.epoch);
+        let compute_budget = self.compute_budget.unwrap_or_default().to_budget();
+        let (upcoming_feature_set, _newly_activated) = self.compute_active_feature_set(true);
+
+        // Recompile loaded programs one at a time before the next epoch hits
+        let slots_in_recompilation_phase =
+            (solana_program_runtime::loaded_programs::MAX_LOADED_ENTRY_COUNT as u64)
+                .min(slots_in_epoch)
+                .checked_div(2)
+                .unwrap();
+
+        let mut program_cache = self.transaction_processor.program_cache.write().unwrap();
+
+        if program_cache.upcoming_environments.is_some() {
+            if let Some((key, program_to_recompile)) = program_cache.programs_to_recompile.pop() {
+                let effective_epoch = program_cache.latest_root_epoch.saturating_add(1);
+                drop(program_cache);
+                let environments_for_epoch = self
+                    .transaction_processor
+                    .program_cache
+                    .read()
+                    .unwrap()
+                    .get_environments_for_epoch(effective_epoch);
+                if let Some(recompiled) = load_program_with_pubkey(
+                    self,
+                    &environments_for_epoch,
+                    &key,
+                    self.slot,
+                    &mut ExecuteTimings::default(),
+                    false,
+                ) {
+                    recompiled.tx_usage_counter.fetch_add(
+                        program_to_recompile
+                            .tx_usage_counter
+                            .load(Ordering::Relaxed),
+                        Ordering::Relaxed,
+                    );
+                    recompiled.ix_usage_counter.fetch_add(
+                        program_to_recompile
+                            .ix_usage_counter
+                            .load(Ordering::Relaxed),
+                        Ordering::Relaxed,
+                    );
+                    let mut program_cache =
+                        self.transaction_processor.program_cache.write().unwrap();
+                    program_cache.assign_program(key, recompiled);
+                }
+            }
+        } else if self.epoch != program_cache.latest_root_epoch
+            || slot_index.saturating_add(slots_in_recompilation_phase) >= slots_in_epoch
+        {
+            // Anticipate the upcoming program runtime environment for the next epoch,
+            // so we can try to recompile loaded programs before the feature transition hits.
+            drop(program_cache);
+            let mut program_cache = self.transaction_processor.program_cache.write().unwrap();
+            let program_runtime_environment_v1 = create_program_runtime_environment_v1(
+                &upcoming_feature_set,
+                &compute_budget,
+                false, /* deployment */
+                false, /* debugging_features */
+            )
+            .unwrap();
+            let program_runtime_environment_v2 = create_program_runtime_environment_v2(
+                &compute_budget,
+                false, /* debugging_features */
+            );
+            let mut upcoming_environments = program_cache.environments.clone();
+            let changed_program_runtime_v1 =
+                *upcoming_environments.program_runtime_v1 != program_runtime_environment_v1;
+            let changed_program_runtime_v2 =
+                *upcoming_environments.program_runtime_v2 != program_runtime_environment_v2;
+            if changed_program_runtime_v1 {
+                upcoming_environments.program_runtime_v1 = Arc::new(program_runtime_environment_v1);
+            }
+            if changed_program_runtime_v2 {
+                upcoming_environments.program_runtime_v2 = Arc::new(program_runtime_environment_v2);
+            }
+            program_cache.upcoming_environments = Some(upcoming_environments);
+            program_cache.programs_to_recompile = program_cache
+                .get_flattened_entries(changed_program_runtime_v1, changed_program_runtime_v2);
+            program_cache
+                .programs_to_recompile
+                .sort_by_cached_key(|(_id, program)| program.decayed_usage_counter(self.slot));
+        }
     }
 
     pub fn prune_program_cache(&self, new_root_slot: Slot, new_root_epoch: Epoch) {
@@ -1663,7 +1741,7 @@ impl Bank {
             .accounts_db
             .epoch_accounts_hash_manager
             .set_in_flight(parent.slot());
-        let accounts_hash = parent.update_accounts_hash(data_source, false, true);
+        let accounts_hash = parent.update_accounts_hash(data_source, true);
         let epoch_accounts_hash = accounts_hash.into();
         parent
             .rc
@@ -2362,26 +2440,6 @@ impl Bank {
         }
     }
 
-    fn assert_validator_rewards_paid(&self, validator_rewards_paid: u64) {
-        assert_eq!(
-            validator_rewards_paid,
-            u64::try_from(
-                self.rewards
-                    .read()
-                    .unwrap()
-                    .par_iter()
-                    .map(|(_address, reward_info)| {
-                        match reward_info.reward_type {
-                            RewardType::Voting | RewardType::Staking => reward_info.lamports,
-                            _ => 0,
-                        }
-                    })
-                    .sum::<i64>()
-            )
-            .unwrap()
-        );
-    }
-
     fn filter_stake_delegations<'a>(
         &self,
         stakes: &'a Stakes<StakeAccount<Delegation>>,
@@ -2430,6 +2488,7 @@ impl Bank {
         let mut result = VoteRewardsAccounts {
             rewards: Vec::with_capacity(len),
             accounts_to_store: Vec::with_capacity(len),
+            total_vote_rewards_lamports: 0,
         };
         vote_account_rewards.into_iter().for_each(
             |(
@@ -2438,7 +2497,6 @@ impl Bank {
                     mut vote_account,
                     commission,
                     vote_rewards,
-                    vote_needs_store,
                 },
             )| {
                 if let Err(err) = vote_account.checked_add_lamports(vote_rewards) {
@@ -2455,9 +2513,8 @@ impl Bank {
                         commission: Some(commission),
                     },
                 ));
-                result
-                    .accounts_to_store
-                    .push(vote_needs_store.then_some(vote_account));
+                result.accounts_to_store.push((vote_pubkey, vote_account));
+                result.total_vote_rewards_lamports += vote_rewards;
             },
         );
         result
@@ -2744,9 +2801,7 @@ impl Bank {
 
         self.blockhash_queue.write().unwrap().genesis_hash(
             &genesis_hash,
-            genesis_config
-                .fee_rate_governor
-                .target_lamports_per_signature,
+            genesis_config.fee_rate_governor.lamports_per_signature,
         );
 
         self.hashes_per_tick = genesis_config.hashes_per_tick();
@@ -2841,12 +2896,6 @@ impl Bank {
         (last_hash, last_lamports_per_signature)
     }
 
-    pub fn is_zero_fees_for_test(&self) -> bool {
-        let (_last_hash, last_lamports_per_signature) =
-            self.last_blockhash_and_lamports_per_signature();
-        last_lamports_per_signature == 0
-    }
-
     pub fn is_blockhash_valid(&self, hash: &Hash) -> bool {
         let blockhash_queue = self.blockhash_queue.read().unwrap();
         blockhash_queue.is_hash_valid_for_age(hash, MAX_PROCESSING_AGE)
@@ -2854,6 +2903,10 @@ impl Bank {
 
     pub fn get_minimum_balance_for_rent_exemption(&self, data_len: usize) -> u64 {
         self.rent_collector.rent.minimum_balance(data_len).max(1)
+    }
+
+    pub fn get_lamports_per_signature(&self) -> u64 {
+        self.fee_rate_governor.lamports_per_signature
     }
 
     pub fn get_lamports_per_signature_for_blockhash(&self, hash: &Hash) -> Option<u64> {
@@ -2988,9 +3041,6 @@ impl Bank {
         // consistent tx check_age handling.
         BankWithScheduler::wait_for_paused_scheduler(self, scheduler);
 
-        let (_last_hash, last_lamports_per_signature) =
-            self.last_blockhash_and_lamports_per_signature();
-
         // Only acquire the write lock for the blockhash queue on block boundaries because
         // readers can starve this write lock acquisition and ticks would be slowed down too
         // much if the write lock is acquired for each tick.
@@ -3016,10 +3066,7 @@ impl Bank {
         #[cfg(feature = "dev-context-only-utils")]
         let blockhash = blockhash_override.as_ref().unwrap_or(blockhash);
 
-        // lamports_per_signature stored in blockhash_queue is not used for fee calculation
-        // but only for determining zero_fees_for_test mode (lamports_per_signature == 0).
-        // Storing last_lamports_per_signature serves the same purpose.
-        w_blockhash_queue.register_hash(blockhash, last_lamports_per_signature);
+        w_blockhash_queue.register_hash(blockhash, self.fee_rate_governor.lamports_per_signature);
         self.update_recent_blockhashes_locked(&w_blockhash_queue);
     }
 
@@ -3038,9 +3085,6 @@ impl Bank {
         blockhash: &Hash,
         lamports_per_signature: Option<u64>,
     ) {
-        let (_last_hash, last_lamports_per_signature) =
-            self.last_blockhash_and_lamports_per_signature();
-
         // Only acquire the write lock for the blockhash queue on block boundaries because
         // readers can starve this write lock acquisition and ticks would be slowed down too
         // much if the write lock is acquired for each tick.
@@ -3048,7 +3092,8 @@ impl Bank {
         if let Some(lamports_per_signature) = lamports_per_signature {
             w_blockhash_queue.register_hash(blockhash, lamports_per_signature);
         } else {
-            w_blockhash_queue.register_hash(blockhash, last_lamports_per_signature);
+            w_blockhash_queue
+                .register_hash(blockhash, self.fee_rate_governor.lamports_per_signature);
         }
     }
 
@@ -3196,6 +3241,14 @@ impl Bank {
         batch
     }
 
+    /// Prepare a transaction batch from a single transaction after locking accounts
+    pub fn prepare_locked_batch_from_single_tx<'a, Tx: SVMMessage>(
+        &'a self,
+        transaction: &'a Tx,
+    ) -> TransactionBatch<'a, 'a, Tx> {
+        self.prepare_sanitized_batch(slice::from_ref(transaction))
+    }
+
     /// Run transactions against a frozen bank without committing the results
     pub fn simulate_transaction(
         &self,
@@ -3241,7 +3294,6 @@ impl Bank {
                     enable_log_recording: true,
                     enable_return_data_recording: true,
                 },
-                transaction_account_lock_limit: Some(self.get_transaction_account_lock_limit()),
             },
         );
 
@@ -4582,7 +4634,6 @@ impl Bank {
                 log_messages_bytes_limit,
                 limit_to_load_programs: false,
                 recording_config,
-                transaction_account_lock_limit: Some(self.get_transaction_account_lock_limit()),
             },
         );
 
@@ -4852,6 +4903,18 @@ impl Bank {
             .is_active(&feature_set::raise_block_limits_to_50m::id())
         {
             let (account_cost_limit, block_cost_limit, vote_cost_limit) = simd_0207_block_limits();
+            self.write_cost_tracker().unwrap().set_limits(
+                account_cost_limit,
+                block_cost_limit,
+                vote_cost_limit,
+            );
+        }
+
+        if self
+            .feature_set
+            .is_active(&feature_set::raise_block_limits_to_60m::id())
+        {
+            let (account_cost_limit, block_cost_limit, vote_cost_limit) = simd_0256_block_limits();
             self.write_cost_tracker().unwrap().set_limits(
                 account_cost_limit,
                 block_cost_limit,
@@ -5685,16 +5748,6 @@ impl Bank {
             )
         }?;
 
-        let move_precompile_verification_to_svm = self
-            .feature_set
-            .is_active(&feature_set::move_precompile_verification_to_svm::id());
-        if !move_precompile_verification_to_svm && {
-            verification_mode == TransactionVerificationMode::HashAndVerifyPrecompiles
-                || verification_mode == TransactionVerificationMode::FullVerification
-        } {
-            verify_precompiles(&sanitized_tx, &self.feature_set)?;
-        }
-
         Ok(sanitized_tx)
     }
 
@@ -5862,7 +5915,6 @@ impl Bank {
     pub fn update_accounts_hash(
         &self,
         data_source: CalcAccountsHashDataSource,
-        mut debug_verify: bool,
         is_startup: bool,
     ) -> AccountsHash {
         let (accounts_hash, total_lamports) = self
@@ -5871,7 +5923,7 @@ impl Bank {
             .accounts_db
             .update_accounts_hash_with_verify_from(
                 data_source,
-                debug_verify,
+                false, // debug_verify
                 self.slot(),
                 &self.ancestors,
                 Some(self.capitalization()),
@@ -5887,24 +5939,22 @@ impl Bank {
                 ("capitalization", self.capitalization(), i64),
             );
 
-            if !debug_verify {
-                // cap mismatch detected. It has been logged to metrics above.
-                // Run both versions of the calculation to attempt to get more info.
-                debug_verify = true;
-                self.rc
-                    .accounts
-                    .accounts_db
-                    .update_accounts_hash_with_verify_from(
-                        data_source,
-                        debug_verify,
-                        self.slot(),
-                        &self.ancestors,
-                        Some(self.capitalization()),
-                        self.epoch_schedule(),
-                        &self.rent_collector,
-                        is_startup,
-                    );
-            }
+            // cap mismatch detected. It has been logged to metrics above.
+            // Run both versions of the calculation to attempt to get more info.
+            let debug_verify = true;
+            self.rc
+                .accounts
+                .accounts_db
+                .update_accounts_hash_with_verify_from(
+                    data_source,
+                    debug_verify,
+                    self.slot(),
+                    &self.ancestors,
+                    Some(self.capitalization()),
+                    self.epoch_schedule(),
+                    &self.rent_collector,
+                    is_startup,
+                );
 
             panic!(
                 "capitalization_mismatch. slot: {}, calculated_lamports: {}, capitalization: {}",
@@ -6097,7 +6147,7 @@ impl Bank {
     pub fn should_use_vote_keyed_leader_schedule(&self, epoch: Epoch) -> Option<bool> {
         let effective_epoch = self
             .feature_set
-            .activated_slot(&solana_feature_set::enable_vote_address_leader_schedule::id())
+            .activated_slot(&agave_feature_set::enable_vote_address_leader_schedule::id())
             .map(|activation_slot| {
                 // If the feature was activated at genesis, then the new leader
                 // schedule should be effective immediately in the first epoch
@@ -6411,15 +6461,15 @@ impl Bank {
 
     pub fn deactivate_feature(&mut self, id: &Pubkey) {
         let mut feature_set = Arc::make_mut(&mut self.feature_set).clone();
-        feature_set.active.remove(id);
-        feature_set.inactive.insert(*id);
+        feature_set.active_mut().remove(id);
+        feature_set.inactive_mut().insert(*id);
         self.feature_set = Arc::new(feature_set);
     }
 
     pub fn activate_feature(&mut self, id: &Pubkey) {
         let mut feature_set = Arc::make_mut(&mut self.feature_set).clone();
-        feature_set.inactive.remove(id);
-        feature_set.active.insert(*id, 0);
+        feature_set.inactive_mut().remove(id);
+        feature_set.active_mut().insert(*id, 0);
         self.feature_set = Arc::new(feature_set);
     }
 
@@ -6570,8 +6620,21 @@ impl Bank {
             }
         }
 
-        if new_feature_activations.contains(&feature_set::raise_block_limits_to_50m::id()) {
+        if new_feature_activations.contains(&feature_set::raise_block_limits_to_50m::id())
+            && !self
+                .feature_set
+                .is_active(&feature_set::raise_block_limits_to_60m::id())
+        {
             let (account_cost_limit, block_cost_limit, vote_cost_limit) = simd_0207_block_limits();
+            self.write_cost_tracker().unwrap().set_limits(
+                account_cost_limit,
+                block_cost_limit,
+                vote_cost_limit,
+            );
+        }
+
+        if new_feature_activations.contains(&feature_set::raise_block_limits_to_60m::id()) {
+            let (account_cost_limit, block_cost_limit, vote_cost_limit) = simd_0256_block_limits();
             self.write_cost_tracker().unwrap().set_limits(
                 account_cost_limit,
                 block_cost_limit,
@@ -6605,12 +6668,12 @@ impl Bank {
     /// Compute the active feature set based on the current bank state,
     /// and return it together with the set of newly activated features.
     fn compute_active_feature_set(&self, include_pending: bool) -> (FeatureSet, AHashSet<Pubkey>) {
-        let mut active = self.feature_set.active.clone();
+        let mut active = self.feature_set.active().clone();
         let mut inactive = AHashSet::new();
         let mut pending = AHashSet::new();
         let slot = self.slot();
 
-        for feature_id in &self.feature_set.inactive {
+        for feature_id in self.feature_set.inactive() {
             let mut activated = None;
             if let Some(account) = self.get_account_with_fixed_root(feature_id) {
                 if let Some(feature) = feature::from_account(&account) {
@@ -6635,7 +6698,7 @@ impl Bank {
             }
         }
 
-        (FeatureSet { active, inactive }, pending)
+        (FeatureSet::new(active, inactive), pending)
     }
 
     fn apply_builtin_program_feature_transitions(
@@ -6802,15 +6865,19 @@ impl Bank {
         total_accounts_stats
     }
 
+    /// Must a snapshot of this bank include the EAH?
+    pub fn must_include_epoch_accounts_hash_in_snapshot(&self) -> bool {
+        epoch_accounts_hash_utils::is_enabled_this_epoch(self)
+            && epoch_accounts_hash_utils::is_in_calculation_window(self)
+    }
+
     /// Get the EAH that will be used by snapshots
     ///
     /// Since snapshots are taken on roots, if the bank is in the EAH calculation window then an
     /// EAH *must* be included.  This means if an EAH calculation is currently in-flight we will
     /// wait for it to complete.
     pub fn get_epoch_accounts_hash_to_serialize(&self) -> Option<EpochAccountsHash> {
-        let should_get_epoch_accounts_hash = epoch_accounts_hash_utils::is_enabled_this_epoch(self)
-            && epoch_accounts_hash_utils::is_in_calculation_window(self);
-        if !should_get_epoch_accounts_hash {
+        if !self.must_include_epoch_accounts_hash_in_snapshot() {
             return None;
         }
 
@@ -6881,6 +6948,40 @@ impl Bank {
     }
 }
 
+impl InvokeContextCallback for Bank {
+    fn get_epoch_stake(&self) -> u64 {
+        self.get_current_epoch_total_stake()
+    }
+
+    fn get_epoch_stake_for_vote_account(&self, vote_address: &Pubkey) -> u64 {
+        self.get_current_epoch_vote_accounts()
+            .get(vote_address)
+            .map(|(stake, _)| (*stake))
+            .unwrap_or(0)
+    }
+
+    fn is_precompile(&self, program_id: &Pubkey) -> bool {
+        is_precompile(program_id, |feature_id: &Pubkey| {
+            self.feature_set.is_active(feature_id)
+        })
+    }
+
+    fn process_precompile(
+        &self,
+        program_id: &Pubkey,
+        data: &[u8],
+        instruction_datas: Vec<&[u8]>,
+    ) -> std::result::Result<(), PrecompileError> {
+        if let Some(precompile) = get_precompile(program_id, |feature_id: &Pubkey| {
+            self.feature_set.is_active(feature_id)
+        }) {
+            precompile.verify(data, &instruction_datas, &self.feature_set)
+        } else {
+            Err(PrecompileError::InvalidPublicKey)
+        }
+    }
+}
+
 impl TransactionProcessingCallback for Bank {
     fn account_matches_owners(&self, account: &Pubkey, owners: &[Pubkey]) -> Option<usize> {
         self.rc
@@ -6941,12 +7042,17 @@ impl TransactionProcessingCallback for Bank {
             self.inspect_account_for_accounts_lt_hash(address, &account_state, is_writable);
         }
     }
+}
 
-    fn get_current_epoch_vote_account_stake(&self, vote_address: &Pubkey) -> u64 {
-        self.get_current_epoch_vote_accounts()
-            .get(vote_address)
-            .map(|(stake, _)| (*stake))
-            .unwrap_or(0)
+impl fmt::Debug for Bank {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Bank")
+            .field("slot", &self.slot)
+            .field("bank_id", &self.bank_id)
+            .field("block_height", &self.block_height)
+            .field("parent_slot", &self.parent_slot)
+            .field("capitalization", &self.capitalization())
+            .finish_non_exhaustive()
     }
 }
 
@@ -7132,7 +7238,7 @@ impl Bank {
     }
 
     pub fn update_accounts_hash_for_tests(&self) -> AccountsHash {
-        self.update_accounts_hash(CalcAccountsHashDataSource::IndexForTests, false, false)
+        self.update_accounts_hash(CalcAccountsHashDataSource::IndexForTests, false)
     }
 
     pub fn new_program_cache_for_tx_batch_for_slot(&self, slot: Slot) -> ProgramCacheForTxBatch {

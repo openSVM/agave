@@ -3,10 +3,10 @@ use {
         mock_bank::{MockBankCallback, MockForkGraph},
         transaction_builder::SanitizedTransactionBuilder,
     },
+    agave_feature_set::{FeatureSet, FEATURE_NAMES},
     lazy_static::lazy_static,
     prost::Message,
     solana_bpf_loader_program::syscalls::create_program_runtime_environment_v1,
-    solana_feature_set::{FeatureSet, FEATURE_NAMES},
     solana_log_collector::LogCollector,
     solana_program_runtime::{
         execution_budget::{SVMTransactionExecutionBudget, SVMTransactionExecutionCost},
@@ -25,10 +25,8 @@ use {
         signature::Signature,
         sysvar::{last_restart_slot, SysvarId},
     },
-    solana_svm::{
-        program_loader, transaction_processing_callback::TransactionProcessingCallback,
-        transaction_processor::TransactionBatchProcessor,
-    },
+    solana_svm::{program_loader, transaction_processor::TransactionBatchProcessor},
+    solana_svm_callback::TransactionProcessingCallback,
     solana_svm_conformance::proto::{AcctState, InstrEffects, InstrFixture},
     solana_timings::ExecuteTimings,
     solana_transaction_context::{
@@ -353,8 +351,7 @@ fn execute_fixture_as_instr(
     let env_config = EnvironmentConfig::new(
         blockhash,
         lamports_per_signature,
-        0,
-        &|_| 0,
+        mock_bank,
         mock_bank.feature_set.clone(),
         sysvar_cache,
     );
